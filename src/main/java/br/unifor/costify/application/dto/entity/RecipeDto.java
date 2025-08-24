@@ -1,4 +1,4 @@
-package br.unifor.costify.application.dto;
+package br.unifor.costify.application.dto.entity;
 
 import br.unifor.costify.domain.entity.Recipe;
 import br.unifor.costify.domain.valueobject.RecipeIngredient;

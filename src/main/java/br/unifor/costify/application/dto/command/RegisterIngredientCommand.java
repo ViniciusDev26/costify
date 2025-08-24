@@ -1,4 +1,4 @@
-package br.unifor.costify.application.dto;
+package br.unifor.costify.application.dto.command;
 
 import br.unifor.costify.domain.valueobject.Unit;
 

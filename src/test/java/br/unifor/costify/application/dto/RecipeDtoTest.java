@@ -1,5 +1,6 @@
 package br.unifor.costify.application.dto;
 
+import br.unifor.costify.application.dto.entity.RecipeDto;
 import br.unifor.costify.domain.contracts.IdGenerator;
 import br.unifor.costify.domain.entity.Recipe;
 import br.unifor.costify.domain.valueobject.Id;

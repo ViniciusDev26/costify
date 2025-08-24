@@ -1,7 +1,7 @@
 package br.unifor.costify.application.usecase;
 
-import br.unifor.costify.application.dto.IngredientDto;
-import br.unifor.costify.application.dto.RegisterIngredientCommand;
+import br.unifor.costify.application.dto.entity.IngredientDto;
+import br.unifor.costify.application.dto.command.RegisterIngredientCommand;
 import br.unifor.costify.application.contracts.IngredientRepository;
 import br.unifor.costify.application.factory.IngredientFactory;
 import br.unifor.costify.domain.contracts.IdGenerator;

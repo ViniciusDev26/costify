@@ -1,5 +1,6 @@
 package br.unifor.costify.application.dto;
 
+import br.unifor.costify.application.dto.command.RegisterRecipeCommand;
 import br.unifor.costify.domain.valueobject.Id;
 import br.unifor.costify.domain.valueobject.RecipeIngredient;
 import br.unifor.costify.domain.valueobject.Unit;

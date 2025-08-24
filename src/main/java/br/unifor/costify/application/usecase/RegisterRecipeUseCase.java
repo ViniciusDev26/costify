@@ -1,7 +1,7 @@
 package br.unifor.costify.application.usecase;
 
-import br.unifor.costify.application.dto.RecipeDto;
-import br.unifor.costify.application.dto.RegisterRecipeCommand;
+import br.unifor.costify.application.dto.entity.RecipeDto;
+import br.unifor.costify.application.dto.command.RegisterRecipeCommand;
 import br.unifor.costify.application.contracts.RecipeRepository;
 import br.unifor.costify.application.factory.RecipeFactory;
 import br.unifor.costify.domain.entity.Recipe;

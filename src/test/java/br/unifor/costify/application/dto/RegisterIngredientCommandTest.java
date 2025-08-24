@@ -1,5 +1,6 @@
 package br.unifor.costify.application.dto;
 
+import br.unifor.costify.application.dto.command.RegisterIngredientCommand;
 import br.unifor.costify.domain.valueobject.Unit;
 import org.junit.jupiter.api.Test;
 
