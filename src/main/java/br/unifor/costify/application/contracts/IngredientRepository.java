@@ -1,4 +1,4 @@
-package br.unifor.costify.application.port;
+package br.unifor.costify.application.contracts;
 
 import br.unifor.costify.domain.entity.Ingredient;
 import br.unifor.costify.domain.valueobject.Id;

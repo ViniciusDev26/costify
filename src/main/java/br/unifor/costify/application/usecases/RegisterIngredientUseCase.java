@@ -1,8 +1,9 @@
-package br.unifor.costify.application.service;
+package br.unifor.costify.application.usecases;
 
 import br.unifor.costify.application.dto.IngredientDto;
 import br.unifor.costify.application.dto.RegisterIngredientCommand;
-import br.unifor.costify.application.port.IngredientRepository;
+import br.unifor.costify.application.contracts.IngredientRepository;
+import br.unifor.costify.application.factory.IngredientFactory;
 import br.unifor.costify.domain.entity.Ingredient;
 
 public class RegisterIngredientUseCase {

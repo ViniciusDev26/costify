@@ -1,4 +1,4 @@
-package br.unifor.costify.application.service;
+package br.unifor.costify.application.factory;
 
 import br.unifor.costify.domain.contracts.IdGenerator;
 import br.unifor.costify.domain.entity.Ingredient;
