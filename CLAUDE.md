@@ -223,7 +223,7 @@ db/migration/
 
 2. **🔒 Git Safety Checkpoint**
    ```bash
-   git add . && git commit -m "checkpoint: before [task-name]"
+   git add . && git commit -m "checkpoint: before [task-name]" --allow-empty
    ```
    - Always commit current state before starting
    - Provides rollback point if needed
