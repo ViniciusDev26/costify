@@ -1,4 +1,4 @@
-package br.unifor.costify.application.usecases;
+package br.unifor.costify.application.usecase;
 
 import br.unifor.costify.application.dto.IngredientDto;
 import br.unifor.costify.application.dto.RegisterIngredientCommand;
