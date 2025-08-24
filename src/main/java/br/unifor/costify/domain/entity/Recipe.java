@@ -13,14 +13,14 @@ public class Recipe {
     private String name;
     private List<RecipeIngredient> ingredients;
 
-    Recipe(Id id, String name, List<RecipeIngredient> ingredients) {
+    public Recipe(Id id, String name, List<RecipeIngredient> ingredients) {
         this.id = Objects.requireNonNull(id, "Id cannot be null");
         this.validate(name, ingredients);
         this.name = name;
         this.ingredients = new ArrayList<>(ingredients);
     }
 
-    Recipe(IdGenerator idGenerator, String name, List<RecipeIngredient> ingredients) {
+    public Recipe(IdGenerator idGenerator, String name, List<RecipeIngredient> ingredients) {
         this.validate(name, ingredients);
         this.id = Id.generate(idGenerator);
         this.name = name;
