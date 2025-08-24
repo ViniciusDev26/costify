@@ -21,7 +21,7 @@ public class Ingredient {
    * @param packageUnit Unit of measurement for the package
    * @param packagePrice Price of the package
   */
-  Ingredient(Id id, String name, double packageQuantity, double packagePrice, Unit packageUnit) {
+  public Ingredient(Id id, String name, double packageQuantity, double packagePrice, Unit packageUnit) {
     this.id = Objects.requireNonNull(id, "Id cannot be null");
     this.validate(name, packageQuantity, packagePrice, packageUnit);
     this.name = name;
@@ -38,7 +38,7 @@ public class Ingredient {
    * @param packageUnit Unit of measurement for the package
    * @param packagePrice Price of the package
   */
-  Ingredient(IdGenerator idGenerator, String name, double packageQuantity, double packagePrice, Unit packageUnit) {
+  public Ingredient(IdGenerator idGenerator, String name, double packageQuantity, double packagePrice, Unit packageUnit) {
     this.validate(name, packageQuantity, packagePrice, packageUnit);
     this.id = Id.generate(idGenerator);
     this.name = name;
