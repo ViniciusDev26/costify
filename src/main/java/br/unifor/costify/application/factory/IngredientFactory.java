@@ -4,7 +4,9 @@ import br.unifor.costify.domain.contracts.IdGenerator;
 import br.unifor.costify.domain.entity.Ingredient;
 import br.unifor.costify.domain.valueobject.Id;
 import br.unifor.costify.domain.valueobject.Unit;
+import org.springframework.stereotype.Component;
 
+@Component
 public class IngredientFactory {
   private final IdGenerator idGenerator;
 

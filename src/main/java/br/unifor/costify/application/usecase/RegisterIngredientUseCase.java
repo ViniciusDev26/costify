@@ -6,7 +6,9 @@ import br.unifor.costify.application.dto.entity.IngredientDto;
 import br.unifor.costify.application.errors.IngredientAlreadyExistsException;
 import br.unifor.costify.application.factory.IngredientFactory;
 import br.unifor.costify.domain.entity.Ingredient;
+import org.springframework.stereotype.Service;
 
+@Service
 public class RegisterIngredientUseCase {
   private final IngredientRepository ingredientRepository;
   private final IngredientFactory ingredientFactory;
