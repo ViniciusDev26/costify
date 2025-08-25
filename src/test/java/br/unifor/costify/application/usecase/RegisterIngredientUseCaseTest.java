@@ -3,6 +3,7 @@ package br.unifor.costify.application.usecase;
 import br.unifor.costify.application.dto.entity.IngredientDto;
 import br.unifor.costify.application.dto.command.RegisterIngredientCommand;
 import br.unifor.costify.application.contracts.IngredientRepository;
+import br.unifor.costify.application.errors.IngredientAlreadyExistsException;
 import br.unifor.costify.application.factory.IngredientFactory;
 import br.unifor.costify.domain.contracts.IdGenerator;
 import br.unifor.costify.domain.entity.Ingredient;
@@ -63,7 +64,7 @@ class RegisterIngredientUseCaseTest {
         try {
             useCase.execute(command);
             assert false;
-        } catch (RegisterIngredientUseCase.IngredientAlreadyExistsException e) {
+        } catch (IngredientAlreadyExistsException e) {
             assert e.getMessage().contains("Flour");
             assert e.getMessage().contains("already exists");
         }
