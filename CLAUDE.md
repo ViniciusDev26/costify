@@ -87,14 +87,33 @@ costify/
 │   │   ├── java/
 │   │   │   └── br/unifor/costify/
 │   │   │       ├── CostifyApplication.java          # Spring Boot main class
+│   │   │       ├── application/                     # Application Layer (Use Cases & DTOs)
+│   │   │       │   ├── contracts/
+│   │   │       │   │   ├── IngredientRepository.java # Ingredient repository interface
+│   │   │       │   │   └── RecipeRepository.java    # Recipe repository interface
+│   │   │       │   ├── dto/
+│   │   │       │   │   ├── command/                 # Input DTOs for commands
+│   │   │       │   │   │   ├── RegisterIngredientCommand.java
+│   │   │       │   │   │   └── RegisterRecipeCommand.java
+│   │   │       │   │   └── entity/                  # Output DTOs for entities
+│   │   │       │   │       ├── IngredientDto.java
+│   │   │       │   │       └── RecipeDto.java
+│   │   │       │   ├── factory/
+│   │   │       │   │   ├── IngredientFactory.java   # Ingredient creation factory
+│   │   │       │   │   └── RecipeFactory.java       # Recipe creation factory
+│   │   │       │   └── usecase/
+│   │   │       │       ├── RegisterIngredientUseCase.java # Ingredient registration logic
+│   │   │       │       └── RegisterRecipeUseCase.java     # Recipe registration logic
 │   │   │       └── domain/                          # Domain Layer (Core Business Logic)
 │   │   │           ├── contracts/
 │   │   │           │   └── IdGenerator.java         # Abstract ID generation
 │   │   │           ├── entity/
-│   │   │           │   └── Ingredient.java          # Core business entity
+│   │   │           │   ├── Ingredient.java          # Ingredient domain entity
+│   │   │           │   └── Recipe.java              # Recipe domain entity
 │   │   │           └── valueobject/
 │   │   │               ├── Id.java                  # Domain ID value object
-│   │   │               └── Unit.java               # Measurement unit value object
+│   │   │               ├── RecipeIngredient.java    # Recipe-ingredient relationship
+│   │   │               └── Unit.java                # Measurement unit value object
 │   │   └── resources/
 │   │       ├── application.properties               # Spring configuration
 │   │       └── db/migration/                        # Flyway migrations (empty)
@@ -104,41 +123,77 @@ costify/
 │               ├── CostifyApplicationTests.java     # Application context tests
 │               ├── TestCostifyApplication.java     # Test configuration
 │               ├── TestcontainersConfiguration.java # Testcontainers setup
+│               ├── application/                     # Application layer tests
+│               │   ├── dto/                         # DTO tests
+│               │   │   ├── IngredientDtoTest.java
+│               │   │   ├── RecipeDtoTest.java
+│               │   │   ├── RegisterIngredientCommandTest.java
+│               │   │   └── RegisterRecipeCommandTest.java
+│               │   └── usecase/                     # Use case tests
+│               │       ├── RegisterIngredientUseCaseTest.java
+│               │       └── RegisterRecipeUseCaseTest.java
 │               ├── domain/                          # Domain unit tests
 │               │   ├── entity/
-│               │   │   └── IngredientTest.java
+│               │   │   ├── IngredientTest.java
+│               │   │   └── RecipeTest.java
 │               │   └── valueobject/
 │               │       ├── IdTest.java
+│               │       ├── RecipeIngredientTest.java
 │               │       └── UnitTest.java
 │               └── integration/
 │                   └── flyway/
 │                       └── FlywayMigrationIntegrationTest.java
 ├── target/                                          # Maven build output
+├── docker-compose.yml                               # PostgreSQL container setup
 ├── pom.xml                                         # Maven configuration
 ├── mvnw                                            # Maven wrapper (Unix)
 ├── mvnw.cmd                                        # Maven wrapper (Windows)
+├── CLAUDE.md                                       # Architecture documentation
 └── README.md                                       # Project documentation
 ```
 
-## Planned Architecture Implementation
+## Architecture Implementation Status
 
-### Missing Layers to Implement
+### ✅ Completed Layers
 
-#### 1. Application Layer (`src/main/java/br/unifor/costify/application/`)
+#### 1. Domain Layer (`src/main/java/br/unifor/costify/domain/`)
 ```
-application/
-├── service/
-│   ├── IngredientService.java           # Business use cases
-│   └── CostCalculationService.java      # Cost calculation logic
+domain/                                  # Core business logic (COMPLETED)
+├── contracts/
+│   └── IdGenerator.java                 # ID generation contract
+├── entity/
+│   ├── Ingredient.java                  # Ingredient aggregate root
+│   └── Recipe.java                      # Recipe aggregate root
+└── valueobject/
+    ├── Id.java                          # Domain ID value object
+    ├── RecipeIngredient.java            # Recipe-ingredient relationship
+    └── Unit.java                        # Measurement unit enum
+```
+
+#### 2. Application Layer (`src/main/java/br/unifor/costify/application/`)
+```
+application/                             # Business use cases (COMPLETED)
+├── contracts/
+│   ├── IngredientRepository.java        # Repository interfaces
+│   └── RecipeRepository.java
 ├── dto/
-│   ├── IngredientDto.java              # Data transfer objects
-│   └── RecipeDto.java
-└── port/
-    ├── IngredientRepository.java        # Repository interfaces
-    └── RecipeRepository.java
+│   ├── command/                         # Input DTOs
+│   │   ├── RegisterIngredientCommand.java
+│   │   └── RegisterRecipeCommand.java
+│   └── entity/                          # Output DTOs
+│       ├── IngredientDto.java
+│       └── RecipeDto.java
+├── factory/
+│   ├── IngredientFactory.java           # Entity creation factories
+│   └── RecipeFactory.java
+└── usecase/
+    ├── RegisterIngredientUseCase.java   # Business workflows
+    └── RegisterRecipeUseCase.java
 ```
 
-#### 2. Infrastructure Layer (`src/main/java/br/unifor/costify/infrastructure/`)
+### 🚧 Next Implementation: Infrastructure Layer
+
+#### Infrastructure Layer (`src/main/java/br/unifor/costify/infrastructure/`) - TO IMPLEMENT
 ```
 infrastructure/
 ├── persistence/
@@ -149,7 +204,8 @@ infrastructure/
 │   │   ├── IngredientJpaRepository.java # JPA repositories
 │   │   └── RecipeJpaRepository.java
 │   └── mapper/
-│       └── IngredientMapper.java       # Entity <-> Domain mapping
+│       ├── IngredientMapper.java       # Entity <-> Domain mapping
+│       └── RecipeMapper.java
 ├── web/
 │   ├── controller/
 │   │   ├── IngredientController.java   # REST endpoints
@@ -201,9 +257,11 @@ db/migration/
 ## Key Design Principles
 
 ### Domain-Driven Design
-- **Entities**: `Ingredient` with business identity and behavior
-- **Value Objects**: `Id`, `Unit` for immutable domain concepts
+- **Entities**: `Ingredient` and `Recipe` aggregates with business identity and behavior
+- **Value Objects**: `Id`, `Unit`, `RecipeIngredient` for immutable domain concepts
 - **Contracts**: `IdGenerator` for dependency inversion
+- **Repository Interfaces**: `IngredientRepository`, `RecipeRepository` for data persistence abstraction
+- **Use Cases**: `RegisterIngredientUseCase`, `RegisterRecipeUseCase` for application workflows
 
 ### Clean Architecture Benefits
 - **Independence**: Domain logic isolated from frameworks
