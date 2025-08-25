@@ -2,9 +2,8 @@ package br.unifor.costify.domain.valueobject;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.jupiter.api.Test;
-
 import br.unifor.costify.domain.contracts.IdGenerator;
+import org.junit.jupiter.api.Test;
 
 public class IdTest {
   @Test

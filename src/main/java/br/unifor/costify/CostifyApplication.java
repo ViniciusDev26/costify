@@ -6,8 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class CostifyApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(CostifyApplication.class, args);
-	}
-
+  public static void main(String[] args) {
+    SpringApplication.run(CostifyApplication.class, args);
+  }
 }

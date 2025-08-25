@@ -9,17 +9,15 @@ public record IngredientDto(
     double packageQuantity,
     double packagePrice,
     Unit packageUnit,
-    double unitCost
-) {
-    
-    public static IngredientDto from(Ingredient ingredient) {
-        return new IngredientDto(
-            ingredient.getId().getValue(),
-            ingredient.getName(),
-            ingredient.getPackageQuantity(),
-            ingredient.getPackagePrice(),
-            ingredient.getPackageUnit(),
-            ingredient.getUnitCost()
-        );
-    }
+    double unitCost) {
+
+  public static IngredientDto from(Ingredient ingredient) {
+    return new IngredientDto(
+        ingredient.getId().getValue(),
+        ingredient.getName(),
+        ingredient.getPackageQuantity(),
+        ingredient.getPackagePrice(),
+        ingredient.getPackageUnit(),
+        ingredient.getUnitCost());
+  }
 }

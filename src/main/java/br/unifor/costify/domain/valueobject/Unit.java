@@ -2,9 +2,9 @@ package br.unifor.costify.domain.valueobject;
 
 public enum Unit {
   ML(1.0, Type.VOLUME),
-  L(1000.0, Type.VOLUME),   // 1L = 1000ml
+  L(1000.0, Type.VOLUME), // 1L = 1000ml
   G(1.0, Type.WEIGHT),
-  KG(1000.0, Type.WEIGHT),  // 1kg = 1000g
+  KG(1000.0, Type.WEIGHT), // 1kg = 1000g
   UN(1.0, Type.UNIT);
 
   private final double factorToBase;

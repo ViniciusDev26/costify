@@ -1,8 +1,7 @@
 package br.unifor.costify.domain.valueobject;
 
-import java.util.Objects;
-
 import br.unifor.costify.domain.contracts.IdGenerator;
+import java.util.Objects;
 
 public final class Id {
   private final String value;
@@ -28,10 +27,8 @@ public final class Id {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o)
-      return true;
-    if (!(o instanceof Id))
-      return false;
+    if (this == o) return true;
+    if (!(o instanceof Id)) return false;
     Id id = (Id) o;
     return value.equals(id.value);
   }
