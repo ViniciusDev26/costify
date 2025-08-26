@@ -1,4 +1,4 @@
-package br.unifor.costify.integration.repository;
+package br.unifor.costify.integration.repository.ingredient;
 
 import br.unifor.costify.TestcontainersConfiguration;
 import br.unifor.costify.domain.entity.Ingredient;
