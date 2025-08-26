@@ -86,47 +86,6 @@ class RecipeTest {
     }
   }
 
-  @Test
-  void updateRecipe_shouldChangeFieldsCorrectly() {
-    Recipe recipe = new Recipe(fakeIdGenerator, "Original Recipe", List.of(recipeIngredient1));
-
-    recipe.setName("Updated Recipe");
-    recipe.setIngredients(List.of(recipeIngredient1, recipeIngredient2));
-
-    assert recipe.getName().equals("Updated Recipe");
-    assert recipe.getIngredients().size() == 2;
-    assert recipe.getIngredients().contains(recipeIngredient1);
-    assert recipe.getIngredients().contains(recipeIngredient2);
-    assert recipe.getId().getValue().equals("test-recipe-id-123");
-  }
-
-  @Test
-  void updateRecipe_withEmptyIngredients_shouldThrowException() {
-    Recipe recipe = new Recipe(fakeIdGenerator, "Test Recipe", List.of(recipeIngredient1));
-
-    try {
-      recipe.setIngredients(List.of());
-      assert false;
-    } catch (IllegalArgumentException ignored) {
-    }
-  }
-
-  @Test
-  void updateRecipe_withInvalidName_shouldThrowException() {
-    Recipe recipe = new Recipe(fakeIdGenerator, "Test Recipe", List.of(recipeIngredient1));
-
-    try {
-      recipe.setName("");
-      assert false;
-    } catch (IllegalArgumentException ignored) {
-    }
-
-    try {
-      recipe.setName(null);
-      assert false;
-    } catch (IllegalArgumentException ignored) {
-    }
-  }
 
   @Test
   void addIngredient_shouldAddToList() {

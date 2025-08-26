@@ -38,19 +38,6 @@ public class Recipe {
     return new ArrayList<>(ingredients);
   }
 
-  public void setName(String name) {
-    if (name == null || name.isBlank()) {
-      throw new IllegalArgumentException("Recipe name cannot be null or empty");
-    }
-    this.name = name;
-  }
-
-  public void setIngredients(List<RecipeIngredient> ingredients) {
-    if (ingredients == null || ingredients.isEmpty()) {
-      throw new IllegalArgumentException("Recipe must have at least one ingredient");
-    }
-    this.ingredients = new ArrayList<>(ingredients);
-  }
 
   public void addIngredient(RecipeIngredient ingredient) {
     Objects.requireNonNull(ingredient, "Ingredient cannot be null");
