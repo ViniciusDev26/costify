@@ -34,8 +34,6 @@ public class IngredientTable {
   @Column(nullable = false, columnDefinition = "measurement_unit")
   public Unit packageUnit;
 
-  @Column(nullable = false)
-  public BigDecimal unitCost;
 
   @CreatedDate public LocalDateTime createdAt;
 
@@ -48,7 +46,6 @@ public class IngredientTable {
     table.packageQuantity = new BigDecimal(ingredient.getPackageQuantity());
     table.packagePrice = new BigDecimal(ingredient.getPackagePrice());
     table.packageUnit = ingredient.getPackageUnit();
-    table.unitCost = new BigDecimal(ingredient.getUnitCost());
     return table;
   }
 
