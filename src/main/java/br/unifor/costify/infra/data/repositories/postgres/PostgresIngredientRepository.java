@@ -17,7 +17,7 @@ public class PostgresIngredientRepository implements IngredientRepository {
   }
 
   @Override
-  public final Optional<Ingredient> findById(Id id) {
+  public Optional<Ingredient> findById(Id id) {
     IngredientTable ingredientQueryResult =
         this.jpaIngredientRepository.findById(id.getValue()).orElse(null);
 

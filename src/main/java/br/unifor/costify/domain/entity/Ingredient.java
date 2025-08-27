@@ -79,38 +79,6 @@ public class Ingredient {
     return packageUnit;
   }
 
-  // Setters
-  public void setName(String name) {
-    if (name == null || name.isBlank()) {
-      throw new IllegalArgumentException("Ingredient name cannot be null or empty");
-    }
-
-    this.name = name;
-  }
-
-  public void setPackageQuantity(double packageQuantity) {
-    if (packageQuantity <= 0) {
-      throw new IllegalArgumentException("Package quantity must be greater than zero");
-    }
-
-    this.packageQuantity = packageQuantity;
-  }
-
-  public void setPackagePrice(double packagePrice) {
-    if (packagePrice < 0) {
-      throw new IllegalArgumentException("Package price cannot be negative");
-    }
-
-    this.packagePrice = packagePrice;
-  }
-
-  public void setPackageUnit(Unit packageUnit) {
-    if (packageUnit == null) {
-      throw new IllegalArgumentException("Package unit cannot be null");
-    }
-
-    this.packageUnit = packageUnit;
-  }
 
   private void validate(
       String name, double packageQuantity, double packagePrice, Unit packageUnit) {

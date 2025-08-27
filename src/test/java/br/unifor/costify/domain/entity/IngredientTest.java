@@ -71,42 +71,6 @@ class IngredientTest {
     }
   }
 
-  @Test
-  void updateIngredient_shouldChangeFieldsCorrectly() {
-    Ingredient ingredient = new Ingredient(fakeIdGenerator, "Leite", 1.0, 5.0, Unit.L);
-
-    ingredient.setName("Leite Integral");
-    ingredient.setPackageQuantity(2.0);
-    ingredient.setPackagePrice(10.0);
-    ingredient.setPackageUnit(Unit.L);
-
-    assert ingredient.getName().equals("Leite Integral");
-    assert ingredient.getPackageQuantity() == 2.0;
-    assert ingredient.getPackagePrice() == 10.0;
-    assert ingredient.getPackageUnit() == Unit.L;
-    assert ingredient.getId().getValue().equals("test-id-123"); // ID não muda
-  }
-
-  @Test
-  void updateIngredient_withInvalidValues_shouldThrowException() {
-    Ingredient ingredient = new Ingredient(fakeIdGenerator, "Leite", 1.0, 5.0, Unit.L);
-
-    try {
-      ingredient.setName("");
-      assert false;
-    } catch (IllegalArgumentException ignored) {
-    }
-    try {
-      ingredient.setPackageQuantity(0);
-      assert false;
-    } catch (IllegalArgumentException ignored) {
-    }
-    try {
-      ingredient.setPackagePrice(-1);
-      assert false;
-    } catch (IllegalArgumentException ignored) {
-    }
-  }
 
   @Test
   void getUnitCost_shouldReturnCorrectValue() {
