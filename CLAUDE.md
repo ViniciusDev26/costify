@@ -363,6 +363,7 @@ db/migration/
    ```
    - Always commit current state before starting
    - Provides rollback point if needed
+   - **IMPORTANT**: This checkpoint will be squashed with final commit
 
 3. **🧪 TDD Development Cycle**
    - **RED**: Write failing test first
@@ -413,8 +414,19 @@ For each component (Entity, Service, Controller):
 # Application startup test
 ./mvnw spring-boot:run
 
-# Final commit
-git add . && git commit -m "✅ implement [feature] with TDD"
+# Final squash commit (combines checkpoint + implementation)
+git reset --soft HEAD~1  # Reset to before checkpoint but keep changes
+git add . && git commit -m "✅ implement [feature] with TDD
+
+- Detailed description of what was implemented
+- Key features and improvements
+- TDD approach followed
+
+🎯 Business value delivered
+
+🧪 Generated with [Claude Code](https://claude.ai/code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>"
 ```
 
 ### 🔄 Rollback Strategy
@@ -430,6 +442,25 @@ git reset --hard [checkpoint-commit-hash]
 git reset --soft [checkpoint-commit-hash]
 ```
 
+### 🎯 Squash Commit Strategy
+To maintain clean git history with one commit per feature:
+
+```bash
+# After successful implementation, squash checkpoint + implementation
+git reset --soft HEAD~1  # Reset to before checkpoint, keep all changes staged
+git add . && git commit -m "✅ implement [feature] with comprehensive description"
+
+# This results in ONE commit instead of:
+# - checkpoint: before [feature] 
+# - ✅ implement [feature]
+```
+
+**Benefits:**
+- Clean, linear git history
+- Each commit represents a complete feature
+- Easy to review and revert if needed
+- Professional commit history for production
+
 ### 📋 TodoWrite Template
 Every task must start with this structure:
 ```
@@ -438,7 +469,7 @@ Every task must start with this structure:
 3. Implement minimal [component] code - pending
 4. Refactor [component] for quality - pending
 5. Integration test verification - pending
-6. Final commit and validation - pending
+6. Final squash commit and validation - pending
 ```
 
 ### 🎯 TDD Success Criteria
