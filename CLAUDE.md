@@ -94,29 +94,64 @@ costify/
 │   │   │       │   ├── dto/
 │   │   │       │   │   ├── command/                 # Input DTOs for commands
 │   │   │       │   │   │   ├── RegisterIngredientCommand.java
-│   │   │       │   │   │   └── RegisterRecipeCommand.java
-│   │   │       │   │   └── entity/                  # Output DTOs for entities
-│   │   │       │   │       ├── IngredientDto.java
-│   │   │       │   │       └── RecipeDto.java
+│   │   │       │   │   │   ├── RegisterRecipeCommand.java
+│   │   │       │   │   │   └── UpdateIngredientCommand.java
+│   │   │       │   │   ├── entity/                  # Output DTOs for entities
+│   │   │       │   │   │   ├── IngredientDto.java
+│   │   │       │   │   │   └── RecipeDto.java
+│   │   │       │   │   └── response/                # Response DTOs (empty)
+│   │   │       │   ├── errors/                      # Application exceptions
+│   │   │       │   │   ├── IngredientAlreadyExistsException.java
+│   │   │       │   │   └── RecipeAlreadyExistsException.java
+│   │   │       │   ├── events/                      # Application events (empty)
 │   │   │       │   ├── factory/
 │   │   │       │   │   ├── IngredientFactory.java   # Ingredient creation factory
 │   │   │       │   │   └── RecipeFactory.java       # Recipe creation factory
 │   │   │       │   └── usecase/
 │   │   │       │       ├── RegisterIngredientUseCase.java # Ingredient registration logic
-│   │   │       │       └── RegisterRecipeUseCase.java     # Recipe registration logic
-│   │   │       └── domain/                          # Domain Layer (Core Business Logic)
-│   │   │           ├── contracts/
-│   │   │           │   └── IdGenerator.java         # Abstract ID generation
-│   │   │           ├── entity/
-│   │   │           │   ├── Ingredient.java          # Ingredient domain entity
-│   │   │           │   └── Recipe.java              # Recipe domain entity
-│   │   │           └── valueobject/
-│   │   │               ├── Id.java                  # Domain ID value object
-│   │   │               ├── RecipeIngredient.java    # Recipe-ingredient relationship
-│   │   │               └── Unit.java                # Measurement unit value object
+│   │   │       │       ├── RegisterRecipeUseCase.java     # Recipe registration logic
+│   │   │       │       └── UpdateIngredientUseCase.java   # Ingredient update logic
+│   │   │       ├── domain/                          # Domain Layer (Core Business Logic)
+│   │   │       │   ├── contracts/
+│   │   │       │   │   └── IdGenerator.java         # Abstract ID generation
+│   │   │       │   ├── entity/
+│   │   │       │   │   ├── Ingredient.java          # Ingredient domain entity
+│   │   │       │   │   └── Recipe.java              # Recipe domain entity
+│   │   │       │   ├── errors/                      # Domain exceptions
+│   │   │       │   │   ├── ingredient/              # Ingredient domain exceptions (empty)
+│   │   │       │   │   ├── money/                   # Money domain exceptions (empty)
+│   │   │       │   │   └── recipe/                  # Recipe domain exceptions (empty)
+│   │   │       │   ├── events/                      # Domain events
+│   │   │       │   │   ├── ingredient/              # Ingredient domain events (empty)
+│   │   │       │   │   └── recipe/                  # Recipe domain events (empty)
+│   │   │       │   └── valueobject/
+│   │   │       │       ├── Id.java                  # Domain ID value object
+│   │   │       │       ├── RecipeIngredient.java    # Recipe-ingredient relationship
+│   │   │       │       └── Unit.java                # Measurement unit value object
+│   │   │       ├── infra/                           # Infrastructure Layer (Implemented)
+│   │   │       │   ├── config/
+│   │   │       │   │   ├── SecurityConfig.java      # Security configuration
+│   │   │       │   │   └── UuidGenerator.java       # UUID generation implementation
+│   │   │       │   ├── controllers/
+│   │   │       │   │   ├── IngredientController.java # REST endpoints for ingredients
+│   │   │       │   │   └── dto/
+│   │   │       │   │       └── IngredientControllerRequest.java # Controller request DTO
+│   │   │       │   └── data/
+│   │   │       │       ├── entities/
+│   │   │       │       │   └── IngredientTable.java # JPA entity for ingredients
+│   │   │       │       └── repositories/
+│   │   │       │           ├── jpa/
+│   │   │       │           │   └── JpaIngredientRepository.java # JPA repository interface
+│   │   │       │           └── postgres/
+│   │   │       │               └── PostgresIngredientRepository.java # Repository implementation
+│   │   │       └── infrastructure/                  # Additional infrastructure (mostly empty)
+│   │   │           └── events/                      # Infrastructure events (empty)
 │   │   └── resources/
 │   │       ├── application.properties               # Spring configuration
-│   │       └── db/migration/                        # Flyway migrations (empty)
+│   │       └── db/migration/                        # Flyway migrations (3 files)
+│   │           ├── V1__Create_ingredients_and_recipes_tables.sql
+│   │           ├── V2__Convert_unit_fields_to_enum.sql
+│   │           └── V3__Remove_unit_cost_column.sql
 │   └── test/
 │       └── java/
 │           └── br/unifor/costify/
@@ -125,6 +160,8 @@ costify/
 │               ├── TestcontainersConfiguration.java # Testcontainers setup
 │               ├── application/                     # Application layer tests
 │               │   ├── dto/                         # DTO tests
+│               │   │   ├── command/                 # Command DTO tests (empty)
+│               │   │   ├── response/                # Response DTO tests (empty)
 │               │   │   ├── IngredientDtoTest.java
 │               │   │   ├── RecipeDtoTest.java
 │               │   │   ├── RegisterIngredientCommandTest.java
@@ -136,13 +173,18 @@ costify/
 │               │   ├── entity/
 │               │   │   ├── IngredientTest.java
 │               │   │   └── RecipeTest.java
+│               │   ├── events/                      # Domain event tests (empty)
 │               │   └── valueobject/
 │               │       ├── IdTest.java
 │               │       ├── RecipeIngredientTest.java
 │               │       └── UnitTest.java
 │               └── integration/
-│                   └── flyway/
-│                       └── FlywayMigrationIntegrationTest.java
+│                   ├── flyway/
+│                   │   └── FlywayMigrationIntegrationTest.java
+│                   └── repository/
+│                       └── ingredient/
+│                           ├── IngredientRepositoryConstraintsIntegrationTest.java
+│                           └── PostgresIngredientRepositoryIntegrationTest.java
 ├── target/                                          # Maven build output
 ├── docker-compose.yml                               # PostgreSQL container setup
 ├── pom.xml                                         # Maven configuration
@@ -157,13 +199,21 @@ costify/
 ### ✅ Completed Layers
 
 #### 1. Domain Layer (`src/main/java/br/unifor/costify/domain/`)
-```
+
+```text
 domain/                                  # Core business logic (COMPLETED)
 ├── contracts/
 │   └── IdGenerator.java                 # ID generation contract
 ├── entity/
 │   ├── Ingredient.java                  # Ingredient aggregate root
 │   └── Recipe.java                      # Recipe aggregate root
+├── errors/                              # Domain exceptions (structure ready)
+│   ├── ingredient/
+│   ├── money/
+│   └── recipe/
+├── events/                              # Domain events (structure ready)
+│   ├── ingredient/
+│   └── recipe/
 └── valueobject/
     ├── Id.java                          # Domain ID value object
     ├── RecipeIngredient.java            # Recipe-ingredient relationship
@@ -171,59 +221,87 @@ domain/                                  # Core business logic (COMPLETED)
 ```
 
 #### 2. Application Layer (`src/main/java/br/unifor/costify/application/`)
-```
-application/                             # Business use cases (COMPLETED)
+
+```text
+application/                             # Business use cases (MOSTLY COMPLETED)
 ├── contracts/
 │   ├── IngredientRepository.java        # Repository interfaces
 │   └── RecipeRepository.java
 ├── dto/
 │   ├── command/                         # Input DTOs
 │   │   ├── RegisterIngredientCommand.java
-│   │   └── RegisterRecipeCommand.java
-│   └── entity/                          # Output DTOs
-│       ├── IngredientDto.java
-│       └── RecipeDto.java
+│   │   ├── RegisterRecipeCommand.java
+│   │   └── UpdateIngredientCommand.java
+│   ├── entity/                          # Output DTOs
+│   │   ├── IngredientDto.java
+│   │   └── RecipeDto.java
+│   └── response/                        # Response DTOs (empty)
+├── errors/                              # Application exceptions
+│   ├── IngredientAlreadyExistsException.java
+│   └── RecipeAlreadyExistsException.java
+├── events/                              # Application events (empty)
 ├── factory/
 │   ├── IngredientFactory.java           # Entity creation factories
 │   └── RecipeFactory.java
 └── usecase/
     ├── RegisterIngredientUseCase.java   # Business workflows
-    └── RegisterRecipeUseCase.java
+    ├── RegisterRecipeUseCase.java
+    └── UpdateIngredientUseCase.java
 ```
 
-### 🚧 Next Implementation: Infrastructure Layer
+#### 3. Infrastructure Layer (`src/main/java/br/unifor/costify/infra/`) - ✅ PARTIALLY COMPLETED
 
-#### Infrastructure Layer (`src/main/java/br/unifor/costify/infrastructure/`) - TO IMPLEMENT
-```
-infrastructure/
-├── persistence/
-│   ├── entity/
-│   │   ├── IngredientJpaEntity.java    # JPA entities
-│   │   └── RecipeJpaEntity.java
-│   ├── repository/
-│   │   ├── IngredientJpaRepository.java # JPA repositories
-│   │   └── RecipeJpaRepository.java
-│   └── mapper/
-│       ├── IngredientMapper.java       # Entity <-> Domain mapping
-│       └── RecipeMapper.java
-├── web/
-│   ├── controller/
-│   │   ├── IngredientController.java   # REST endpoints
-│   │   └── RecipeController.java
-│   └── config/
-│       ├── WebConfig.java              # Web configuration
-│       └── SecurityConfig.java         # Security configuration
-└── external/
-    └── IdGeneratorImpl.java            # External ID generation
+```text
+infra/                                   # Infrastructure implementation (PARTIAL)
+├── config/
+│   ├── SecurityConfig.java              # Security configuration
+│   └── UuidGenerator.java               # UUID generation implementation
+├── controllers/
+│   ├── IngredientController.java        # REST endpoints for ingredients
+│   └── dto/
+│       └── IngredientControllerRequest.java # Controller request DTO
+└── data/
+    ├── entities/
+    │   └── IngredientTable.java         # JPA entity for ingredients
+    └── repositories/
+        ├── jpa/
+        │   └── JpaIngredientRepository.java # JPA repository interface
+        └── postgres/
+            └── PostgresIngredientRepository.java # Repository implementation
 ```
 
-#### 3. Database Migrations (`src/main/resources/db/migration/`)
-```
+#### 4. Database Migrations (`src/main/resources/db/migration/`) - ✅ COMPLETED
+
+```text
 db/migration/
-├── V1__Create_ingredients_table.sql
-├── V2__Create_recipes_table.sql
-└── V3__Create_recipe_ingredients_table.sql
+├── V1__Create_ingredients_and_recipes_tables.sql
+├── V2__Convert_unit_fields_to_enum.sql
+└── V3__Remove_unit_cost_column.sql
 ```
+
+### 🚧 Missing Components - High Priority
+
+#### Recipe Infrastructure (TO IMPLEMENT)
+
+- `RecipeController` - REST endpoints for recipe management
+- `RecipeTable` - JPA entity for recipes
+- `JpaRecipeRepository` - JPA repository interface
+- `PostgresRecipeRepository` - Recipe repository implementation
+- `RecipeControllerRequest` - Controller request DTO
+
+#### Cost Calculation Features (TO IMPLEMENT)
+
+- `CalculateRecipeCostUseCase` - Core business feature
+- `RecipeCostDto` - Cost breakdown response
+- `CostCalculationController` - Cost calculation endpoints
+- Recipe domain methods for cost calculation
+
+#### Additional Infrastructure Components (TO IMPLEMENT)
+
+- Complete CRUD operations for ingredients (GET, PUT, DELETE)
+- Error handling and standardized API responses
+- API documentation (OpenAPI/Swagger)
+- Input validation and error responses
 
 ## Build & Development Commands
 
@@ -372,8 +450,22 @@ Every task must start with this structure:
 - [ ] Rollback checkpoint available
 
 ## Future Enhancements
-- Recipe management with multiple ingredients
-- Cost calculation algorithms  
+
+### Core Business Features
+- Recipe cost calculation algorithms with ingredient breakdown
+- Recipe management with complete CRUD operations
+- Ingredient price history tracking
+- Recipe versioning and cost comparison
+
+### Technical Improvements
 - API documentation with OpenAPI/Swagger
-- Caching layer for performance
+- Caching layer for performance optimization
 - Event-driven architecture for scalability
+- Advanced validation and error handling
+- Audit logging for ingredient/recipe changes
+
+### Quality & Testing
+- Comprehensive integration test coverage
+- Performance testing for cost calculations
+- Contract testing for API compatibility
+- Load testing for concurrent recipe calculations
