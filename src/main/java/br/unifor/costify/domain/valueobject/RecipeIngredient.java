@@ -1,5 +1,6 @@
 package br.unifor.costify.domain.valueobject;
 
+import br.unifor.costify.domain.errors.recipe.InvalidQuantityException;
 import java.util.Objects;
 
 public class RecipeIngredient {
@@ -8,14 +9,8 @@ public class RecipeIngredient {
   private final Unit unit;
 
   public RecipeIngredient(Id ingredientId, double quantity, Unit unit) {
-    if (ingredientId == null) {
-      throw new IllegalArgumentException("Ingredient ID cannot be null");
-    }
     if (quantity <= 0) {
-      throw new IllegalArgumentException("Quantity must be greater than zero");
-    }
-    if (unit == null) {
-      throw new IllegalArgumentException("Unit cannot be null");
+      throw new InvalidQuantityException("Quantity must be greater than zero");
     }
 
     this.ingredientId = ingredientId;

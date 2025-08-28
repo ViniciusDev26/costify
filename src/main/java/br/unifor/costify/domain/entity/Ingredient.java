@@ -4,7 +4,6 @@ import br.unifor.costify.domain.contracts.IdGenerator;
 import br.unifor.costify.domain.valueobject.Id;
 import br.unifor.costify.domain.valueobject.Money;
 import br.unifor.costify.domain.valueobject.Unit;
-import java.util.Objects;
 
 public class Ingredient {
   private Id id;
@@ -24,8 +23,8 @@ public class Ingredient {
    */
   public Ingredient(
       Id id, String name, double packageQuantity, Money packagePrice, Unit packageUnit) {
-    this.id = Objects.requireNonNull(id, "Id cannot be null");
-    this.validate(name, packageQuantity, packagePrice, packageUnit);
+    this.validate(name, packageQuantity);
+    this.id = id;
     this.name = name;
     this.packageQuantity = packageQuantity;
     this.packagePrice = packagePrice;
@@ -47,7 +46,7 @@ public class Ingredient {
       double packageQuantity,
       Money packagePrice,
       Unit packageUnit) {
-    this.validate(name, packageQuantity, packagePrice, packageUnit);
+    this.validate(name, packageQuantity);
     this.id = Id.generate(idGenerator);
     this.name = name;
     this.packageQuantity = packageQuantity;
@@ -81,19 +80,9 @@ public class Ingredient {
   }
 
 
-  private void validate(
-      String name, double packageQuantity, Money packagePrice, Unit packageUnit) {
-    if (name == null || name.isBlank()) {
-      throw new IllegalArgumentException("Ingredient name cannot be null or empty");
-    }
+  private void validate(String name, double packageQuantity) {
     if (packageQuantity <= 0) {
       throw new IllegalArgumentException("Package quantity must be greater than zero");
-    }
-    if (packagePrice == null) {
-      throw new IllegalArgumentException("Package price cannot be null");
-    }
-    if (packageUnit == null) {
-      throw new IllegalArgumentException("Package unit cannot be null");
     }
   }
 }

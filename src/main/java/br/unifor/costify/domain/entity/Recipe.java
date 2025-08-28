@@ -5,7 +5,7 @@ import br.unifor.costify.domain.valueobject.Id;
 import br.unifor.costify.domain.valueobject.RecipeIngredient;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import br.unifor.costify.domain.errors.recipe.EmptyRecipeException;
 
 public class Recipe {
   private Id id;
@@ -13,8 +13,8 @@ public class Recipe {
   private List<RecipeIngredient> ingredients;
 
   public Recipe(Id id, String name, List<RecipeIngredient> ingredients) {
-    this.id = Objects.requireNonNull(id, "Id cannot be null");
     this.validate(name, ingredients);
+    this.id = id;
     this.name = name;
     this.ingredients = new ArrayList<>(ingredients);
   }
@@ -40,30 +40,23 @@ public class Recipe {
 
 
   public void addIngredient(RecipeIngredient ingredient) {
-    Objects.requireNonNull(ingredient, "Ingredient cannot be null");
     this.ingredients.add(ingredient);
   }
 
   public void removeIngredient(Id ingredientId) {
-    Objects.requireNonNull(ingredientId, "Ingredient ID cannot be null");
-
     List<RecipeIngredient> updatedIngredients =
         ingredients.stream().filter(ri -> !ri.getIngredientId().equals(ingredientId)).toList();
 
     if (updatedIngredients.isEmpty()) {
-      throw new IllegalArgumentException(
-          "Cannot remove ingredient - recipe must have at least one ingredient");
+      throw new EmptyRecipeException("Recipe must have at least one ingredient");
     }
 
     this.ingredients = new ArrayList<>(updatedIngredients);
   }
 
   private void validate(String name, List<RecipeIngredient> ingredients) {
-    if (name == null || name.isBlank()) {
-      throw new IllegalArgumentException("Recipe name cannot be null or empty");
-    }
     if (ingredients == null || ingredients.isEmpty()) {
-      throw new IllegalArgumentException("Recipe must have at least one ingredient");
+      throw new EmptyRecipeException("Recipe must have at least one ingredient");
     }
   }
 }

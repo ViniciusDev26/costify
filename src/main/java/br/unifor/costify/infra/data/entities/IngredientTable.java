@@ -1,6 +1,7 @@
 package br.unifor.costify.infra.data.entities;
 
 import br.unifor.costify.domain.entity.Ingredient;
+import br.unifor.costify.domain.valueobject.Money;
 import br.unifor.costify.domain.valueobject.Unit;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -44,7 +45,7 @@ public class IngredientTable {
     table.id = ingredient.getId().getValue();
     table.name = ingredient.getName();
     table.packageQuantity = new BigDecimal(ingredient.getPackageQuantity());
-    table.packagePrice = new BigDecimal(ingredient.getPackagePrice());
+    table.packagePrice = ingredient.getPackagePrice().getAmount();
     table.packageUnit = ingredient.getPackageUnit();
     return table;
   }
@@ -54,7 +55,7 @@ public class IngredientTable {
         br.unifor.costify.domain.valueobject.Id.of(raw.id),
         raw.name,
         raw.packageQuantity.doubleValue(),
-        raw.packagePrice.doubleValue(),
+        Money.of(raw.packagePrice),
         raw.packageUnit);
   }
 }

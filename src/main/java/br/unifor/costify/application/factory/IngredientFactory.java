@@ -3,6 +3,7 @@ package br.unifor.costify.application.factory;
 import br.unifor.costify.domain.contracts.IdGenerator;
 import br.unifor.costify.domain.entity.Ingredient;
 import br.unifor.costify.domain.valueobject.Id;
+import br.unifor.costify.domain.valueobject.Money;
 import br.unifor.costify.domain.valueobject.Unit;
 import org.springframework.stereotype.Component;
 
@@ -30,11 +31,11 @@ public class IngredientFactory {
       double packageQuantity,
       double packagePrice,
       Unit packageUnit) {
-    return new Ingredient(idGenerator, name, packageQuantity, packagePrice, packageUnit);
+    return new Ingredient(idGenerator, name, packageQuantity, Money.of(packagePrice), packageUnit);
   }
 
   private Ingredient createIngredient(
       Id id, String name, double packageQuantity, double packagePrice, Unit packageUnit) {
-    return new Ingredient(id, name, packageQuantity, packagePrice, packageUnit);
+    return new Ingredient(id, name, packageQuantity, Money.of(packagePrice), packageUnit);
   }
 }

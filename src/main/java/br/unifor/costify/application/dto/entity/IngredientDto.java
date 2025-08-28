@@ -16,7 +16,7 @@ public record IngredientDto(
         ingredient.getId().getValue(),
         ingredient.getName(),
         ingredient.getPackageQuantity(),
-        ingredient.getPackagePrice(),
+        ingredient.getPackagePrice().doubleValue(),
         ingredient.getPackageUnit(),
         ingredient.getUnitCost());
   }

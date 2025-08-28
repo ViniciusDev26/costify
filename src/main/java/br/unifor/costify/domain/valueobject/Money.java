@@ -1,5 +1,7 @@
 package br.unifor.costify.domain.valueobject;
 
+import br.unifor.costify.domain.errors.money.NegativeMoneyException;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Objects;
@@ -11,11 +13,9 @@ public final class Money {
     private final BigDecimal amount;
 
     private Money(BigDecimal amount) {
-        if (amount == null) {
-            throw new IllegalArgumentException("Amount cannot be null");
-        }
+        // Only business rule: Money cannot be negative (business invariant)
         if (amount.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("Amount cannot be negative");
+            throw new NegativeMoneyException("Money cannot be negative in business context");
         }
         this.amount = amount.setScale(SCALE, ROUNDING_MODE);
     }
@@ -33,20 +33,11 @@ public final class Money {
     }
 
     public Money add(Money other) {
-        if (other == null) {
-            throw new IllegalArgumentException("Money to add cannot be null");
-        }
         return new Money(this.amount.add(other.amount));
     }
 
     public Money subtract(Money other) {
-        if (other == null) {
-            throw new IllegalArgumentException("Money to subtract cannot be null");
-        }
         BigDecimal result = this.amount.subtract(other.amount);
-        if (result.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("Result cannot be negative");
-        }
         return new Money(result);
     }
 
@@ -55,9 +46,6 @@ public final class Money {
     }
 
     public Money multiply(BigDecimal multiplier) {
-        if (multiplier == null) {
-            throw new IllegalArgumentException("Multiplier cannot be null");
-        }
         return new Money(this.amount.multiply(multiplier));
     }
 
@@ -66,33 +54,18 @@ public final class Money {
     }
 
     public Money divide(BigDecimal divisor) {
-        if (divisor == null) {
-            throw new IllegalArgumentException("Divisor cannot be null");
-        }
-        if (divisor.compareTo(BigDecimal.ZERO) == 0) {
-            throw new IllegalArgumentException("Cannot divide by zero");
-        }
         return new Money(this.amount.divide(divisor, SCALE, ROUNDING_MODE));
     }
 
     public boolean isGreaterThan(Money other) {
-        if (other == null) {
-            throw new IllegalArgumentException("Money to compare cannot be null");
-        }
         return this.amount.compareTo(other.amount) > 0;
     }
 
     public boolean isLessThan(Money other) {
-        if (other == null) {
-            throw new IllegalArgumentException("Money to compare cannot be null");
-        }
         return this.amount.compareTo(other.amount) < 0;
     }
 
     public boolean equals(Money other) {
-        if (other == null) {
-            return false;
-        }
         return this.amount.compareTo(other.amount) == 0;
     }
 

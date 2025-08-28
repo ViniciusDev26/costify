@@ -5,6 +5,7 @@ import br.unifor.costify.application.dto.command.UpdateIngredientCommand;
 import br.unifor.costify.application.dto.entity.IngredientDto;
 import br.unifor.costify.domain.entity.Ingredient;
 import br.unifor.costify.domain.valueobject.Id;
+import br.unifor.costify.domain.valueobject.Money;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -25,7 +26,7 @@ public class UpdateIngredientUseCase {
         existing.getId(), // Keep same ID
         command.name() != null ? command.name() : existing.getName(),
         command.packageQuantity() != null ? command.packageQuantity() : existing.getPackageQuantity(),
-        command.packagePrice() != null ? command.packagePrice() : existing.getPackagePrice(),
+        command.packagePrice() != null ? Money.of(command.packagePrice()) : existing.getPackagePrice(),
         command.packageUnit() != null ? command.packageUnit() : existing.getPackageUnit()
     );
 

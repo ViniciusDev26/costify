@@ -7,9 +7,6 @@ public final class Id {
   private final String value;
 
   private Id(String value) {
-    if (value == null || value.isBlank()) {
-      throw new IllegalArgumentException("Id cannot be null or empty");
-    }
     this.value = value;
   }
 
