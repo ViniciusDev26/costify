@@ -54,7 +54,8 @@ class RecipeCostCalculationServiceTest {
             Arrays.asList(
                 new RecipeIngredient(flour.getId(), 300.0, Unit.G), // 300g flour
                 new RecipeIngredient(sugar.getId(), 100.0, Unit.G)  // 100g sugar
-            )
+            ),
+            Money.of(10.0)
         );
     }
 
@@ -106,7 +107,8 @@ class RecipeCostCalculationServiceTest {
         Recipe milkshakeRecipe = new Recipe(
             Id.of("milkshake-id"),
             "Milkshake",
-            List.of(new RecipeIngredient(milk.getId(), 250.0, Unit.ML)) // needs 250ml
+            List.of(new RecipeIngredient(milk.getId(), 250.0, Unit.ML)), // needs 250ml
+            Money.of(8.0)
         );
         
         Map<Id, Ingredient> ingredientMap = Map.of(milk.getId(), milk);
@@ -171,7 +173,8 @@ class RecipeCostCalculationServiceTest {
                 new RecipeIngredient(flour.getId(), 200.0, Unit.G), // 200g flour
                 new RecipeIngredient(flour.getId(), 100.0, Unit.G), // another 100g flour
                 new RecipeIngredient(sugar.getId(), 50.0, Unit.G)   // 50g sugar
-            )
+            ),
+            Money.of(15.0)
         );
         
         Map<Id, Ingredient> ingredientMap = Map.of(

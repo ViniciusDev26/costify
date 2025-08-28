@@ -1,25 +1,44 @@
 package br.unifor.costify.application.usecase;
 
+import br.unifor.costify.application.contracts.IngredientRepository;
 import br.unifor.costify.application.contracts.RecipeRepository;
 import br.unifor.costify.application.dto.command.RegisterRecipeCommand;
 import br.unifor.costify.application.dto.entity.RecipeDto;
+import br.unifor.costify.application.errors.IngredientNotFoundException;
 import br.unifor.costify.application.errors.RecipeAlreadyExistsException;
 import br.unifor.costify.application.factory.RecipeFactory;
 import br.unifor.costify.application.validation.ValidationService;
+import br.unifor.costify.domain.entity.Ingredient;
 import br.unifor.costify.domain.entity.Recipe;
+import br.unifor.costify.domain.service.RecipeCostCalculationService;
+import br.unifor.costify.domain.valueobject.Id;
+import br.unifor.costify.domain.valueobject.Money;
+import br.unifor.costify.domain.valueobject.RecipeCost;
+import br.unifor.costify.domain.valueobject.RecipeIngredient;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 public class RegisterRecipeUseCase {
   private final RecipeRepository recipeRepository;
+  private final IngredientRepository ingredientRepository;
   private final RecipeFactory recipeFactory;
   private final ValidationService validationService;
+  private final RecipeCostCalculationService costCalculationService;
 
   public RegisterRecipeUseCase(
-      RecipeRepository recipeRepository, 
+      RecipeRepository recipeRepository,
+      IngredientRepository ingredientRepository,
       RecipeFactory recipeFactory,
-      ValidationService validationService) {
+      ValidationService validationService,
+      RecipeCostCalculationService costCalculationService) {
     this.recipeRepository = recipeRepository;
+    this.ingredientRepository = ingredientRepository;
     this.recipeFactory = recipeFactory;
     this.validationService = validationService;
+    this.costCalculationService = costCalculationService;
   }
 
   public RecipeDto execute(RegisterRecipeCommand command) {
@@ -27,7 +46,15 @@ public class RegisterRecipeUseCase {
     
     validateRecipeDoesNotExist(command.name());
 
-    Recipe recipe = recipeFactory.create(command.name(), command.ingredients());
+    // Load ingredients and calculate cost
+    Map<Id, Ingredient> ingredientMap = loadIngredients(command.ingredients());
+    
+    // Create temporary recipe with zero cost for cost calculation
+    Recipe tempRecipe = recipeFactory.create(command.name(), command.ingredients(), Money.zero());
+    RecipeCost recipeCost = costCalculationService.calculateCost(tempRecipe, ingredientMap);
+    
+    // Create final recipe with calculated total cost
+    Recipe recipe = recipeFactory.create(command.name(), command.ingredients(), recipeCost.getTotalCost());
 
     Recipe savedRecipe = recipeRepository.save(recipe);
 
@@ -38,5 +65,22 @@ public class RegisterRecipeUseCase {
     if (recipeRepository.existsByName(name)) {
       throw new RecipeAlreadyExistsException("Recipe with name '" + name + "' already exists");
     }
+  }
+
+  private Map<Id, Ingredient> loadIngredients(List<RecipeIngredient> recipeIngredients) {
+    Map<Id, Ingredient> ingredientMap = new HashMap<>();
+    
+    for (RecipeIngredient recipeIngredient : recipeIngredients) {
+      Id ingredientId = recipeIngredient.getIngredientId();
+      
+      Optional<Ingredient> ingredientOpt = ingredientRepository.findById(ingredientId);
+      if (ingredientOpt.isEmpty()) {
+        throw new IngredientNotFoundException("Ingredient not found with ID: " + ingredientId);
+      }
+      
+      ingredientMap.put(ingredientId, ingredientOpt.get());
+    }
+    
+    return ingredientMap;
   }
 }

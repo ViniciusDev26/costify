@@ -3,6 +3,7 @@ package br.unifor.costify.application.factory;
 import br.unifor.costify.domain.contracts.IdGenerator;
 import br.unifor.costify.domain.entity.Recipe;
 import br.unifor.costify.domain.valueobject.Id;
+import br.unifor.costify.domain.valueobject.Money;
 import br.unifor.costify.domain.valueobject.RecipeIngredient;
 import java.util.List;
 
@@ -13,20 +14,11 @@ public class RecipeFactory {
     this.idGenerator = idGenerator;
   }
 
-  public Recipe create(String name, List<RecipeIngredient> ingredients) {
-    return createRecipe(idGenerator, name, ingredients);
+  public Recipe create(String name, List<RecipeIngredient> ingredients, Money totalCost) {
+    return new Recipe(idGenerator, name, ingredients, totalCost);
   }
 
-  public Recipe create(Id id, String name, List<RecipeIngredient> ingredients) {
-    return createRecipe(id, name, ingredients);
-  }
-
-  private Recipe createRecipe(
-      IdGenerator idGenerator, String name, List<RecipeIngredient> ingredients) {
-    return new Recipe(idGenerator, name, ingredients);
-  }
-
-  private Recipe createRecipe(Id id, String name, List<RecipeIngredient> ingredients) {
-    return new Recipe(id, name, ingredients);
+  public Recipe create(Id id, String name, List<RecipeIngredient> ingredients, Money totalCost) {
+    return new Recipe(id, name, ingredients, totalCost);
   }
 }

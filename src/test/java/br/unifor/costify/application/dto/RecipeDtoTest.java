@@ -4,6 +4,7 @@ import br.unifor.costify.application.dto.entity.RecipeDto;
 import br.unifor.costify.domain.contracts.IdGenerator;
 import br.unifor.costify.domain.entity.Recipe;
 import br.unifor.costify.domain.valueobject.Id;
+import br.unifor.costify.domain.valueobject.Money;
 import br.unifor.costify.domain.valueobject.RecipeIngredient;
 import br.unifor.costify.domain.valueobject.Unit;
 import java.util.List;
@@ -20,7 +21,7 @@ class RecipeDtoTest {
     RecipeIngredient recipeIngredient2 = new RecipeIngredient(ingredientId2, 0.2, Unit.KG);
     List<RecipeIngredient> ingredients = List.of(recipeIngredient1, recipeIngredient2);
 
-    Recipe recipe = new Recipe(fakeIdGenerator, "Bread Recipe", ingredients);
+    Recipe recipe = new Recipe(fakeIdGenerator, "Bread Recipe", ingredients, Money.of(10.50));
 
     RecipeDto dto = RecipeDto.from(recipe);
 
@@ -38,7 +39,7 @@ class RecipeDtoTest {
     RecipeIngredient recipeIngredient = new RecipeIngredient(ingredientId, 1.0, Unit.KG);
     List<RecipeIngredient> ingredients = List.of(recipeIngredient);
 
-    Recipe recipe = new Recipe(fakeIdGenerator, "Cake Recipe", ingredients);
+    Recipe recipe = new Recipe(fakeIdGenerator, "Cake Recipe", ingredients, Money.of(15.75));
 
     RecipeDto dto = RecipeDto.from(recipe);
 
