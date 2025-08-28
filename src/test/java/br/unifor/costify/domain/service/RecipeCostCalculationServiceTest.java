@@ -6,6 +6,7 @@ import br.unifor.costify.domain.valueobject.Id;
 import br.unifor.costify.domain.valueobject.RecipeIngredient;
 import br.unifor.costify.domain.valueobject.RecipeCost;
 import br.unifor.costify.domain.valueobject.IngredientCost;
+import br.unifor.costify.domain.valueobject.Money;
 import br.unifor.costify.domain.valueobject.Unit;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,7 +34,7 @@ class RecipeCostCalculationServiceTest {
             Id.of("flour-id"),
             "Flour",
             1.0,    // 1kg package quantity
-            5.00,   // $5.00 package price
+            Money.of(5.00),   // $5.00 package price
             Unit.KG  // package in kilograms
         );
         
@@ -42,7 +43,7 @@ class RecipeCostCalculationServiceTest {
             Id.of("sugar-id"),
             "Sugar", 
             500.0,  // 500g package
-            3.00,   // $3.00 package price
+            Money.of(3.00),   // $3.00 package price
             Unit.G   // package in grams
         );
         
@@ -70,7 +71,7 @@ class RecipeCostCalculationServiceTest {
 
         // Assert
         assertNotNull(result);
-        assertEquals(2.10, result.getTotalCost(), 0.01); // 300g * $0.005 + 100g * $0.006 = $1.50 + $0.60 = $2.10
+        assertEquals(Money.of(2.10), result.getTotalCost()); // 300g * $0.005 + 100g * $0.006 = $1.50 + $0.60 = $2.10
         
         assertEquals(2, result.getIngredientCosts().size());
         
@@ -78,7 +79,7 @@ class RecipeCostCalculationServiceTest {
         var flourCost = result.getIngredientCosts().stream()
             .filter(ic -> ic.getIngredientId().equals(flour.getId()))
             .findFirst().orElseThrow();
-        assertEquals(1.50, flourCost.getCost(), 0.01);
+        assertEquals(Money.of(1.50), flourCost.getCost());
         assertEquals(300.0, flourCost.getQuantityUsed(), 0.01);
         assertEquals(Unit.G, flourCost.getUnit());
         
@@ -86,7 +87,7 @@ class RecipeCostCalculationServiceTest {
         var sugarCost = result.getIngredientCosts().stream()
             .filter(ic -> ic.getIngredientId().equals(sugar.getId()))
             .findFirst().orElseThrow();
-        assertEquals(0.60, sugarCost.getCost(), 0.01);
+        assertEquals(Money.of(0.60), sugarCost.getCost());
         assertEquals(100.0, sugarCost.getQuantityUsed(), 0.01);
         assertEquals(Unit.G, sugarCost.getUnit());
     }
@@ -98,7 +99,7 @@ class RecipeCostCalculationServiceTest {
             Id.of("milk-id"),
             "Milk",
             1.0,    // 1L package  
-            2.50,   // $2.50 package price
+            Money.of(2.50),   // $2.50 package price
             Unit.L   // package in liters
         );
         
@@ -116,10 +117,10 @@ class RecipeCostCalculationServiceTest {
         // Assert
         assertNotNull(result);
         // 250ml = 0.25L, cost should be 0.25 * $2.50 = $0.625
-        assertEquals(0.625, result.getTotalCost(), 0.01);
+        assertEquals(Money.of(0.63), result.getTotalCost()); // Rounded to 2 decimal places
         
         var milkCost = result.getIngredientCosts().get(0);
-        assertEquals(0.625, milkCost.getCost(), 0.01);
+        assertEquals(Money.of(0.63), milkCost.getCost());
         assertEquals(250.0, milkCost.getQuantityUsed(), 0.01);
         assertEquals(Unit.ML, milkCost.getUnit());
     }
@@ -186,7 +187,7 @@ class RecipeCostCalculationServiceTest {
         // Total flour: 300g * $0.005 = $1.50
         // Total sugar: 50g * $0.006 = $0.30
         // Total: $1.80
-        assertEquals(1.80, result.getTotalCost(), 0.01);
+        assertEquals(Money.of(1.80), result.getTotalCost());
         
         // Should have separate entries for each ingredient usage
         assertEquals(3, result.getIngredientCosts().size());

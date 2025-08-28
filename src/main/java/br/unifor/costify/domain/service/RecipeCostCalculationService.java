@@ -4,9 +4,9 @@ import br.unifor.costify.domain.entity.Ingredient;
 import br.unifor.costify.domain.entity.Recipe;
 import br.unifor.costify.domain.valueobject.Id;
 import br.unifor.costify.domain.valueobject.IngredientCost;
+import br.unifor.costify.domain.valueobject.Money;
 import br.unifor.costify.domain.valueobject.RecipeCost;
 import br.unifor.costify.domain.valueobject.RecipeIngredient;
-import br.unifor.costify.domain.valueobject.Unit;
 
 import java.util.List;
 import java.util.Map;
@@ -51,7 +51,7 @@ public class RecipeCostCalculationService {
         double recipeQuantityInBaseUnits = recipeIngredient.getUnit().toBase(recipeIngredient.getQuantity());
         
         // Calculate total cost for the recipe quantity
-        double totalCost = unitCost * recipeQuantityInBaseUnits;
+        Money totalCost = Money.of(unitCost * recipeQuantityInBaseUnits);
 
         return new IngredientCost(
             ingredient.getId(),

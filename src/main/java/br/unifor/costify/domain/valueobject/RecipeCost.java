@@ -9,7 +9,7 @@ public final class RecipeCost {
     private final Id recipeId;
     private final String recipeName;
     private final List<IngredientCost> ingredientCosts;
-    private final double totalCost;
+    private final Money totalCost;
 
     public RecipeCost(Id recipeId, String recipeName, List<IngredientCost> ingredientCosts) {
         if (recipeId == null) {
@@ -29,8 +29,8 @@ public final class RecipeCost {
         this.recipeName = recipeName;
         this.ingredientCosts = new ArrayList<>(ingredientCosts);
         this.totalCost = ingredientCosts.stream()
-                .mapToDouble(IngredientCost::getCost)
-                .sum();
+                .map(IngredientCost::getCost)
+                .reduce(Money.zero(), Money::add);
     }
 
     public Id getRecipeId() {
@@ -45,7 +45,7 @@ public final class RecipeCost {
         return Collections.unmodifiableList(ingredientCosts);
     }
 
-    public double getTotalCost() {
+    public Money getTotalCost() {
         return totalCost;
     }
 
@@ -54,7 +54,7 @@ public final class RecipeCost {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         RecipeCost that = (RecipeCost) o;
-        return Double.compare(totalCost, that.totalCost) == 0 &&
+        return Objects.equals(totalCost, that.totalCost) &&
                 Objects.equals(recipeId, that.recipeId) &&
                 Objects.equals(recipeName, that.recipeName) &&
                 Objects.equals(ingredientCosts, that.ingredientCosts);
@@ -67,7 +67,7 @@ public final class RecipeCost {
 
     @Override
     public String toString() {
-        return String.format("RecipeCost{recipeId=%s, recipeName='%s', totalCost=%.2f, ingredientCount=%d}", 
+        return String.format("RecipeCost{recipeId=%s, recipeName='%s', totalCost=%s, ingredientCount=%d}", 
                 recipeId, recipeName, totalCost, ingredientCosts.size());
     }
 }

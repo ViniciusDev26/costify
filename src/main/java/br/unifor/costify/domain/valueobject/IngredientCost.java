@@ -7,9 +7,9 @@ public final class IngredientCost {
     private final String ingredientName;
     private final double quantityUsed;
     private final Unit unit;
-    private final double cost;
+    private final Money cost;
 
-    public IngredientCost(Id ingredientId, String ingredientName, double quantityUsed, Unit unit, double cost) {
+    public IngredientCost(Id ingredientId, String ingredientName, double quantityUsed, Unit unit, Money cost) {
         if (ingredientId == null) {
             throw new IllegalArgumentException("Ingredient ID cannot be null");
         }
@@ -22,8 +22,8 @@ public final class IngredientCost {
         if (unit == null) {
             throw new IllegalArgumentException("Unit cannot be null");
         }
-        if (cost < 0) {
-            throw new IllegalArgumentException("Cost cannot be negative");
+        if (cost == null) {
+            throw new IllegalArgumentException("Cost cannot be null");
         }
 
         this.ingredientId = ingredientId;
@@ -49,7 +49,7 @@ public final class IngredientCost {
         return unit;
     }
 
-    public double getCost() {
+    public Money getCost() {
         return cost;
     }
 
@@ -59,9 +59,9 @@ public final class IngredientCost {
         if (o == null || getClass() != o.getClass()) return false;
         IngredientCost that = (IngredientCost) o;
         return Double.compare(quantityUsed, that.quantityUsed) == 0 &&
-                Double.compare(cost, that.cost) == 0 &&
                 Objects.equals(ingredientId, that.ingredientId) &&
                 Objects.equals(ingredientName, that.ingredientName) &&
+                Objects.equals(cost, that.cost) &&
                 unit == that.unit;
     }
 
@@ -72,7 +72,7 @@ public final class IngredientCost {
 
     @Override
     public String toString() {
-        return String.format("IngredientCost{ingredientId=%s, ingredientName='%s', quantityUsed=%.2f %s, cost=%.2f}", 
+        return String.format("IngredientCost{ingredientId=%s, ingredientName='%s', quantityUsed=%.2f %s, cost=%s}", 
                 ingredientId, ingredientName, quantityUsed, unit, cost);
     }
 }

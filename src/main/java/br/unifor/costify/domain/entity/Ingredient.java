@@ -2,6 +2,7 @@ package br.unifor.costify.domain.entity;
 
 import br.unifor.costify.domain.contracts.IdGenerator;
 import br.unifor.costify.domain.valueobject.Id;
+import br.unifor.costify.domain.valueobject.Money;
 import br.unifor.costify.domain.valueobject.Unit;
 import java.util.Objects;
 
@@ -9,7 +10,7 @@ public class Ingredient {
   private Id id;
   private String name;
   private double packageQuantity;
-  private double packagePrice;
+  private Money packagePrice;
   private Unit packageUnit;
 
   /**
@@ -22,7 +23,7 @@ public class Ingredient {
    * @param packageUnit Unit of measurement for the package
    */
   public Ingredient(
-      Id id, String name, double packageQuantity, double packagePrice, Unit packageUnit) {
+      Id id, String name, double packageQuantity, Money packagePrice, Unit packageUnit) {
     this.id = Objects.requireNonNull(id, "Id cannot be null");
     this.validate(name, packageQuantity, packagePrice, packageUnit);
     this.name = name;
@@ -44,7 +45,7 @@ public class Ingredient {
       IdGenerator idGenerator,
       String name,
       double packageQuantity,
-      double packagePrice,
+      Money packagePrice,
       Unit packageUnit) {
     this.validate(name, packageQuantity, packagePrice, packageUnit);
     this.id = Id.generate(idGenerator);
@@ -55,7 +56,7 @@ public class Ingredient {
   }
 
   public double getUnitCost() {
-    return packagePrice / packageUnit.toBase(packageQuantity);
+    return packagePrice.doubleValue() / packageUnit.toBase(packageQuantity);
   }
 
   // Getters
@@ -71,7 +72,7 @@ public class Ingredient {
     return packageQuantity;
   }
 
-  public double getPackagePrice() {
+  public Money getPackagePrice() {
     return packagePrice;
   }
 
@@ -81,15 +82,15 @@ public class Ingredient {
 
 
   private void validate(
-      String name, double packageQuantity, double packagePrice, Unit packageUnit) {
+      String name, double packageQuantity, Money packagePrice, Unit packageUnit) {
     if (name == null || name.isBlank()) {
       throw new IllegalArgumentException("Ingredient name cannot be null or empty");
     }
     if (packageQuantity <= 0) {
       throw new IllegalArgumentException("Package quantity must be greater than zero");
     }
-    if (packagePrice < 0) {
-      throw new IllegalArgumentException("Package price cannot be negative");
+    if (packagePrice == null) {
+      throw new IllegalArgumentException("Package price cannot be null");
     }
     if (packageUnit == null) {
       throw new IllegalArgumentException("Package unit cannot be null");
