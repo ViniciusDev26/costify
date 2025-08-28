@@ -3,7 +3,7 @@ package br.unifor.costify.domain.valueobject;
 import br.unifor.costify.domain.errors.recipe.InvalidQuantityException;
 import java.util.Objects;
 
-public class RecipeIngredient {
+public final class RecipeIngredient {
   private final Id ingredientId;
   private final double quantity;
   private final Unit unit;

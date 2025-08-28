@@ -1,6 +1,7 @@
 package br.unifor.costify.domain.entity;
 
 import br.unifor.costify.domain.contracts.IdGenerator;
+import br.unifor.costify.domain.errors.ingredient.InvalidIngredientNameException;
 import br.unifor.costify.domain.valueobject.Id;
 import br.unifor.costify.domain.valueobject.Money;
 import br.unifor.costify.domain.valueobject.Unit;
@@ -81,6 +82,9 @@ public class Ingredient {
 
 
   private void validate(String name, double packageQuantity) {
+    if (name == null || name.trim().isEmpty()) {
+      throw new InvalidIngredientNameException("Ingredient name cannot be null or empty");
+    }
     if (packageQuantity <= 0) {
       throw new IllegalArgumentException("Package quantity must be greater than zero");
     }
