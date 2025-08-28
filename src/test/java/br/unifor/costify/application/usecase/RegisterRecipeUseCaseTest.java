@@ -3,12 +3,12 @@ package br.unifor.costify.application.usecase;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-import br.unifor.costify.application.contracts.IngredientRepository;
 import br.unifor.costify.application.contracts.RecipeRepository;
 import br.unifor.costify.application.dto.command.RegisterRecipeCommand;
 import br.unifor.costify.application.dto.entity.RecipeDto;
 import br.unifor.costify.application.errors.RecipeAlreadyExistsException;
 import br.unifor.costify.application.factory.RecipeFactory;
+import br.unifor.costify.application.service.IngredientLoaderService;
 import br.unifor.costify.application.validation.ValidationService;
 import br.unifor.costify.domain.contracts.IdGenerator;
 import br.unifor.costify.domain.entity.Ingredient;
@@ -30,7 +30,7 @@ import org.mockito.MockitoAnnotations;
 
 class RegisterRecipeUseCaseTest {
   @Mock private RecipeRepository recipeRepository;
-  @Mock private IngredientRepository ingredientRepository;
+  @Mock private IngredientLoaderService ingredientLoaderService;
   @Mock private IdGenerator idGenerator;
   @Mock private ValidationService validationService;
   @Mock private RecipeCostCalculationService costCalculationService;
@@ -42,7 +42,7 @@ class RegisterRecipeUseCaseTest {
   void setup() {
     MockitoAnnotations.openMocks(this);
     recipeFactory = new RecipeFactory(idGenerator);
-    useCase = new RegisterRecipeUseCase(recipeRepository, ingredientRepository, recipeFactory, validationService, costCalculationService);
+    useCase = new RegisterRecipeUseCase(recipeRepository, ingredientLoaderService, recipeFactory, validationService, costCalculationService);
   }
 
   @Test
@@ -61,8 +61,10 @@ class RegisterRecipeUseCaseTest {
     
     when(recipeRepository.existsByName("Bread Recipe")).thenReturn(false);
     when(idGenerator.generate()).thenReturn("test-recipe-id-123");
-    when(ingredientRepository.findById(ingredientId1)).thenReturn(Optional.of(ingredient1));
-    when(ingredientRepository.findById(ingredientId2)).thenReturn(Optional.of(ingredient2));
+    when(ingredientLoaderService.loadIngredients(ingredients)).thenReturn(Map.of(
+        ingredientId1, ingredient1,
+        ingredientId2, ingredient2
+    ));
     
     // Mock cost calculation
     IngredientCost ingredientCost1 = new IngredientCost(ingredientId1, "Flour", 0.5, Unit.KG, Money.of(2.5));
@@ -81,8 +83,7 @@ class RegisterRecipeUseCaseTest {
     assert result.ingredients().contains(recipeIngredient2);
 
     verify(recipeRepository).existsByName("Bread Recipe");
-    verify(ingredientRepository).findById(ingredientId1);
-    verify(ingredientRepository).findById(ingredientId2);
+    verify(ingredientLoaderService).loadIngredients(ingredients);
     verify(costCalculationService).calculateCost(any(Recipe.class), any(Map.class));
     verify(recipeRepository).save(any(Recipe.class));
   }
@@ -122,7 +123,7 @@ class RegisterRecipeUseCaseTest {
     
     when(recipeRepository.existsByName("Cake Recipe")).thenReturn(false);
     when(idGenerator.generate()).thenReturn("cake-recipe-id-456");
-    when(ingredientRepository.findById(ingredientId)).thenReturn(Optional.of(ingredient));
+    when(ingredientLoaderService.loadIngredients(ingredients)).thenReturn(Map.of(ingredientId, ingredient));
     
     // Mock cost calculation
     IngredientCost ingredientCost = new IngredientCost(ingredientId, "Flour", 1.0, Unit.KG, Money.of(5.0));
@@ -135,7 +136,7 @@ class RegisterRecipeUseCaseTest {
     useCase.execute(command);
 
     verify(recipeRepository, times(1)).existsByName("Cake Recipe");
-    verify(ingredientRepository, times(1)).findById(ingredientId);
+    verify(ingredientLoaderService, times(1)).loadIngredients(ingredients);
     verify(costCalculationService, times(1)).calculateCost(any(Recipe.class), any(Map.class));
     verify(recipeRepository, times(1)).save(any(Recipe.class));
   }

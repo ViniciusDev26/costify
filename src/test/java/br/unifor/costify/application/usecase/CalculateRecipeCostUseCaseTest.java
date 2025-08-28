@@ -1,10 +1,10 @@
 package br.unifor.costify.application.usecase;
 
-import br.unifor.costify.application.contracts.IngredientRepository;
 import br.unifor.costify.application.contracts.RecipeRepository;
 import br.unifor.costify.application.dto.response.RecipeCostDto;
 import br.unifor.costify.application.errors.IngredientNotFoundException;
 import br.unifor.costify.application.errors.RecipeNotFoundException;
+import br.unifor.costify.application.service.IngredientLoaderService;
 import br.unifor.costify.domain.entity.Ingredient;
 import br.unifor.costify.domain.entity.Recipe;
 import br.unifor.costify.domain.service.RecipeCostCalculationService;
@@ -36,7 +36,7 @@ class CalculateRecipeCostUseCaseTest {
     private RecipeRepository recipeRepository;
     
     @Mock
-    private IngredientRepository ingredientRepository;
+    private IngredientLoaderService ingredientLoaderService;
     
     @Mock
     private RecipeCostCalculationService costCalculationService;
@@ -45,7 +45,7 @@ class CalculateRecipeCostUseCaseTest {
     
     @BeforeEach
     void setUp() {
-        useCase = new CalculateRecipeCostUseCase(recipeRepository, ingredientRepository, costCalculationService);
+        useCase = new CalculateRecipeCostUseCase(recipeRepository, ingredientLoaderService, costCalculationService);
     }
     
     @Test
@@ -64,7 +64,7 @@ class CalculateRecipeCostUseCaseTest {
         RecipeCost recipeCost = new RecipeCost(recipeId, "Chocolate Cake", List.of(ingredientCost));
         
         when(recipeRepository.findById(recipeId)).thenReturn(Optional.of(recipe));
-        when(ingredientRepository.findById(ingredientId)).thenReturn(Optional.of(ingredient));
+        when(ingredientLoaderService.loadIngredients(List.of(recipeIngredient))).thenReturn(Map.of(ingredientId, ingredient));
         when(costCalculationService.calculateCost(eq(recipe), any(Map.class))).thenReturn(recipeCost);
         
         // When
@@ -79,7 +79,7 @@ class CalculateRecipeCostUseCaseTest {
         assertThat(result.getIngredientCosts().get(0).getIngredientName()).isEqualTo("Flour");
         
         verify(recipeRepository).findById(recipeId);
-        verify(ingredientRepository).findById(ingredientId);
+        verify(ingredientLoaderService).loadIngredients(List.of(recipeIngredient));
         verify(costCalculationService).calculateCost(eq(recipe), any(Map.class));
     }
     
@@ -97,7 +97,7 @@ class CalculateRecipeCostUseCaseTest {
             .hasMessage("Recipe not found with ID: " + recipeIdString);
         
         verify(recipeRepository).findById(recipeId);
-        verifyNoInteractions(ingredientRepository);
+        verifyNoInteractions(ingredientLoaderService);
         verifyNoInteractions(costCalculationService);
     }
     
@@ -112,7 +112,7 @@ class CalculateRecipeCostUseCaseTest {
         Recipe recipe = new Recipe(recipeId, "Chocolate Cake", List.of(recipeIngredient), Money.of(5.99));
         
         when(recipeRepository.findById(recipeId)).thenReturn(Optional.of(recipe));
-        when(ingredientRepository.findById(ingredientId)).thenReturn(Optional.empty());
+        when(ingredientLoaderService.loadIngredients(List.of(recipeIngredient))).thenThrow(new IngredientNotFoundException("Ingredient not found with ID: " + ingredientId));
         
         // When / Then
         assertThatThrownBy(() -> useCase.execute(recipeIdString))
@@ -120,7 +120,7 @@ class CalculateRecipeCostUseCaseTest {
             .hasMessage("Ingredient not found with ID: " + ingredientId);
         
         verify(recipeRepository).findById(recipeId);
-        verify(ingredientRepository).findById(ingredientId);
+        verify(ingredientLoaderService).loadIngredients(List.of(recipeIngredient));
         verifyNoInteractions(costCalculationService);
     }
     
@@ -144,8 +144,10 @@ class CalculateRecipeCostUseCaseTest {
         RecipeCost recipeCost = new RecipeCost(recipeId, "Chocolate Cake", List.of(ingredientCost1, ingredientCost2));
         
         when(recipeRepository.findById(recipeId)).thenReturn(Optional.of(recipe));
-        when(ingredientRepository.findById(ingredientId1)).thenReturn(Optional.of(ingredient1));
-        when(ingredientRepository.findById(ingredientId2)).thenReturn(Optional.of(ingredient2));
+        when(ingredientLoaderService.loadIngredients(List.of(recipeIngredient1, recipeIngredient2))).thenReturn(Map.of(
+            ingredientId1, ingredient1,
+            ingredientId2, ingredient2
+        ));
         when(costCalculationService.calculateCost(eq(recipe), any(Map.class))).thenReturn(recipeCost);
         
         // When
@@ -156,8 +158,7 @@ class CalculateRecipeCostUseCaseTest {
         assertThat(result.getIngredientCosts()).hasSize(2);
         assertThat(result.getTotalCost()).isEqualTo(BigDecimal.valueOf(1.00).setScale(2));
         
-        verify(ingredientRepository).findById(ingredientId1);
-        verify(ingredientRepository).findById(ingredientId2);
+        verify(ingredientLoaderService).loadIngredients(List.of(recipeIngredient1, recipeIngredient2));
     }
     
     @Test
