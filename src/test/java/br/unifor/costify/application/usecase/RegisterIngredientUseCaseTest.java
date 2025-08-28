@@ -8,8 +8,10 @@ import br.unifor.costify.application.dto.command.RegisterIngredientCommand;
 import br.unifor.costify.application.dto.entity.IngredientDto;
 import br.unifor.costify.application.errors.IngredientAlreadyExistsException;
 import br.unifor.costify.application.factory.IngredientFactory;
+import br.unifor.costify.application.validation.ValidationService;
 import br.unifor.costify.domain.contracts.IdGenerator;
 import br.unifor.costify.domain.entity.Ingredient;
+import br.unifor.costify.domain.valueobject.Money;
 import br.unifor.costify.domain.valueobject.Unit;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,6 +24,8 @@ class RegisterIngredientUseCaseTest {
 
   @Mock private IdGenerator idGenerator;
 
+  @Mock private ValidationService validationService;
+
   private RegisterIngredientUseCase useCase;
   private IngredientFactory ingredientFactory;
 
@@ -29,7 +33,7 @@ class RegisterIngredientUseCaseTest {
   void setup() {
     MockitoAnnotations.openMocks(this);
     ingredientFactory = new IngredientFactory(idGenerator);
-    useCase = new RegisterIngredientUseCase(ingredientRepository, ingredientFactory);
+    useCase = new RegisterIngredientUseCase(ingredientRepository, ingredientFactory, validationService);
   }
 
   @Test
@@ -39,7 +43,7 @@ class RegisterIngredientUseCaseTest {
     when(ingredientRepository.existsByName("Flour")).thenReturn(false);
     when(idGenerator.generate()).thenReturn("test-id-123");
 
-    Ingredient savedIngredient = new Ingredient(idGenerator, "Flour", 1.0, 5.0, Unit.KG);
+    Ingredient savedIngredient = new Ingredient(idGenerator, "Flour", 1.0, Money.of(5.0), Unit.KG);
     when(ingredientRepository.save(any(Ingredient.class))).thenReturn(savedIngredient);
 
     IngredientDto result = useCase.execute(command);
@@ -78,7 +82,7 @@ class RegisterIngredientUseCaseTest {
     when(ingredientRepository.existsByName("Sugar")).thenReturn(false);
     when(idGenerator.generate()).thenReturn("sugar-id-456");
 
-    Ingredient savedIngredient = new Ingredient(idGenerator, "Sugar", 2.0, 8.0, Unit.KG);
+    Ingredient savedIngredient = new Ingredient(idGenerator, "Sugar", 2.0, Money.of(8.0), Unit.KG);
     when(ingredientRepository.save(any(Ingredient.class))).thenReturn(savedIngredient);
 
     useCase.execute(command);

@@ -3,6 +3,7 @@ package br.unifor.costify.integration.repository.ingredient;
 import br.unifor.costify.TestcontainersConfiguration;
 import br.unifor.costify.domain.entity.Ingredient;
 import br.unifor.costify.domain.valueobject.Id;
+import br.unifor.costify.domain.valueobject.Money;
 import br.unifor.costify.domain.valueobject.Unit;
 import br.unifor.costify.infra.data.repositories.jpa.JpaIngredientRepository;
 import br.unifor.costify.infra.data.repositories.postgres.PostgresIngredientRepository;
@@ -31,7 +32,7 @@ class IngredientRepositoryConstraintsIntegrationTest {
   void save_withDuplicateName_shouldThrowDataIntegrityViolationException() {
     // Given - save first ingredient
     Ingredient firstIngredient =
-        new Ingredient(Id.of("first-id"), "Duplicate Name", 1.0, 5.0, Unit.L);
+        new Ingredient(Id.of("first-id"), "Duplicate Name", 1.0, Money.of(5.0), Unit.L);
     ingredientRepository.save(firstIngredient);
 
     // When/Then - try to save second ingredient with same name
@@ -40,7 +41,7 @@ class IngredientRepositoryConstraintsIntegrationTest {
             Id.of("second-id"),
             "Duplicate Name", // Same name
             2.0,
-            10.0,
+            Money.of(10.0),
             Unit.KG);
 
     try {
@@ -54,7 +55,7 @@ class IngredientRepositoryConstraintsIntegrationTest {
   @Test
   void save_withDuplicateId_shouldUpdateExistingRecord() {
     // Given - save original ingredient
-    Ingredient original = new Ingredient(Id.of("duplicate-id"), "Original Name", 1.0, 5.0, Unit.L);
+    Ingredient original = new Ingredient(Id.of("duplicate-id"), "Original Name", 1.0, Money.of(5.0), Unit.L);
     ingredientRepository.save(original);
 
     // When - save new ingredient with same ID (immutable update pattern)
@@ -63,14 +64,14 @@ class IngredientRepositoryConstraintsIntegrationTest {
             Id.of("duplicate-id"), // Same ID
             "Updated Name", // Different name
             2.0,
-            10.0,
+            Money.of(10.0),
             Unit.KG);
     Ingredient saved = ingredientRepository.save(updated);
 
     // Then - should update the existing record
     assert saved.getName().equals("Updated Name");
     assert saved.getPackageQuantity() == 2.0;
-    assert saved.getPackagePrice() == 10.0;
+    assert saved.getPackagePrice().doubleValue() == 10.0;
     assert saved.getPackageUnit() == Unit.KG;
 
     // Verify only one record exists
@@ -87,14 +88,14 @@ class IngredientRepositoryConstraintsIntegrationTest {
             Id.of("free-ingredient"),
             "Free Sample",
             1.0,
-            0.0, // Zero price should be allowed
+            Money.of(0.0), // Zero price should be allowed
             Unit.G);
 
     // When
     Ingredient saved = ingredientRepository.save(freeIngredient);
 
     // Then
-    assert saved.getPackagePrice() == 0.0;
+    assert saved.getPackagePrice().doubleValue() == 0.0;
     assert saved.getUnitCost() == 0.0; // Unit cost should also be zero
   }
 
@@ -103,7 +104,7 @@ class IngredientRepositoryConstraintsIntegrationTest {
     // Given - very long name (database column is VARCHAR(255))
     String longName = "A".repeat(300); // 300 characters
     Ingredient longNameIngredient =
-        new Ingredient(Id.of("long-name-id"), longName, 1.0, 5.0, Unit.G);
+        new Ingredient(Id.of("long-name-id"), longName, 1.0, Money.of(5.0), Unit.G);
 
     try {
       // When
@@ -125,7 +126,7 @@ class IngredientRepositoryConstraintsIntegrationTest {
             Id.of("precise-id"),
             "Precise Ingredient",
             999.999, // 3 decimal places
-            99999.99, // 2 decimal places
+            Money.of(99999.99), // 2 decimal places
             Unit.G);
 
     // When
@@ -133,13 +134,13 @@ class IngredientRepositoryConstraintsIntegrationTest {
 
     // Then - precision should be maintained
     assert saved.getPackageQuantity() == 999.999;
-    assert saved.getPackagePrice() == 99999.99;
+    assert saved.getPackagePrice().doubleValue() == 99999.99;
 
     // Verify after database round-trip
     var found = ingredientRepository.findById(Id.of("precise-id"));
     assert found.isPresent();
     assert found.get().getPackageQuantity() == 999.999;
-    assert found.get().getPackagePrice() == 99999.99;
+    assert found.get().getPackagePrice().doubleValue() == 99999.99;
   }
 
   @Test
@@ -150,7 +151,7 @@ class IngredientRepositoryConstraintsIntegrationTest {
     for (int i = 0; i < allUnits.length; i++) {
       Unit unit = allUnits[i];
       Ingredient ingredient =
-          new Ingredient(Id.of("unit-test-" + i), "Test " + unit.name(), 1.0, 5.0, unit);
+          new Ingredient(Id.of("unit-test-" + i), "Test " + unit.name(), 1.0, Money.of(5.0), unit);
 
       // Save and verify
       Ingredient saved = ingredientRepository.save(ingredient);

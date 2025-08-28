@@ -6,6 +6,8 @@ import java.math.BigDecimal;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import br.unifor.costify.domain.errors.money.NegativeMoneyException;
+
 class MoneyTest {
 
     @Test
@@ -136,46 +138,40 @@ class MoneyTest {
 
     @Test
     void shouldThrowExceptionForNullAmount() {
-        IllegalArgumentException exception = assertThrows(
-            IllegalArgumentException.class,
+        NullPointerException exception = assertThrows(
+            NullPointerException.class,
             () -> Money.of((BigDecimal) null)
         );
-        
-        assertEquals("Amount cannot be null", exception.getMessage());
     }
 
     @Test
     void shouldThrowExceptionForNegativeAmount() {
-        IllegalArgumentException exception = assertThrows(
-            IllegalArgumentException.class,
+        NegativeMoneyException exception = assertThrows(
+            NegativeMoneyException.class,
             () -> Money.of(new BigDecimal("-1.00"))
         );
         
-        assertEquals("Amount cannot be negative", exception.getMessage());
+        assertEquals("Money cannot be negative in business context", exception.getMessage());
     }
 
     @Test
     void shouldThrowExceptionWhenAddingNull() {
         Money money = Money.of(new BigDecimal("10.00"));
         
-        IllegalArgumentException exception = assertThrows(
-            IllegalArgumentException.class,
+        NullPointerException exception = assertThrows(
+            NullPointerException.class,
             () -> money.add(null)
         );
-        
-        assertEquals("Money to add cannot be null", exception.getMessage());
     }
 
     @Test
     void shouldThrowExceptionWhenSubtractingNull() {
         Money money = Money.of(new BigDecimal("10.00"));
         
-        IllegalArgumentException exception = assertThrows(
-            IllegalArgumentException.class,
+        NullPointerException exception = assertThrows(
+            NullPointerException.class,
             () -> money.subtract(null)
         );
-        
-        assertEquals("Money to subtract cannot be null", exception.getMessage());
     }
 
     @Test
@@ -183,12 +179,12 @@ class MoneyTest {
         Money money1 = Money.of(new BigDecimal("5.00"));
         Money money2 = Money.of(new BigDecimal("10.00"));
         
-        IllegalArgumentException exception = assertThrows(
-            IllegalArgumentException.class,
+        NegativeMoneyException exception = assertThrows(
+            NegativeMoneyException.class,
             () -> money1.subtract(money2)
         );
         
-        assertEquals("Result cannot be negative", exception.getMessage());
+        assertEquals("Money cannot be negative in business context", exception.getMessage());
     }
 
     @Test

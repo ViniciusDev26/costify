@@ -1,6 +1,7 @@
 package br.unifor.costify.domain.entity;
 
 import br.unifor.costify.domain.contracts.IdGenerator;
+import br.unifor.costify.domain.errors.recipe.EmptyRecipeException;
 import br.unifor.costify.domain.valueobject.Id;
 import br.unifor.costify.domain.valueobject.RecipeIngredient;
 import br.unifor.costify.domain.valueobject.Unit;
@@ -52,7 +53,7 @@ class RecipeTest {
     try {
       new Recipe(fakeIdGenerator, "Empty Recipe", List.of());
       assert false;
-    } catch (IllegalArgumentException ignored) {
+    } catch (EmptyRecipeException ignored) {
     }
   }
 
@@ -61,30 +62,10 @@ class RecipeTest {
     try {
       new Recipe(fakeIdGenerator, "Null Ingredients Recipe", null);
       assert false;
-    } catch (IllegalArgumentException ignored) {
+    } catch (EmptyRecipeException ignored) {
     }
   }
 
-  @Test
-  void createRecipe_withInvalidName_shouldThrowException() {
-    try {
-      new Recipe(fakeIdGenerator, null, List.of(recipeIngredient1));
-      assert false;
-    } catch (IllegalArgumentException ignored) {
-    }
-
-    try {
-      new Recipe(fakeIdGenerator, "", List.of(recipeIngredient1));
-      assert false;
-    } catch (IllegalArgumentException ignored) {
-    }
-
-    try {
-      new Recipe(fakeIdGenerator, "   ", List.of(recipeIngredient1));
-      assert false;
-    } catch (IllegalArgumentException ignored) {
-    }
-  }
 
 
   @Test
@@ -117,7 +98,7 @@ class RecipeTest {
     try {
       recipe.removeIngredient(recipeIngredient1.getIngredientId());
       assert false;
-    } catch (IllegalArgumentException ignored) {
+    } catch (EmptyRecipeException ignored) {
     }
   }
 }

@@ -1,7 +1,5 @@
 package br.unifor.costify.domain.valueobject;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import br.unifor.costify.domain.contracts.IdGenerator;
 import org.junit.jupiter.api.Test;
 
@@ -13,12 +11,6 @@ public class IdTest {
     assert id.toString() != null;
   }
 
-  @Test
-  void createIdFromNullValue_shouldThrowException() {
-    assertThrows(IllegalArgumentException.class, () -> Id.of(null));
-    assertThrows(IllegalArgumentException.class, () -> Id.of(""));
-    assertThrows(IllegalArgumentException.class, () -> Id.of("   "));
-  }
 
   @Test
   void generateId_shouldCallGenerator() {

@@ -8,6 +8,7 @@ import br.unifor.costify.application.dto.command.RegisterRecipeCommand;
 import br.unifor.costify.application.dto.entity.RecipeDto;
 import br.unifor.costify.application.errors.RecipeAlreadyExistsException;
 import br.unifor.costify.application.factory.RecipeFactory;
+import br.unifor.costify.application.validation.ValidationService;
 import br.unifor.costify.domain.contracts.IdGenerator;
 import br.unifor.costify.domain.entity.Recipe;
 import br.unifor.costify.domain.valueobject.Id;
@@ -22,6 +23,7 @@ import org.mockito.MockitoAnnotations;
 class RegisterRecipeUseCaseTest {
   @Mock private RecipeRepository recipeRepository;
   @Mock private IdGenerator idGenerator;
+  @Mock private ValidationService validationService;
 
   private RegisterRecipeUseCase useCase;
   private RecipeFactory recipeFactory;
@@ -30,7 +32,7 @@ class RegisterRecipeUseCaseTest {
   void setup() {
     MockitoAnnotations.openMocks(this);
     recipeFactory = new RecipeFactory(idGenerator);
-    useCase = new RegisterRecipeUseCase(recipeRepository, recipeFactory);
+    useCase = new RegisterRecipeUseCase(recipeRepository, recipeFactory, validationService);
   }
 
   @Test

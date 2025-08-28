@@ -3,6 +3,7 @@ package br.unifor.costify.integration.repository.ingredient;
 import br.unifor.costify.TestcontainersConfiguration;
 import br.unifor.costify.domain.entity.Ingredient;
 import br.unifor.costify.domain.valueobject.Id;
+import br.unifor.costify.domain.valueobject.Money;
 import br.unifor.costify.domain.valueobject.Unit;
 import br.unifor.costify.infra.data.repositories.jpa.JpaIngredientRepository;
 import br.unifor.costify.infra.data.repositories.postgres.PostgresIngredientRepository;
@@ -32,7 +33,7 @@ class PostgresIngredientRepositoryIntegrationTest {
 
   @BeforeEach
   void setUp() {
-    testIngredient = new Ingredient(Id.of("test-ingredient-id"), "Test Milk", 1.0, 5.50, Unit.L);
+    testIngredient = new Ingredient(Id.of("test-ingredient-id"), "Test Milk", 1.0, Money.of(5.50), Unit.L);
   }
 
   @Test
@@ -45,7 +46,7 @@ class PostgresIngredientRepositoryIntegrationTest {
     assert saved.getId().equals(testIngredient.getId());
     assert saved.getName().equals(testIngredient.getName());
     assert saved.getPackageQuantity() == testIngredient.getPackageQuantity();
-    assert saved.getPackagePrice() == testIngredient.getPackagePrice();
+    assert saved.getPackagePrice().equals(testIngredient.getPackagePrice());
     assert saved.getPackageUnit() == testIngredient.getPackageUnit();
   }
 
@@ -63,7 +64,7 @@ class PostgresIngredientRepositoryIntegrationTest {
     assert ingredient.getId().equals(testIngredient.getId());
     assert ingredient.getName().equals(testIngredient.getName());
     assert ingredient.getPackageQuantity() == testIngredient.getPackageQuantity();
-    assert ingredient.getPackagePrice() == testIngredient.getPackagePrice();
+    assert ingredient.getPackagePrice().equals(testIngredient.getPackagePrice());
     assert ingredient.getPackageUnit() == testIngredient.getPackageUnit();
   }
 
@@ -111,7 +112,7 @@ class PostgresIngredientRepositoryIntegrationTest {
             testIngredient.getId(), // Same ID
             "Updated Premium Milk", // Updated name
             2.0, // Updated quantity
-            12.0, // Updated price
+            Money.of(12.0), // Updated price
             Unit.L // Same unit
             );
     Ingredient saved = ingredientRepository.save(updatedIngredient);
@@ -120,7 +121,7 @@ class PostgresIngredientRepositoryIntegrationTest {
     assert saved.getId().equals(testIngredient.getId());
     assert saved.getName().equals("Updated Premium Milk");
     assert saved.getPackageQuantity() == 2.0;
-    assert saved.getPackagePrice() == 12.0;
+    assert saved.getPackagePrice().doubleValue() == 12.0;
     assert saved.getPackageUnit() == Unit.L;
 
     // Verify in database
@@ -149,12 +150,12 @@ class PostgresIngredientRepositoryIntegrationTest {
   void save_shouldHandleDifferentUnits() {
     // Test with different units
     Ingredient gramIngredient =
-        new Ingredient(Id.of("gram-ingredient"), "Flour", 500.0, 3.20, Unit.G);
+        new Ingredient(Id.of("gram-ingredient"), "Flour", 500.0, Money.of(3.20), Unit.G);
 
-    Ingredient kgIngredient = new Ingredient(Id.of("kg-ingredient"), "Sugar", 1.0, 4.50, Unit.KG);
+    Ingredient kgIngredient = new Ingredient(Id.of("kg-ingredient"), "Sugar", 1.0, Money.of(4.50), Unit.KG);
 
     Ingredient mlIngredient =
-        new Ingredient(Id.of("ml-ingredient"), "Vanilla Extract", 50.0, 8.90, Unit.ML);
+        new Ingredient(Id.of("ml-ingredient"), "Vanilla Extract", 50.0, Money.of(8.90), Unit.ML);
 
     // Save all
     Ingredient savedGram = ingredientRepository.save(gramIngredient);
@@ -175,7 +176,7 @@ class PostgresIngredientRepositoryIntegrationTest {
             Id.of("cost-test"),
             "Test Product",
             2.0, // 2 units
-            10.0, // $10 total
+            Money.of(10.0), // $10 total
             Unit.KG // per kg
             );
 
