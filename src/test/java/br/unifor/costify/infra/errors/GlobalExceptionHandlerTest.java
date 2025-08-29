@@ -64,14 +64,14 @@ class GlobalExceptionHandlerTest {
     void shouldHandleIngredientNotFoundException() {
         IngredientNotFoundException exception = IngredientNotFoundException.withId("test-id");
 
-        ResponseEntity<ErrorResponse> response = handler.handleIngredientNotFound(exception, request);
+        ResponseEntity<ErrorResponse> response = handler.handleApplicationException(exception, request);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         ErrorResponse body = response.getBody();
         assertNotNull(body);
         assertEquals(404, body.status());
         assertEquals("Not Found", body.error());
-        assertEquals("INFRA-404", body.code());
+        assertEquals("APP-100", body.code()); // Original application error code
         assertEquals("Ingredient with ID 'test-id' not found", body.message());
         assertEquals("/api/test", body.path());
     }
@@ -80,14 +80,14 @@ class GlobalExceptionHandlerTest {
     void shouldHandleIngredientAlreadyExistsException() {
         IngredientAlreadyExistsException exception = IngredientAlreadyExistsException.withName("duplicate");
 
-        ResponseEntity<ErrorResponse> response = handler.handleIngredientAlreadyExists(exception, request);
+        ResponseEntity<ErrorResponse> response = handler.handleApplicationException(exception, request);
 
         assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
         ErrorResponse body = response.getBody();
         assertNotNull(body);
         assertEquals(409, body.status());
         assertEquals("Conflict", body.error());
-        assertEquals("INFRA-409", body.code());
+        assertEquals("APP-101", body.code()); // Original application error code
         assertEquals("Ingredient with name 'duplicate' already exists", body.message());
     }
 
@@ -95,13 +95,13 @@ class GlobalExceptionHandlerTest {
     void shouldHandleRecipeNotFoundException() {
         RecipeNotFoundException exception = RecipeNotFoundException.withId("recipe-id");
 
-        ResponseEntity<ErrorResponse> response = handler.handleRecipeNotFound(exception, request);
+        ResponseEntity<ErrorResponse> response = handler.handleApplicationException(exception, request);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         ErrorResponse body = response.getBody();
         assertNotNull(body);
         assertEquals(404, body.status());
-        assertEquals("INFRA-404", body.code());
+        assertEquals("APP-200", body.code()); // Original application error code
         assertEquals("Recipe with ID 'recipe-id' not found", body.message());
     }
 
@@ -109,13 +109,13 @@ class GlobalExceptionHandlerTest {
     void shouldHandleRecipeAlreadyExistsException() {
         RecipeAlreadyExistsException exception = RecipeAlreadyExistsException.withName("duplicate-recipe");
 
-        ResponseEntity<ErrorResponse> response = handler.handleRecipeAlreadyExists(exception, request);
+        ResponseEntity<ErrorResponse> response = handler.handleApplicationException(exception, request);
 
         assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
         ErrorResponse body = response.getBody();
         assertNotNull(body);
         assertEquals(409, body.status());
-        assertEquals("INFRA-409", body.code());
+        assertEquals("APP-201", body.code()); // Original application error code
     }
 
     @Test
@@ -129,7 +129,7 @@ class GlobalExceptionHandlerTest {
         ErrorResponse body = response.getBody();
         assertNotNull(body);
         assertEquals(404, body.status());
-        assertEquals("INFRA-404", body.code());
+        assertEquals("APP-100", body.code()); // Original application error code
         assertEquals("Test error", body.message());
     }
 
@@ -141,13 +141,13 @@ class GlobalExceptionHandlerTest {
     void shouldHandleInvalidIngredientNameException() {
         InvalidIngredientNameException exception = new InvalidIngredientNameException("Invalid name");
 
-        ResponseEntity<ErrorResponse> response = handler.handleInvalidIngredientName(exception, request);
+        ResponseEntity<ErrorResponse> response = handler.handleDomainException(exception, request);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         ErrorResponse body = response.getBody();
         assertNotNull(body);
         assertEquals(400, body.status());
-        assertEquals("INFRA-422", body.code());
+        assertEquals("DOMAIN-001", body.code()); // Original domain error code
         assertEquals("Invalid name", body.message());
     }
 
@@ -155,48 +155,48 @@ class GlobalExceptionHandlerTest {
     void shouldHandleNegativeMoneyException() {
         NegativeMoneyException exception = new NegativeMoneyException("Negative amount");
 
-        ResponseEntity<ErrorResponse> response = handler.handleNegativeMoney(exception, request);
+        ResponseEntity<ErrorResponse> response = handler.handleDomainException(exception, request);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         ErrorResponse body = response.getBody();
         assertNotNull(body);
-        assertEquals("INFRA-422", body.code());
+        assertEquals("DOMAIN-002", body.code()); // Original domain error code
     }
 
     @Test
     void shouldHandleEmptyRecipeException() {
         EmptyRecipeException exception = new EmptyRecipeException("Recipe is empty");
 
-        ResponseEntity<ErrorResponse> response = handler.handleEmptyRecipe(exception, request);
+        ResponseEntity<ErrorResponse> response = handler.handleDomainException(exception, request);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         ErrorResponse body = response.getBody();
         assertNotNull(body);
-        assertEquals("INFRA-422", body.code());
+        assertEquals("DOMAIN-003", body.code()); // Original domain error code
     }
 
     @Test
     void shouldHandleInvalidQuantityException() {
         InvalidQuantityException exception = new InvalidQuantityException("Invalid quantity");
 
-        ResponseEntity<ErrorResponse> response = handler.handleInvalidQuantity(exception, request);
+        ResponseEntity<ErrorResponse> response = handler.handleDomainException(exception, request);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         ErrorResponse body = response.getBody();
         assertNotNull(body);
-        assertEquals("INFRA-422", body.code());
+        assertEquals("DOMAIN-004", body.code()); // Original domain error code
     }
 
     @Test
     void shouldHandleInvalidTotalCostException() {
         InvalidTotalCostException exception = new InvalidTotalCostException("Invalid cost");
 
-        ResponseEntity<ErrorResponse> response = handler.handleInvalidTotalCost(exception, request);
+        ResponseEntity<ErrorResponse> response = handler.handleDomainException(exception, request);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         ErrorResponse body = response.getBody();
         assertNotNull(body);
-        assertEquals("INFRA-422", body.code());
+        assertEquals("DOMAIN-005", body.code()); // Original domain error code
     }
 
     @Test
@@ -210,7 +210,7 @@ class GlobalExceptionHandlerTest {
         ErrorResponse body = response.getBody();
         assertNotNull(body);
         assertEquals(400, body.status());
-        assertEquals("INFRA-422", body.code());
+        assertEquals("DOMAIN-001", body.code()); // Original domain error code
         assertEquals("Domain error", body.message());
     }
 

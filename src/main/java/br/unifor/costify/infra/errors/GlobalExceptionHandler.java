@@ -2,17 +2,8 @@ package br.unifor.costify.infra.errors;
 
 import br.unifor.costify.application.errors.ApplicationErrorCode;
 import br.unifor.costify.application.errors.ApplicationException;
-import br.unifor.costify.application.errors.IngredientAlreadyExistsException;
-import br.unifor.costify.application.errors.IngredientNotFoundException;
-import br.unifor.costify.application.errors.RecipeAlreadyExistsException;
-import br.unifor.costify.application.errors.RecipeNotFoundException;
 import br.unifor.costify.domain.errors.DomainErrorCode;
 import br.unifor.costify.domain.errors.DomainException;
-import br.unifor.costify.domain.errors.ingredient.InvalidIngredientNameException;
-import br.unifor.costify.domain.errors.money.NegativeMoneyException;
-import br.unifor.costify.domain.errors.recipe.EmptyRecipeException;
-import br.unifor.costify.domain.errors.recipe.InvalidQuantityException;
-import br.unifor.costify.domain.errors.recipe.InvalidTotalCostException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
@@ -46,166 +37,21 @@ public class GlobalExceptionHandler {
     // Application Layer Exceptions
     // ====================================
 
-    @ExceptionHandler(IngredientNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleIngredientNotFound(
-            IngredientNotFoundException ex, HttpServletRequest request) {
-        log.warn("Ingredient not found: {}", ex.getMessage());
-        
-        ErrorResponse error = ErrorResponse.of(
-            HttpStatus.NOT_FOUND.value(),
-            "Not Found",
-            ErrorCode.RESOURCE_NOT_FOUND.getCode(),
-            ex.getMessage(),
-            request.getRequestURI()
-        );
-        
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
-    }
-
-    @ExceptionHandler(IngredientAlreadyExistsException.class)
-    public ResponseEntity<ErrorResponse> handleIngredientAlreadyExists(
-            IngredientAlreadyExistsException ex, HttpServletRequest request) {
-        log.warn("Ingredient already exists: {}", ex.getMessage());
-        
-        ErrorResponse error = ErrorResponse.of(
-            HttpStatus.CONFLICT.value(),
-            "Conflict",
-            ErrorCode.RESOURCE_CONFLICT.getCode(),
-            ex.getMessage(),
-            request.getRequestURI()
-        );
-        
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
-    }
-
-    @ExceptionHandler(RecipeNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleRecipeNotFound(
-            RecipeNotFoundException ex, HttpServletRequest request) {
-        log.warn("Recipe not found: {}", ex.getMessage());
-        
-        ErrorResponse error = ErrorResponse.of(
-            HttpStatus.NOT_FOUND.value(),
-            "Not Found",
-            ErrorCode.RESOURCE_NOT_FOUND.getCode(),
-            ex.getMessage(),
-            request.getRequestURI()
-        );
-        
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
-    }
-
-    @ExceptionHandler(RecipeAlreadyExistsException.class)
-    public ResponseEntity<ErrorResponse> handleRecipeAlreadyExists(
-            RecipeAlreadyExistsException ex, HttpServletRequest request) {
-        log.warn("Recipe already exists: {}", ex.getMessage());
-        
-        ErrorResponse error = ErrorResponse.of(
-            HttpStatus.CONFLICT.value(),
-            "Conflict",
-            ErrorCode.RESOURCE_CONFLICT.getCode(),
-            ex.getMessage(),
-            request.getRequestURI()
-        );
-        
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
-    }
-
     // ====================================
     // Domain Layer Exceptions
     // ====================================
-
-    @ExceptionHandler(InvalidIngredientNameException.class)
-    public ResponseEntity<ErrorResponse> handleInvalidIngredientName(
-            InvalidIngredientNameException ex, HttpServletRequest request) {
-        log.warn("Invalid ingredient name: {}", ex.getMessage());
-        
-        ErrorResponse error = ErrorResponse.of(
-            HttpStatus.BAD_REQUEST.value(),
-            "Bad Request",
-            ErrorCode.BUSINESS_RULE_VIOLATION.getCode(),
-            ex.getMessage(),
-            request.getRequestURI()
-        );
-        
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
-    }
-
-    @ExceptionHandler(NegativeMoneyException.class)
-    public ResponseEntity<ErrorResponse> handleNegativeMoney(
-            NegativeMoneyException ex, HttpServletRequest request) {
-        log.warn("Negative money amount: {}", ex.getMessage());
-        
-        ErrorResponse error = ErrorResponse.of(
-            HttpStatus.BAD_REQUEST.value(),
-            "Bad Request",
-            ErrorCode.BUSINESS_RULE_VIOLATION.getCode(),
-            ex.getMessage(),
-            request.getRequestURI()
-        );
-        
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
-    }
-
-    @ExceptionHandler(EmptyRecipeException.class)
-    public ResponseEntity<ErrorResponse> handleEmptyRecipe(
-            EmptyRecipeException ex, HttpServletRequest request) {
-        log.warn("Empty recipe: {}", ex.getMessage());
-        
-        ErrorResponse error = ErrorResponse.of(
-            HttpStatus.BAD_REQUEST.value(),
-            "Bad Request",
-            ErrorCode.BUSINESS_RULE_VIOLATION.getCode(),
-            ex.getMessage(),
-            request.getRequestURI()
-        );
-        
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
-    }
-
-    @ExceptionHandler(InvalidQuantityException.class)
-    public ResponseEntity<ErrorResponse> handleInvalidQuantity(
-            InvalidQuantityException ex, HttpServletRequest request) {
-        log.warn("Invalid quantity: {}", ex.getMessage());
-        
-        ErrorResponse error = ErrorResponse.of(
-            HttpStatus.BAD_REQUEST.value(),
-            "Bad Request",
-            ErrorCode.BUSINESS_RULE_VIOLATION.getCode(),
-            ex.getMessage(),
-            request.getRequestURI()
-        );
-        
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
-    }
-
-    @ExceptionHandler(InvalidTotalCostException.class)
-    public ResponseEntity<ErrorResponse> handleInvalidTotalCost(
-            InvalidTotalCostException ex, HttpServletRequest request) {
-        log.warn("Invalid total cost: {}", ex.getMessage());
-        
-        ErrorResponse error = ErrorResponse.of(
-            HttpStatus.BAD_REQUEST.value(),
-            "Bad Request",
-            ErrorCode.BUSINESS_RULE_VIOLATION.getCode(),
-            ex.getMessage(),
-            request.getRequestURI()
-        );
-        
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
-    }
 
     @ExceptionHandler(ApplicationException.class)
     public ResponseEntity<ErrorResponse> handleApplicationException(
             ApplicationException ex, HttpServletRequest request) {
         log.warn("Application exception [{}]: {}", ex.getErrorCode(), ex.getMessage());
         
-        ErrorCode mappedErrorCode = mapApplicationErrorCode(ex.getApplicationErrorCode());
         HttpStatus status = getHttpStatusForApplicationError(ex.getApplicationErrorCode());
         
         ErrorResponse error = ErrorResponse.of(
             status.value(),
             status.getReasonPhrase(), 
-            mappedErrorCode.getCode(),
+            ex.getErrorCode(), // Use original application error code
             ex.getMessage(),
             request.getRequestURI()
         );
@@ -218,12 +64,10 @@ public class GlobalExceptionHandler {
             DomainException ex, HttpServletRequest request) {
         log.warn("Domain exception [{}]: {}", ex.getErrorCode(), ex.getMessage());
         
-        ErrorCode mappedErrorCode = mapDomainErrorCode(ex.getDomainErrorCode());
-        
         ErrorResponse error = ErrorResponse.of(
             HttpStatus.BAD_REQUEST.value(),
             "Bad Request", 
-            mappedErrorCode.getCode(),
+            ex.getErrorCode(), // Use original domain error code
             ex.getMessage(),
             request.getRequestURI()
         );
@@ -416,21 +260,6 @@ public class GlobalExceptionHandler {
         );
     }
 
-    /**
-     * Maps application error codes to infrastructure error codes for consistent API responses.
-     * This keeps the application layer independent of infrastructure concerns.
-     */
-    private ErrorCode mapApplicationErrorCode(ApplicationErrorCode applicationErrorCode) {
-        return switch (applicationErrorCode) {
-            case INGREDIENT_NOT_FOUND -> ErrorCode.RESOURCE_NOT_FOUND;
-            case INGREDIENT_ALREADY_EXISTS -> ErrorCode.RESOURCE_CONFLICT;
-            case RECIPE_NOT_FOUND -> ErrorCode.RESOURCE_NOT_FOUND;
-            case RECIPE_ALREADY_EXISTS -> ErrorCode.RESOURCE_CONFLICT;
-            case COST_CALCULATION_ERROR -> ErrorCode.BUSINESS_LOGIC_ERROR;
-            case INGREDIENT_LOADING_ERROR -> ErrorCode.BUSINESS_LOGIC_ERROR;
-            case APPLICATION_ERROR -> ErrorCode.INTERNAL_SERVER_ERROR;
-        };
-    }
 
     /**
      * Maps application error codes to appropriate HTTP status codes.
@@ -444,18 +273,4 @@ public class GlobalExceptionHandler {
         };
     }
 
-    /**
-     * Maps domain error codes to infrastructure error codes for consistent API responses.
-     * This keeps the domain layer independent of infrastructure concerns.
-     */
-    private ErrorCode mapDomainErrorCode(DomainErrorCode domainErrorCode) {
-        return switch (domainErrorCode) {
-            case INVALID_INGREDIENT_NAME -> ErrorCode.BUSINESS_RULE_VIOLATION;
-            case NEGATIVE_MONEY -> ErrorCode.BUSINESS_RULE_VIOLATION;
-            case EMPTY_RECIPE -> ErrorCode.BUSINESS_RULE_VIOLATION;
-            case INVALID_QUANTITY -> ErrorCode.BUSINESS_RULE_VIOLATION;
-            case INVALID_TOTAL_COST -> ErrorCode.BUSINESS_RULE_VIOLATION;
-            case DOMAIN_CONSTRAINT_VIOLATION -> ErrorCode.BUSINESS_RULE_VIOLATION;
-        };
-    }
 }
