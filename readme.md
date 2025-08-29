@@ -178,9 +178,11 @@ Content-Type: application/json
 
 The API supports the following measurement units:
 
-- **Volume**: `ML` (milliliters), `L` (liters) 
-- **Weight**: `G` (grams), `KG` (kilograms)
+- **Volume**: `ML` (milliliters), `L` (liters), `TBSP` (tablespoons = 15ml for liquids)
+- **Weight**: `G` (grams), `KG` (kilograms), `TBSP_BUTTER` (tablespoons ≈ 14g for butter/margarine)
 - **Unit**: `UN` (units/pieces)
+
+> **Note**: Use `TBSP` for liquid ingredients (vanilla extract, oil, milk) and `TBSP_BUTTER` for solid fats (butter, margarine) since they have different densities.
 
 ### ⚠️ Validation Rules
 

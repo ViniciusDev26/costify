@@ -3,8 +3,10 @@ package br.unifor.costify.domain.valueobject;
 public enum Unit {
   ML(1.0, Type.VOLUME),
   L(1000.0, Type.VOLUME), // 1L = 1000ml
+  TBSP(15.0, Type.VOLUME), // 1 tablespoon = 15ml (for liquids)
   G(1.0, Type.WEIGHT),
   KG(1000.0, Type.WEIGHT), // 1kg = 1000g
+  TBSP_BUTTER(14.0, Type.WEIGHT), // 1 tablespoon butter ≈ 14g
   UN(1.0, Type.UNIT);
 
   private final double factorToBase;

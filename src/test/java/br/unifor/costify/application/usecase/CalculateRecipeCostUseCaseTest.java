@@ -1,6 +1,7 @@
 package br.unifor.costify.application.usecase;
 
 import br.unifor.costify.application.contracts.RecipeRepository;
+import br.unifor.costify.application.dto.response.IngredientCostDto;
 import br.unifor.costify.application.dto.response.RecipeCostDto;
 import br.unifor.costify.application.errors.IngredientNotFoundException;
 import br.unifor.costify.application.errors.RecipeNotFoundException;
@@ -21,6 +22,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -180,5 +182,72 @@ class CalculateRecipeCostUseCaseTest {
         assertThatThrownBy(() -> useCase.execute(recipeIdString))
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessage("Recipe must have at least one ingredient");
+    }
+
+    @Test
+    void shouldCalculateCostForRecipeWithTbspUnits() {
+        // Given
+        String recipeIdString = "tbsp-recipe";
+        Id recipeId = Id.of(recipeIdString);
+        Id vanillaId = Id.of("vanilla-extract");
+        Id butterId = Id.of("butter");
+        
+        // Recipe ingredients with TBSP units
+        RecipeIngredient vanillaIngredient = new RecipeIngredient(vanillaId, 1.0, Unit.TBSP); // 1 tbsp vanilla
+        RecipeIngredient butterIngredient = new RecipeIngredient(butterId, 2.0, Unit.TBSP_BUTTER); // 2 tbsp butter
+        Recipe recipe = new Recipe(recipeId, "Vanilla Butter Cookie", List.of(vanillaIngredient, butterIngredient), Money.of(3.55));
+        
+        // Ingredients with TBSP package units
+        Ingredient vanillaExtract = new Ingredient(vanillaId, "Vanilla Extract", 10.0, Money.of(8.50), Unit.TBSP); // 10 tbsp for $8.50
+        Ingredient butter = new Ingredient(butterId, "Butter", 32.0, Money.of(12.00), Unit.TBSP_BUTTER); // 32 tbsp for $12.00
+        
+        // Expected costs:
+        // - Vanilla: 1 tbsp out of 10 tbsp = $8.50 / 10 = $0.85
+        // - Butter: 2 tbsp out of 32 tbsp = $12.00 / 32 * 2 = $0.75
+        // - Total: $1.60
+        IngredientCost vanillaCost = new IngredientCost(vanillaId, "Vanilla Extract", 1.0, Unit.TBSP, Money.of(0.85));
+        IngredientCost butterCost = new IngredientCost(butterId, "Butter", 2.0, Unit.TBSP_BUTTER, Money.of(0.75));
+        RecipeCost recipeCost = new RecipeCost(recipeId, "Vanilla Butter Cookie", List.of(vanillaCost, butterCost));
+        
+        when(recipeRepository.findById(recipeId)).thenReturn(Optional.of(recipe));
+        when(ingredientLoaderService.loadIngredients(List.of(vanillaIngredient, butterIngredient))).thenReturn(Map.of(
+            vanillaId, vanillaExtract,
+            butterId, butter
+        ));
+        when(costCalculationService.calculateCost(eq(recipe), any(Map.class))).thenReturn(recipeCost);
+        
+        // When
+        RecipeCostDto result = useCase.execute(recipeIdString);
+        
+        // Then
+        assertThat(result).isNotNull();
+        assertThat(result.getRecipeId()).isEqualTo(recipeIdString);
+        assertThat(result.getRecipeName()).isEqualTo("Vanilla Butter Cookie");
+        assertThat(result.getIngredientCosts()).hasSize(2);
+        
+        // Verify vanilla extract cost
+        IngredientCostDto vanillaResult = result.getIngredientCosts().stream()
+            .filter(cost -> cost.getIngredientId().equals(vanillaId.getValue()))
+            .findFirst()
+            .orElseThrow();
+        assertThat(vanillaResult.getQuantityUsed()).isEqualTo(1.0);
+        assertThat(vanillaResult.getUnit()).isEqualTo(Unit.TBSP);
+        assertThat(vanillaResult.getCost()).isEqualTo(BigDecimal.valueOf(0.85).setScale(2, RoundingMode.HALF_UP));
+        
+        // Verify butter cost
+        IngredientCostDto butterResult = result.getIngredientCosts().stream()
+            .filter(cost -> cost.getIngredientId().equals(butterId.getValue()))
+            .findFirst()
+            .orElseThrow();
+        assertThat(butterResult.getQuantityUsed()).isEqualTo(2.0);
+        assertThat(butterResult.getUnit()).isEqualTo(Unit.TBSP_BUTTER);
+        assertThat(butterResult.getCost()).isEqualTo(BigDecimal.valueOf(0.75).setScale(2, RoundingMode.HALF_UP));
+        
+        // Verify total cost
+        assertThat(result.getTotalCost()).isEqualTo(BigDecimal.valueOf(1.60).setScale(2, RoundingMode.HALF_UP));
+        
+        verify(recipeRepository).findById(recipeId);
+        verify(ingredientLoaderService).loadIngredients(List.of(vanillaIngredient, butterIngredient));
+        verify(costCalculationService).calculateCost(eq(recipe), any(Map.class));
     }
 }

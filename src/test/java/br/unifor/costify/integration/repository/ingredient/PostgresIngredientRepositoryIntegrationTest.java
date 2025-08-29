@@ -169,6 +169,78 @@ class PostgresIngredientRepositoryIntegrationTest {
   }
 
   @Test
+  void save_shouldHandleTbspUnits() {
+    // Test with TBSP (liquid volume) units
+    Ingredient tbspLiquidIngredient =
+        new Ingredient(Id.of("tbsp-liquid"), "Vanilla Extract", 10.0, Money.of(8.50), Unit.TBSP);
+
+    // Test with TBSP_BUTTER (solid fat weight) units  
+    Ingredient tbspButterIngredient =
+        new Ingredient(Id.of("tbsp-butter"), "Butter", 32.0, Money.of(12.00), Unit.TBSP_BUTTER);
+
+    // Save both
+    Ingredient savedTbspLiquid = ingredientRepository.save(tbspLiquidIngredient);
+    Ingredient savedTbspButter = ingredientRepository.save(tbspButterIngredient);
+
+    // Verify TBSP units are preserved
+    assert savedTbspLiquid.getPackageUnit() == Unit.TBSP;
+    assert savedTbspButter.getPackageUnit() == Unit.TBSP_BUTTER;
+
+    // Verify they can be retrieved from database
+    Optional<Ingredient> foundTbspLiquid = ingredientRepository.findById(tbspLiquidIngredient.getId());
+    Optional<Ingredient> foundTbspButter = ingredientRepository.findById(tbspButterIngredient.getId());
+
+    assert foundTbspLiquid.isPresent();
+    assert foundTbspButter.isPresent();
+    assert foundTbspLiquid.get().getPackageUnit() == Unit.TBSP;
+    assert foundTbspButter.get().getPackageUnit() == Unit.TBSP_BUTTER;
+  }
+
+  @Test
+  void save_shouldCalculateUnitCostCorrectlyForTbspUnits() {
+    // Test TBSP (liquid) cost calculation: 1 TBSP = 15ml
+    Ingredient tbspLiquid =
+        new Ingredient(
+            Id.of("tbsp-cost-test"),
+            "Vanilla Extract",
+            10.0, // 10 tablespoons
+            Money.of(8.50), // $8.50 total
+            Unit.TBSP
+            );
+
+    // Test TBSP_BUTTER (solid) cost calculation: 1 TBSP = 14g
+    Ingredient tbspButter =
+        new Ingredient(
+            Id.of("tbsp-butter-cost-test"),
+            "Butter", 
+            16.0, // 16 tablespoons
+            Money.of(12.00), // $12.00 total
+            Unit.TBSP_BUTTER
+            );
+
+    // Save both
+    Ingredient savedTbspLiquid = ingredientRepository.save(tbspLiquid);
+    Ingredient savedTbspButter = ingredientRepository.save(tbspButter);
+
+    // Verify TBSP liquid cost: $8.50 / (10 * 15ml) = $8.50 / 150ml = $0.0567 per ml
+    double expectedTbspLiquidCost = 8.50 / Unit.TBSP.toBase(10.0);
+    assert Math.abs(savedTbspLiquid.getUnitCost() - expectedTbspLiquidCost) < 0.0001;
+
+    // Verify TBSP butter cost: $12.00 / (16 * 14g) = $12.00 / 224g = $0.0536 per g
+    double expectedTbspButterCost = 12.00 / Unit.TBSP_BUTTER.toBase(16.0);
+    assert Math.abs(savedTbspButter.getUnitCost() - expectedTbspButterCost) < 0.0001;
+
+    // Verify after retrieval from database
+    Optional<Ingredient> foundTbspLiquid = ingredientRepository.findById(tbspLiquid.getId());
+    Optional<Ingredient> foundTbspButter = ingredientRepository.findById(tbspButter.getId());
+
+    assert foundTbspLiquid.isPresent();
+    assert foundTbspButter.isPresent();
+    assert Math.abs(foundTbspLiquid.get().getUnitCost() - expectedTbspLiquidCost) < 0.0001;
+    assert Math.abs(foundTbspButter.get().getUnitCost() - expectedTbspButterCost) < 0.0001;
+  }
+
+  @Test
   void save_shouldCalculateUnitCostDynamically() {
     // Given
     Ingredient ingredient =

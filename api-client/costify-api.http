@@ -43,6 +43,28 @@ Content-Type: {{contentType}}
   "packageUnit": "UN"
 }
 
+### Register Vanilla Extract Ingredient (TBSP for liquids)
+POST {{baseUrl}}/api/ingredients
+Content-Type: {{contentType}}
+
+{
+  "name": "Vanilla Extract",
+  "packageQuantity": 10.0,
+  "packagePrice": 8.50,
+  "packageUnit": "TBSP"
+}
+
+### Register Butter Ingredient (TBSP_BUTTER for solid fats)
+POST {{baseUrl}}/api/ingredients
+Content-Type: {{contentType}}
+
+{
+  "name": "Butter",
+  "packageQuantity": 30.0,
+  "packagePrice": 12.00,
+  "packageUnit": "TBSP_BUTTER"
+}
+
 ### =============================================================================
 ### RECIPES API  
 ### =============================================================================
