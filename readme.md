@@ -101,33 +101,105 @@ Java assertions are required for domain validation tests. All tests should pass 
 
 ### 🎯 Available REST API
 
-Once the application is running, the following endpoints are available:
+Once the application is running (default: http://localhost:8080), the following endpoints are available:
 
-```bash
-# Register new ingredient
+#### **Ingredients API**
+
+**Register New Ingredient**
+```http
 POST /ingredients
 Content-Type: application/json
+
 {
-  "name": "Flour", 
+  "name": "Flour",
   "packageQuantity": 1.0,
   "packagePrice": 2.50,
   "packageUnit": "KG"
 }
+```
 
-# Register new recipe with ingredients  
+**Response:**
+```json
+{
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "name": "Flour",
+  "packageQuantity": 1.0,
+  "packagePrice": 2.50,
+  "packageUnit": "KG",
+  "unitCost": 2.50
+}
+```
+
+#### **Recipes API**
+
+**Register New Recipe**
+```http
 POST /recipes
 Content-Type: application/json
+
 {
   "name": "Bread",
   "ingredients": [
     {
-      "ingredientId": "ingredient-uuid",
+      "ingredientId": "550e8400-e29b-41d4-a716-446655440000",
       "quantity": 0.5,
-      "unit": "KG" 
+      "unit": "KG"
+    },
+    {
+      "ingredientId": "660e8400-e29b-41d4-a716-446655440001",
+      "quantity": 200.0,
+      "unit": "ML"
     }
   ]
 }
 ```
+
+**Response:**
+```json
+{
+  "id": "770e8400-e29b-41d4-a716-446655440002",
+  "name": "Bread",
+  "ingredients": [
+    {
+      "ingredientId": "550e8400-e29b-41d4-a716-446655440000",
+      "quantity": 0.5,
+      "unit": "KG"
+    },
+    {
+      "ingredientId": "660e8400-e29b-41d4-a716-446655440001", 
+      "quantity": 200.0,
+      "unit": "ML"
+    }
+  ]
+}
+```
+
+### 📋 Supported Units
+
+The API supports the following measurement units:
+
+- **Volume**: `ML` (milliliters), `L` (liters) 
+- **Weight**: `G` (grams), `KG` (kilograms)
+- **Unit**: `UN` (units/pieces)
+
+### ⚠️ Validation Rules
+
+**Ingredient Registration:**
+- `name`: Required, cannot be blank
+- `packageQuantity`: Must be ≥ 1.0
+- `packagePrice`: Must be ≥ 1.0  
+- `packageUnit`: Required, must be valid Unit enum
+
+**Recipe Registration:**
+- `name`: Required, cannot be blank
+- `ingredients`: Required, cannot be empty
+- `ingredientId`: Required, must be valid UUID
+- `quantity`: Must be ≥ 0.01
+- `unit`: Required, must be valid Unit enum
+
+### 🔍 HTTP Client Examples
+
+See the `api-client/` folder for ready-to-use HTTP request files compatible with popular IDEs and tools.
 
 ## Project Structure
 
