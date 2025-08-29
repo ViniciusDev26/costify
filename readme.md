@@ -203,6 +203,142 @@ The API supports the following measurement units:
 
 See the `api-client/` folder for ready-to-use HTTP request files compatible with popular IDEs and tools.
 
+---
+
+## Error Handling Rules
+
+### 🚨 Clean Architecture Error Handling
+
+Costify implements **layer-based error handling** following Clean Architecture principles. Each layer has specific error responsibilities and codes:
+
+#### **Layer Error Code Ranges**
+- **Domain Layer**: `DOM-1000` to `DOM-1999` - Core business rule violations
+- **Application Layer**: `APP-2000` to `APP-2999` - Use case and workflow errors  
+- **Infrastructure Layer**: `INF-3000` to `INF-3999` - Technical and external system errors
+
+### 📋 Error Response Format
+
+All API errors follow a consistent JSON structure:
+
+```json
+{
+  "error": {
+    "code": "DOM-1001",
+    "message": "Ingredient name cannot be null or blank",
+    "details": "The ingredient name 'null' is invalid",
+    "timestamp": "2025-01-15T10:30:00Z",
+    "path": "/ingredients"
+  }
+}
+```
+
+### 🎯 Domain Layer Errors (DOM-1000 to DOM-1999)
+
+#### **Ingredient Domain Errors**
+- **`DOM-1001`** - `InvalidIngredientNameException`: Ingredient name is null, blank, or invalid
+- **`DOM-1002`** - `NegativeIngredientQuantityException`: Package quantity must be positive
+- **`DOM-1003`** - `NegativeIngredientPriceException`: Package price must be positive
+
+#### **Recipe Domain Errors**  
+- **`DOM-1101`** - `EmptyRecipeException`: Recipe must contain at least one ingredient
+- **`DOM-1102`** - `InvalidQuantityException`: Recipe ingredient quantity must be positive
+- **`DOM-1103`** - `InvalidTotalCostException`: Recipe total cost calculation failed
+
+#### **Money Value Object Errors**
+- **`DOM-1201`** - `NegativeMoneyException`: Money amounts cannot be negative
+- **`DOM-1202`** - `InvalidCurrencyException`: Invalid or unsupported currency
+
+### ⚙️ Application Layer Errors (APP-2000 to APP-2999)
+
+#### **Use Case Errors**
+- **`APP-2001`** - `IngredientNotFoundException`: Ingredient with specified ID does not exist
+- **`APP-2002`** - `IngredientAlreadyExistsException`: Ingredient with name already exists
+- **`APP-2003`** - `RecipeNotFoundException`: Recipe with specified ID does not exist
+- **`APP-2004`** - `RecipeAlreadyExistsException`: Recipe with name already exists
+
+#### **Validation Errors**
+- **`APP-2101`** - `InvalidCommandException`: Input command validation failed
+- **`APP-2102`** - `ValidationException`: DTO field validation errors
+- **`APP-2103`** - `BusinessRuleViolationException`: Application-level business rule violation
+
+### 🔧 Infrastructure Layer Errors (INF-3000 to INF-3999)
+
+#### **Database Errors**
+- **`INF-3001`** - `DatabaseConnectionException`: Database connection failed
+- **`INF-3002`** - `DatabaseConstraintViolationException`: Database constraint violation
+- **`INF-3003`** - `OptimisticLockException`: Concurrent modification detected
+
+#### **External System Errors**
+- **`INF-3101`** - `ExternalApiException`: External service call failed
+- **`INF-3102`** - `NetworkTimeoutException`: Network request timed out
+- **`INF-3103`** - `AuthenticationException`: Authentication with external system failed
+
+### 🛡️ Error Handling Best Practices
+
+#### **1. Error Propagation Rules**
+- **Domain → Application**: Domain exceptions bubble up unchanged
+- **Application → Infrastructure**: Application exceptions converted to appropriate HTTP status codes  
+- **Infrastructure → Client**: Technical errors masked, business errors exposed
+
+#### **2. HTTP Status Code Mapping**
+```
+Domain Errors (DOM-*)     → 400 Bad Request (business rule violations)
+Application Not Found     → 404 Not Found (entity not found)
+Application Conflicts     → 409 Conflict (already exists)
+Infrastructure Database   → 500 Internal Server Error (technical issues)
+Infrastructure External   → 502 Bad Gateway (external service issues)
+Validation Errors        → 422 Unprocessable Entity (input validation)
+```
+
+#### **3. Security Considerations**
+- **Domain errors**: Safe to expose (business rules)
+- **Application errors**: Safe to expose (workflow issues)
+- **Infrastructure errors**: **Never expose internal details** (database schema, internal IDs, stack traces)
+
+### 🧪 Testing Error Scenarios
+
+#### **Unit Test Examples**
+```java
+@Test
+void shouldThrowInvalidIngredientNameException() {
+    // Domain layer validation
+    assertThrows(InvalidIngredientNameException.class, 
+        () -> new Ingredient(null, packageQuantity, packagePrice, unit));
+}
+
+@Test 
+void shouldThrowIngredientNotFoundExceptionWhenIngredientDoesNotExist() {
+    // Application layer error handling
+    when(repository.findById(id)).thenReturn(Optional.empty());
+    assertThrows(IngredientNotFoundException.class,
+        () -> useCase.execute(command));
+}
+```
+
+#### **Integration Test Examples**
+```java
+@Test
+void shouldReturn404WhenIngredientNotFound() {
+    // Infrastructure layer HTTP error mapping
+    mockMvc.perform(get("/ingredients/{id}", nonExistentId))
+           .andExpect(status().isNotFound())
+           .andExpect(jsonPath("$.error.code").value("APP-2001"));
+}
+```
+
+### 📊 Error Monitoring & Logging
+
+#### **Logging Levels by Layer**
+- **Domain errors**: `WARN` level (business rule violations)
+- **Application errors**: `ERROR` level (use case failures)  
+- **Infrastructure errors**: `ERROR` level (technical failures)
+
+#### **Error Metrics Tracking**
+- Error rate by layer and error code
+- Most frequent business rule violations
+- Infrastructure error patterns and trends
+- Response time impact of error handling
+
 ## Project Structure
 
 ```
