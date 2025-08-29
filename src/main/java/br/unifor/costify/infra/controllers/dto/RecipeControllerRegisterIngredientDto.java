@@ -5,7 +5,7 @@ import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-public record RecipeIngredientDto(
+public record RecipeControllerRegisterIngredientDto(
     @NotBlank String ingredientId,
     @DecimalMin(value = "0.01") double quantity,
     @NotNull Unit unit) {}

@@ -5,8 +5,8 @@ import br.unifor.costify.application.dto.entity.RecipeDto;
 import br.unifor.costify.application.usecase.RegisterRecipeUseCase;
 import br.unifor.costify.domain.valueobject.Id;
 import br.unifor.costify.domain.valueobject.RecipeIngredient;
-import br.unifor.costify.infra.controllers.dto.RecipeControllerRequest;
-import br.unifor.costify.infra.controllers.dto.RecipeIngredientDto;
+import br.unifor.costify.infra.controllers.dto.RecipeControllerRegisterRequest;
+import br.unifor.costify.infra.controllers.dto.RecipeControllerRegisterIngredientDto;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,7 +24,7 @@ public class RecipeController {
   }
 
   @PostMapping
-  public RecipeDto registerRecipe(@RequestBody @Valid RecipeControllerRequest request) {
+  public RecipeDto registerRecipe(@RequestBody @Valid RecipeControllerRegisterRequest request) {
     List<RecipeIngredient> ingredients = request.ingredients().stream()
         .map(dto -> new RecipeIngredient(
             Id.of(dto.ingredientId()),

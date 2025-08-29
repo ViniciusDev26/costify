@@ -3,7 +3,7 @@ package br.unifor.costify.infra.controllers;
 import br.unifor.costify.application.dto.command.RegisterIngredientCommand;
 import br.unifor.costify.application.dto.entity.IngredientDto;
 import br.unifor.costify.application.usecase.RegisterIngredientUseCase;
-import br.unifor.costify.infra.controllers.dto.IngredientControllerRequest;
+import br.unifor.costify.infra.controllers.dto.IngredientControllerRegisterRequest;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,7 +20,7 @@ public class IngredientController {
   }
 
   @PostMapping
-  public IngredientDto registerIngredient(@RequestBody @Valid IngredientControllerRequest request) {
+  public IngredientDto registerIngredient(@RequestBody @Valid IngredientControllerRegisterRequest request) {
     RegisterIngredientCommand command =
         new RegisterIngredientCommand(
             request.name(),

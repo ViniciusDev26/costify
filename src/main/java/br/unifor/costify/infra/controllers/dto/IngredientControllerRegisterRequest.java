@@ -5,7 +5,7 @@ import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-public record IngredientControllerRequest(
+public record IngredientControllerRegisterRequest(
     @NotBlank String name,
     @DecimalMin(value = "1") double packageQuantity,
     @DecimalMin(value = "1") double packagePrice,
