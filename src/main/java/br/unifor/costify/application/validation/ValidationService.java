@@ -5,7 +5,9 @@ import br.unifor.costify.domain.valueobject.RecipeIngredient;
 import br.unifor.costify.domain.valueobject.Unit;
 
 import java.util.List;
+import org.springframework.stereotype.Service;
 
+@Service
 public class ValidationService {
     
     public void validateIngredientData(String name, double packageQuantity, double packagePrice, Unit packageUnit) {

@@ -5,8 +5,10 @@ import br.unifor.costify.domain.entity.Recipe;
 import br.unifor.costify.domain.valueobject.Id;
 import br.unifor.costify.domain.valueobject.Money;
 import br.unifor.costify.domain.valueobject.RecipeIngredient;
+import org.springframework.stereotype.Component;
 import java.util.List;
 
+@Component
 public class RecipeFactory {
   private final IdGenerator idGenerator;
 

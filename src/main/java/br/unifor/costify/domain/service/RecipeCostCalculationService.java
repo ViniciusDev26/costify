@@ -11,7 +11,9 @@ import br.unifor.costify.domain.valueobject.RecipeIngredient;
 import java.util.List;
 import java.util.Map;
 import java.util.ArrayList;
+import org.springframework.stereotype.Service;
 
+@Service
 public class RecipeCostCalculationService {
 
     public RecipeCost calculateCost(Recipe recipe, Map<Id, Ingredient> ingredientMap) {

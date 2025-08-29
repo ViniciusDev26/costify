@@ -15,8 +15,11 @@ import br.unifor.costify.domain.valueobject.Money;
 import br.unifor.costify.domain.valueobject.RecipeCost;
 import br.unifor.costify.domain.valueobject.RecipeIngredient;
 
+import org.springframework.stereotype.Service;
+
 import java.util.Map;
 
+@Service
 public class RegisterRecipeUseCase {
   private final RecipeRepository recipeRepository;
   private final IngredientLoaderService ingredientLoaderService;
