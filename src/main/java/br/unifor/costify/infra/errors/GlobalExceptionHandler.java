@@ -54,7 +54,7 @@ public class GlobalExceptionHandler {
         ErrorResponse error = ErrorResponse.of(
             HttpStatus.NOT_FOUND.value(),
             "Not Found",
-            ErrorCode.INGREDIENT_NOT_FOUND.getCode(),
+            ErrorCode.RESOURCE_NOT_FOUND.getCode(),
             ex.getMessage(),
             request.getRequestURI()
         );
@@ -70,7 +70,7 @@ public class GlobalExceptionHandler {
         ErrorResponse error = ErrorResponse.of(
             HttpStatus.CONFLICT.value(),
             "Conflict",
-            ErrorCode.INGREDIENT_ALREADY_EXISTS.getCode(),
+            ErrorCode.RESOURCE_CONFLICT.getCode(),
             ex.getMessage(),
             request.getRequestURI()
         );
@@ -86,7 +86,7 @@ public class GlobalExceptionHandler {
         ErrorResponse error = ErrorResponse.of(
             HttpStatus.NOT_FOUND.value(),
             "Not Found",
-            ErrorCode.RECIPE_NOT_FOUND.getCode(),
+            ErrorCode.RESOURCE_NOT_FOUND.getCode(),
             ex.getMessage(),
             request.getRequestURI()
         );
@@ -102,7 +102,7 @@ public class GlobalExceptionHandler {
         ErrorResponse error = ErrorResponse.of(
             HttpStatus.CONFLICT.value(),
             "Conflict",
-            ErrorCode.RECIPE_ALREADY_EXISTS.getCode(),
+            ErrorCode.RESOURCE_CONFLICT.getCode(),
             ex.getMessage(),
             request.getRequestURI()
         );
@@ -122,7 +122,7 @@ public class GlobalExceptionHandler {
         ErrorResponse error = ErrorResponse.of(
             HttpStatus.BAD_REQUEST.value(),
             "Bad Request",
-            ErrorCode.INVALID_INGREDIENT_NAME.getCode(),
+            ErrorCode.BUSINESS_RULE_VIOLATION.getCode(),
             ex.getMessage(),
             request.getRequestURI()
         );
@@ -138,7 +138,7 @@ public class GlobalExceptionHandler {
         ErrorResponse error = ErrorResponse.of(
             HttpStatus.BAD_REQUEST.value(),
             "Bad Request",
-            ErrorCode.NEGATIVE_MONEY.getCode(),
+            ErrorCode.BUSINESS_RULE_VIOLATION.getCode(),
             ex.getMessage(),
             request.getRequestURI()
         );
@@ -154,7 +154,7 @@ public class GlobalExceptionHandler {
         ErrorResponse error = ErrorResponse.of(
             HttpStatus.BAD_REQUEST.value(),
             "Bad Request",
-            ErrorCode.EMPTY_RECIPE.getCode(),
+            ErrorCode.BUSINESS_RULE_VIOLATION.getCode(),
             ex.getMessage(),
             request.getRequestURI()
         );
@@ -170,7 +170,7 @@ public class GlobalExceptionHandler {
         ErrorResponse error = ErrorResponse.of(
             HttpStatus.BAD_REQUEST.value(),
             "Bad Request",
-            ErrorCode.INVALID_RECIPE_QUANTITY.getCode(),
+            ErrorCode.BUSINESS_RULE_VIOLATION.getCode(),
             ex.getMessage(),
             request.getRequestURI()
         );
@@ -186,7 +186,7 @@ public class GlobalExceptionHandler {
         ErrorResponse error = ErrorResponse.of(
             HttpStatus.BAD_REQUEST.value(),
             "Bad Request",
-            ErrorCode.INVALID_RECIPE_COST.getCode(),
+            ErrorCode.BUSINESS_RULE_VIOLATION.getCode(),
             ex.getMessage(),
             request.getRequestURI()
         );
@@ -360,7 +360,7 @@ public class GlobalExceptionHandler {
         ErrorResponse error = ErrorResponse.of(
             HttpStatus.METHOD_NOT_ALLOWED.value(),
             "Method Not Allowed",
-            ErrorCode.VALIDATION_ERROR.getCode(),
+            ErrorCode.METHOD_NOT_ALLOWED.getCode(),
             String.format("Method '%s' not supported for this endpoint", ex.getMethod()),
             request.getRequestURI()
         );
@@ -376,7 +376,7 @@ public class GlobalExceptionHandler {
         ErrorResponse error = ErrorResponse.of(
             HttpStatus.NOT_FOUND.value(),
             "Not Found",
-            ErrorCode.VALIDATION_ERROR.getCode(),
+            ErrorCode.RESOURCE_NOT_FOUND.getCode(),
             String.format("Endpoint '%s %s' not found", ex.getHttpMethod(), ex.getRequestURL()),
             request.getRequestURI()
         );
@@ -422,12 +422,12 @@ public class GlobalExceptionHandler {
      */
     private ErrorCode mapApplicationErrorCode(ApplicationErrorCode applicationErrorCode) {
         return switch (applicationErrorCode) {
-            case INGREDIENT_NOT_FOUND -> ErrorCode.INGREDIENT_NOT_FOUND;
-            case INGREDIENT_ALREADY_EXISTS -> ErrorCode.INGREDIENT_ALREADY_EXISTS;
-            case RECIPE_NOT_FOUND -> ErrorCode.RECIPE_NOT_FOUND;
-            case RECIPE_ALREADY_EXISTS -> ErrorCode.RECIPE_ALREADY_EXISTS;
-            case COST_CALCULATION_ERROR -> ErrorCode.COST_CALCULATION_ERROR;
-            case INGREDIENT_LOADING_ERROR -> ErrorCode.COST_CALCULATION_ERROR;
+            case INGREDIENT_NOT_FOUND -> ErrorCode.RESOURCE_NOT_FOUND;
+            case INGREDIENT_ALREADY_EXISTS -> ErrorCode.RESOURCE_CONFLICT;
+            case RECIPE_NOT_FOUND -> ErrorCode.RESOURCE_NOT_FOUND;
+            case RECIPE_ALREADY_EXISTS -> ErrorCode.RESOURCE_CONFLICT;
+            case COST_CALCULATION_ERROR -> ErrorCode.BUSINESS_LOGIC_ERROR;
+            case INGREDIENT_LOADING_ERROR -> ErrorCode.BUSINESS_LOGIC_ERROR;
             case APPLICATION_ERROR -> ErrorCode.INTERNAL_SERVER_ERROR;
         };
     }
@@ -450,12 +450,12 @@ public class GlobalExceptionHandler {
      */
     private ErrorCode mapDomainErrorCode(DomainErrorCode domainErrorCode) {
         return switch (domainErrorCode) {
-            case INVALID_INGREDIENT_NAME -> ErrorCode.INVALID_INGREDIENT_NAME;
-            case NEGATIVE_MONEY -> ErrorCode.NEGATIVE_MONEY;
-            case EMPTY_RECIPE -> ErrorCode.EMPTY_RECIPE;
-            case INVALID_QUANTITY -> ErrorCode.INVALID_RECIPE_QUANTITY;
-            case INVALID_TOTAL_COST -> ErrorCode.INVALID_RECIPE_COST;
-            case DOMAIN_CONSTRAINT_VIOLATION -> ErrorCode.VALIDATION_ERROR;
+            case INVALID_INGREDIENT_NAME -> ErrorCode.BUSINESS_RULE_VIOLATION;
+            case NEGATIVE_MONEY -> ErrorCode.BUSINESS_RULE_VIOLATION;
+            case EMPTY_RECIPE -> ErrorCode.BUSINESS_RULE_VIOLATION;
+            case INVALID_QUANTITY -> ErrorCode.BUSINESS_RULE_VIOLATION;
+            case INVALID_TOTAL_COST -> ErrorCode.BUSINESS_RULE_VIOLATION;
+            case DOMAIN_CONSTRAINT_VIOLATION -> ErrorCode.BUSINESS_RULE_VIOLATION;
         };
     }
 }

@@ -1,31 +1,28 @@
 package br.unifor.costify.infra.errors;
 
 /**
- * Layer-based error codes for the Costify application following Clean Architecture patterns.
- * Each error code identifies which layer the error originates from.
+ * Infrastructure layer error codes for REST API responses.
+ * Contains only technical/HTTP-related errors, maintaining Clean Architecture boundaries.
+ * Domain and Application layer errors are mapped to these generic codes in GlobalExceptionHandler.
  */
 public enum ErrorCode {
-    // Infrastructure layer errors (API/Framework level)
+    // Generic server errors
     INTERNAL_SERVER_ERROR("INFRA-000", "Internal server error"),
+    
+    // Request/Validation errors  
     VALIDATION_ERROR("INFRA-001", "Request validation failed"),
+    BAD_REQUEST("INFRA-400", "Bad request"),
     
-    // Application layer errors (Use case level)
-    INGREDIENT_NOT_FOUND("APP-100", "Ingredient not found"),
-    INGREDIENT_ALREADY_EXISTS("APP-101", "Ingredient already exists"),
-    RECIPE_NOT_FOUND("APP-200", "Recipe not found"),
-    RECIPE_ALREADY_EXISTS("APP-201", "Recipe already exists"),
-    COST_CALCULATION_ERROR("APP-300", "Error calculating recipe cost"),
+    // Resource errors
+    RESOURCE_NOT_FOUND("INFRA-404", "Resource not found"),
+    RESOURCE_CONFLICT("INFRA-409", "Resource conflict"),
     
-    // Domain layer errors (Business rules level)
-    INVALID_INGREDIENT_NAME("DOMAIN-100", "Invalid ingredient name"),
-    NEGATIVE_MONEY("DOMAIN-200", "Money amount cannot be negative"),
-    EMPTY_RECIPE("DOMAIN-300", "Recipe must have at least one ingredient"),
-    INVALID_RECIPE_QUANTITY("DOMAIN-301", "Invalid recipe ingredient quantity"),
-    INVALID_RECIPE_COST("DOMAIN-302", "Invalid recipe total cost"),
+    // Method errors
+    METHOD_NOT_ALLOWED("INFRA-405", "Method not allowed"),
     
-    // Domain business logic errors
-    INCOMPATIBLE_UNITS("DOMAIN-400", "Cannot convert between incompatible unit types"),
-    INSUFFICIENT_INVENTORY("DOMAIN-500", "Insufficient ingredient inventory");
+    // Business logic errors (mapped from domain/application layers)
+    BUSINESS_RULE_VIOLATION("INFRA-422", "Business rule violation"),
+    BUSINESS_LOGIC_ERROR("INFRA-400", "Business logic error");
 
     private final String code;
     private final String defaultMessage;

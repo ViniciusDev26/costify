@@ -71,7 +71,7 @@ class GlobalExceptionHandlerTest {
         assertNotNull(body);
         assertEquals(404, body.status());
         assertEquals("Not Found", body.error());
-        assertEquals("APP-100", body.code());
+        assertEquals("INFRA-404", body.code());
         assertEquals("Ingredient with ID 'test-id' not found", body.message());
         assertEquals("/api/test", body.path());
     }
@@ -87,7 +87,7 @@ class GlobalExceptionHandlerTest {
         assertNotNull(body);
         assertEquals(409, body.status());
         assertEquals("Conflict", body.error());
-        assertEquals("APP-101", body.code());
+        assertEquals("INFRA-409", body.code());
         assertEquals("Ingredient with name 'duplicate' already exists", body.message());
     }
 
@@ -101,7 +101,7 @@ class GlobalExceptionHandlerTest {
         ErrorResponse body = response.getBody();
         assertNotNull(body);
         assertEquals(404, body.status());
-        assertEquals("APP-200", body.code());
+        assertEquals("INFRA-404", body.code());
         assertEquals("Recipe with ID 'recipe-id' not found", body.message());
     }
 
@@ -115,7 +115,7 @@ class GlobalExceptionHandlerTest {
         ErrorResponse body = response.getBody();
         assertNotNull(body);
         assertEquals(409, body.status());
-        assertEquals("APP-201", body.code());
+        assertEquals("INFRA-409", body.code());
     }
 
     @Test
@@ -129,7 +129,7 @@ class GlobalExceptionHandlerTest {
         ErrorResponse body = response.getBody();
         assertNotNull(body);
         assertEquals(404, body.status());
-        assertEquals("APP-100", body.code());
+        assertEquals("INFRA-404", body.code());
         assertEquals("Test error", body.message());
     }
 
@@ -147,7 +147,7 @@ class GlobalExceptionHandlerTest {
         ErrorResponse body = response.getBody();
         assertNotNull(body);
         assertEquals(400, body.status());
-        assertEquals("DOMAIN-100", body.code());
+        assertEquals("INFRA-422", body.code());
         assertEquals("Invalid name", body.message());
     }
 
@@ -160,7 +160,7 @@ class GlobalExceptionHandlerTest {
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         ErrorResponse body = response.getBody();
         assertNotNull(body);
-        assertEquals("DOMAIN-200", body.code());
+        assertEquals("INFRA-422", body.code());
     }
 
     @Test
@@ -172,7 +172,7 @@ class GlobalExceptionHandlerTest {
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         ErrorResponse body = response.getBody();
         assertNotNull(body);
-        assertEquals("DOMAIN-300", body.code());
+        assertEquals("INFRA-422", body.code());
     }
 
     @Test
@@ -184,7 +184,7 @@ class GlobalExceptionHandlerTest {
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         ErrorResponse body = response.getBody();
         assertNotNull(body);
-        assertEquals("DOMAIN-301", body.code());
+        assertEquals("INFRA-422", body.code());
     }
 
     @Test
@@ -196,7 +196,7 @@ class GlobalExceptionHandlerTest {
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         ErrorResponse body = response.getBody();
         assertNotNull(body);
-        assertEquals("DOMAIN-302", body.code());
+        assertEquals("INFRA-422", body.code());
     }
 
     @Test
@@ -210,7 +210,7 @@ class GlobalExceptionHandlerTest {
         ErrorResponse body = response.getBody();
         assertNotNull(body);
         assertEquals(400, body.status());
-        assertEquals("DOMAIN-100", body.code());
+        assertEquals("INFRA-422", body.code());
         assertEquals("Domain error", body.message());
     }
 
@@ -316,7 +316,7 @@ class GlobalExceptionHandlerTest {
         ErrorResponse body = response.getBody();
         assertNotNull(body);
         assertEquals(405, body.status());
-        assertEquals("INFRA-001", body.code());
+        assertEquals("INFRA-405", body.code());
         assertEquals("Method 'POST' not supported for this endpoint", body.message());
     }
 
@@ -330,7 +330,7 @@ class GlobalExceptionHandlerTest {
         ErrorResponse body = response.getBody();
         assertNotNull(body);
         assertEquals(404, body.status());
-        assertEquals("INFRA-001", body.code());
+        assertEquals("INFRA-404", body.code());
         assertEquals("Endpoint 'GET /api/unknown' not found", body.message());
     }
 
