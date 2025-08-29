@@ -1,34 +1,45 @@
 # Costify
 
-Costify is a Java platform to calculate product costs from recipes. Each ingredient has quantity, unit, and price, allowing the real cost of the recipe to be computed. Built with Clean Architecture and Spring Boot.
+Costify is a Java platform for calculating product costs from recipes. Each ingredient has quantity, unit, and price data to compute real recipe costs. Built with Clean Architecture principles and Spring Boot.
 
 ---
 
 ## Features
 
+### 🚀 Core Functionality
+* **Recipe Management** - Complete CRUD operations for recipes with multiple ingredients
+* **Ingredient Management** - Full ingredient registration and management system  
+* **Cost Calculation Engine** - Real-time recipe cost calculation with ingredient breakdown
+* **REST API** - HTTP endpoints for all operations with JSON request/response
+
+### 🏗️ Architecture
 * **Clean Architecture** with Domain, Application, and Infrastructure layers
-* **Domain Modeling** with Value Objects (`Id`, `Unit`, `RecipeIngredient`) and entities (`Ingredient`, `Recipe`)
-* **Use Cases** for ingredient and recipe registration with business validation
-* **Repository Pattern** with dependency inversion (`IngredientRepository`, `RecipeRepository`)
-* **Entity Factories** for proper domain object creation
-* **DTO Organization** with separate command and entity DTOs
-* **Comprehensive Testing** with 55 unit and integration tests using JUnit 5
-* **Database Integration** with PostgreSQL, Flyway migrations, and Testcontainers
+* **Domain-Driven Design** with proper aggregates, entities, and value objects
+* **Repository Pattern** with dependency inversion and PostgreSQL persistence
+* **Use Case Pattern** for business workflows and validation
+* **Factory Pattern** for proper domain object creation
+
+### 🧪 Testing & Quality
+* **Comprehensive Test Suite** with 20+ test classes covering all layers
+* **Integration Testing** with real PostgreSQL database via Testcontainers
+* **Unit Testing** for domain logic, use cases, and DTOs
+* **Database Constraint Testing** with repository integration tests
+* **Migration Testing** with Flyway schema evolution verification
 
 ---
 
 ## Technology Stack
 
 * **Java 21** - Programming language
-* **Spring Boot 3.5.5** - Application framework
-* **Maven** - Build and dependency management
-* **PostgreSQL** - Database
-* **Flyway** - Database migration management
-* **JUnit 5** - Unit testing framework
-* **Mockito** - Mocking framework for tests
-* **Testcontainers** - Integration testing with real database
-* **Clean Architecture** - Architectural pattern
-* **Domain-Driven Design** - Domain modeling approach
+* **Spring Boot 3.5.5** - Application framework with embedded Tomcat
+* **Maven** - Build and dependency management  
+* **PostgreSQL** - Primary database with ACID transactions
+* **Flyway** - Database schema migration management
+* **JUnit 5** - Unit and integration testing framework
+* **Mockito** - Mocking framework for unit tests
+* **Testcontainers** - Integration testing with containerized PostgreSQL
+* **Spring Security** - Authentication and authorization
+* **Lombok** - Boilerplate code reduction
 
 ---
 
@@ -66,7 +77,7 @@ Build and run the application:
 ### Running Tests
 
 ```bash
-# Run all tests with Java assertions enabled
+# Run all tests with Java assertions enabled  
 ./mvnw test -DargLine="-ea"
 
 # Run only unit tests (exclude integration tests)
@@ -77,11 +88,46 @@ Build and run the application:
 
 # Run specific test class
 ./mvnw test -DargLine="-ea" -Dtest=IngredientTest
+
+# Clean build with all tests
+./mvnw clean install
 ```
 
-This enables Java assertions for domain validation tests. All 55 tests should pass.
+Java assertions are required for domain validation tests. All tests should pass consistently.
 
 ---
+
+## API Endpoints
+
+### 🎯 Available REST API
+
+Once the application is running, the following endpoints are available:
+
+```bash
+# Register new ingredient
+POST /ingredients
+Content-Type: application/json
+{
+  "name": "Flour", 
+  "packageQuantity": 1.0,
+  "packagePrice": 2.50,
+  "packageUnit": "KG"
+}
+
+# Register new recipe with ingredients  
+POST /recipes
+Content-Type: application/json
+{
+  "name": "Bread",
+  "ingredients": [
+    {
+      "ingredientId": "ingredient-uuid",
+      "quantity": 0.5,
+      "unit": "KG" 
+    }
+  ]
+}
+```
 
 ## Project Structure
 
@@ -90,46 +136,35 @@ src/
 ├── main/
 │   ├── java/br/unifor/costify/
 │   │   ├── CostifyApplication.java          # Spring Boot main class
-│   │   ├── application/                     # Application Layer (Use Cases & DTOs)
+│   │   ├── application/                     # ✅ Application Layer (Complete)
 │   │   │   ├── contracts/                   # Repository interfaces
-│   │   │   │   ├── IngredientRepository.java
-│   │   │   │   └── RecipeRepository.java
-│   │   │   ├── dto/
-│   │   │   │   ├── command/                 # Input DTOs for commands
-│   │   │   │   │   ├── RegisterIngredientCommand.java
-│   │   │   │   │   └── RegisterRecipeCommand.java
-│   │   │   │   └── entity/                  # Output DTOs for entities
-│   │   │   │       ├── IngredientDto.java
-│   │   │   │       └── RecipeDto.java
-│   │   │   ├── factory/                     # Entity creation factories
-│   │   │   │   ├── IngredientFactory.java
-│   │   │   │   └── RecipeFactory.java
-│   │   │   └── usecase/                     # Business use cases
-│   │   │       ├── RegisterIngredientUseCase.java
-│   │   │       └── RegisterRecipeUseCase.java
-│   │   └── domain/                          # Domain Layer (Core Business Logic)
-│   │       ├── contracts/
-│   │       │   └── IdGenerator.java         # Abstract ID generation
-│   │       ├── entity/
-│   │       │   ├── Ingredient.java          # Ingredient aggregate root
-│   │       │   └── Recipe.java              # Recipe aggregate root
-│   │       └── valueobject/
-│   │           ├── Id.java                  # Domain ID value object
-│   │           ├── RecipeIngredient.java    # Recipe-ingredient relationship
-│   │           └── Unit.java                # Measurement unit enum
+│   │   │   ├── dto/command/                 # Input DTOs (RegisterIngredient/RecipeCommand)
+│   │   │   ├── dto/entity/                  # Output DTOs (Ingredient/RecipeDto)  
+│   │   │   ├── dto/response/                # Response DTOs (Cost calculation)
+│   │   │   ├── errors/                      # Application exceptions
+│   │   │   ├── factory/                     # Domain object factories
+│   │   │   ├── service/                     # Application services
+│   │   │   ├── usecase/                     # Business workflows (4 use cases)
+│   │   │   └── validation/                  # Input validation service
+│   │   ├── domain/                          # ✅ Domain Layer (Complete) 
+│   │   │   ├── contracts/                   # Domain contracts (IdGenerator)
+│   │   │   ├── entity/                      # Aggregates (Ingredient, Recipe)
+│   │   │   ├── errors/                      # Domain exceptions hierarchy
+│   │   │   ├── events/                      # Domain events (ready for expansion)
+│   │   │   ├── service/                     # Domain services (Cost calculation)
+│   │   │   └── valueobject/                 # Value objects (Id, Money, Unit, etc.)
+│   │   ├── infra/                           # ✅ Infrastructure Layer (Complete)
+│   │   │   ├── config/                      # Security & UUID generation config
+│   │   │   ├── controllers/                 # REST endpoints (Ingredient/Recipe) 
+│   │   │   └── data/                        # JPA entities & PostgreSQL repositories
+│   │   └── infrastructure/                  # Additional infrastructure (expandable)
 │   └── resources/
-│       ├── application.properties           # Spring configuration
-│       └── db/migration/                    # Flyway migrations
-└── test/
-    └── java/br/unifor/costify/
-        ├── application/                     # Application layer tests
-        │   ├── dto/                         # DTO validation tests
-        │   └── usecase/                     # Use case business logic tests
-        ├── domain/                          # Domain unit tests
-        │   ├── entity/                      # Entity behavior tests
-        │   └── valueobject/                 # Value object tests
-        └── integration/                     # Integration tests
-            └── flyway/                      # Database migration tests
+│       ├── application.properties           # Spring Boot configuration
+│       └── db/migration/                    # ✅ 4 Flyway migration files
+└── test/                                    # ✅ 20+ comprehensive test classes
+    ├── integration/                         # Database & repository integration tests
+    ├── application/                         # Use case & DTO tests  
+    └── domain/                              # Domain logic unit tests
 ```
 
 ## Architecture Overview
