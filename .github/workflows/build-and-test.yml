@@ -19,4 +19,5 @@ jobs:
         distribution: 'temurin'
         cache: maven
     - name: Build and test
+      working-directory: apps/api
       run: mvn -B clean install
