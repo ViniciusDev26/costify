@@ -38,7 +38,7 @@ func main() {
 
 	// Setup dependencies
 	idGenerator := config.NewUuidGenerator()
-	
+
 	// Repositories
 	ingredientRepo := repository.NewIngredientRepository(db)
 	recipeRepo := repository.NewRecipeRepository(db)

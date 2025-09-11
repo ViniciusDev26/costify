@@ -15,7 +15,7 @@ type RecipeIngredientRequest struct {
 // ToRecipeIngredient converts to domain value object
 func (r *RecipeIngredientRequest) ToRecipeIngredient() (valueobject.RecipeIngredient, error) {
 	id := valueobject.Id{}.Of(r.IngredientID)
-	
+
 	unit, exists := valueobject.FromString(r.Unit)
 	if !exists {
 		return valueobject.RecipeIngredient{}, fmt.Errorf("invalid unit: %s", r.Unit)
@@ -33,7 +33,7 @@ type RecipeRegisterRequest struct {
 // ToRecipeIngredients converts all ingredients to domain value objects
 func (r *RecipeRegisterRequest) ToRecipeIngredients() ([]valueobject.RecipeIngredient, error) {
 	var ingredients []valueobject.RecipeIngredient
-	
+
 	for _, ingredientReq := range r.Ingredients {
 		ingredient, err := ingredientReq.ToRecipeIngredient()
 		if err != nil {
@@ -41,6 +41,6 @@ func (r *RecipeRegisterRequest) ToRecipeIngredients() ([]valueobject.RecipeIngre
 		}
 		ingredients = append(ingredients, ingredient)
 	}
-	
+
 	return ingredients, nil
 }

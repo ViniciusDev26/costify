@@ -19,7 +19,7 @@ func FromIngredientCost(ingredientCost valueobject.IngredientCost) IngredientCos
 		IngredientID:   ingredientCost.IngredientId().Value(),
 		IngredientName: ingredientCost.IngredientName(),
 		QuantityUsed:   ingredientCost.QuantityUsed(),
-		Unit:           string(ingredientCost.Unit()),
+		Unit:           ingredientCost.Unit().String(),
 		Cost:           ingredientCost.Cost().Amount(),
 	}
 }

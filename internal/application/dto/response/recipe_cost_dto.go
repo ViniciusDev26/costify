@@ -15,7 +15,7 @@ type RecipeCostDto struct {
 // FromRecipeCost creates a RecipeCostDto from a domain value object
 func FromRecipeCost(recipeCost valueobject.RecipeCost) RecipeCostDto {
 	var ingredientCostDtos []IngredientCostDto
-	
+
 	for _, ingredientCost := range recipeCost.IngredientCosts() {
 		ingredientCostDtos = append(ingredientCostDtos, FromIngredientCost(ingredientCost))
 	}

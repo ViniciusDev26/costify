@@ -2,7 +2,6 @@ package entity
 
 import (
 	"github.com/vini/costify-go/internal/domain/entity"
-	"github.com/vini/costify-go/internal/domain/valueobject"
 )
 
 // RecipeDto represents the data transfer object for a recipe

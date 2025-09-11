@@ -3,14 +3,12 @@ package command
 import (
 	"fmt"
 	"strings"
-
-	"github.com/vini/costify-go/internal/domain/valueobject"
 )
 
 // RegisterRecipeCommand represents the command to register a new recipe
 type RegisterRecipeCommand struct {
-	Name        string                     `json:"name" validate:"required"`
-	Ingredients []RecipeIngredientCommand  `json:"ingredients" validate:"required,min=1"`
+	Name        string                    `json:"name" validate:"required"`
+	Ingredients []RecipeIngredientCommand `json:"ingredients" validate:"required,min=1"`
 }
 
 // NewRegisterRecipeCommand creates a new RegisterRecipeCommand with validation

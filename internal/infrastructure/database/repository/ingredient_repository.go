@@ -22,7 +22,7 @@ func NewIngredientRepository(db *gorm.DB) *IngredientRepository {
 // Save saves an ingredient to the database
 func (r *IngredientRepository) Save(ingredient *entity.Ingredient) (*entity.Ingredient, error) {
 	ingredientTable := database.FromIngredientEntity(ingredient)
-	
+
 	if err := r.db.Create(ingredientTable).Error; err != nil {
 		return nil, fmt.Errorf("failed to save ingredient: %w", err)
 	}
@@ -33,7 +33,7 @@ func (r *IngredientRepository) Save(ingredient *entity.Ingredient) (*entity.Ingr
 // FindById finds an ingredient by ID
 func (r *IngredientRepository) FindById(id valueobject.Id) (*entity.Ingredient, error) {
 	var ingredientTable database.IngredientTable
-	
+
 	if err := r.db.Where("id = ?", id.Value()).First(&ingredientTable).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, fmt.Errorf("ingredient not found with ID: %s", id.Value())
@@ -47,7 +47,7 @@ func (r *IngredientRepository) FindById(id valueobject.Id) (*entity.Ingredient, 
 // ExistsByName checks if an ingredient exists by name
 func (r *IngredientRepository) ExistsByName(name string) (bool, error) {
 	var count int64
-	
+
 	if err := r.db.Model(&database.IngredientTable{}).Where("name = ?", name).Count(&count).Error; err != nil {
 		return false, fmt.Errorf("failed to check ingredient existence: %w", err)
 	}
@@ -58,11 +58,11 @@ func (r *IngredientRepository) ExistsByName(name string) (bool, error) {
 // DeleteById deletes an ingredient by ID
 func (r *IngredientRepository) DeleteById(id valueobject.Id) error {
 	result := r.db.Where("id = ?", id.Value()).Delete(&database.IngredientTable{})
-	
+
 	if result.Error != nil {
 		return fmt.Errorf("failed to delete ingredient: %w", result.Error)
 	}
-	
+
 	if result.RowsAffected == 0 {
 		return fmt.Errorf("ingredient not found with ID: %s", id.Value())
 	}

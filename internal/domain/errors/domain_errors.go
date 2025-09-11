@@ -1,6 +1,5 @@
 package errors
 
-
 // DomainError represents a base domain error
 type DomainError struct {
 	message string

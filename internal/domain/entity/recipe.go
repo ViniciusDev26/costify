@@ -70,7 +70,7 @@ func (r *Recipe) AddIngredient(ingredient valueobject.RecipeIngredient) {
 // RemoveIngredient removes an ingredient from the recipe by ingredient ID
 func (r *Recipe) RemoveIngredient(ingredientId valueobject.Id) error {
 	var updatedIngredients []valueobject.RecipeIngredient
-	
+
 	for _, ingredient := range r.ingredients {
 		if !ingredient.IngredientId().Equals(ingredientId) {
 			updatedIngredients = append(updatedIngredients, ingredient)

@@ -2,7 +2,6 @@ package entity
 
 import (
 	"github.com/vini/costify-go/internal/domain/entity"
-	"github.com/vini/costify-go/internal/domain/valueobject"
 )
 
 // IngredientDto represents the data transfer object for an ingredient
@@ -22,7 +21,7 @@ func FromIngredient(ingredient *entity.Ingredient) IngredientDto {
 		Name:            ingredient.Name(),
 		PackageQuantity: ingredient.PackageQuantity(),
 		PackagePrice:    ingredient.PackagePrice().Amount(),
-		PackageUnit:     string(ingredient.PackageUnit()),
+		PackageUnit:     ingredient.PackageUnit().String(),
 		UnitCost:        ingredient.UnitCost(),
 	}
 }

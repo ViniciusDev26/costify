@@ -3,8 +3,6 @@ package command
 import (
 	"fmt"
 	"strings"
-
-	"github.com/vini/costify-go/internal/domain/valueobject"
 )
 
 // RegisterIngredientCommand represents the command to register a new ingredient

@@ -27,7 +27,7 @@ func (IngredientTable) TableName() string {
 // ToEntity converts GORM model to domain entity
 func (it *IngredientTable) ToEntity() (*entity.Ingredient, error) {
 	id := valueobject.Id{}.Of(it.ID)
-	
+
 	money, err := valueobject.Money{}.Of(it.PackagePrice)
 	if err != nil {
 		return nil, err
@@ -74,7 +74,7 @@ func (RecipeTable) TableName() string {
 // ToEntity converts GORM model to domain entity
 func (rt *RecipeTable) ToEntity() (*entity.Recipe, error) {
 	id := valueobject.Id{}.Of(rt.ID)
-	
+
 	var ingredients []valueobject.RecipeIngredient
 	for _, ri := range rt.RecipeIngredients {
 		ingredient, err := ri.ToValueObject()
@@ -128,7 +128,7 @@ func (RecipeIngredientTable) TableName() string {
 // ToValueObject converts GORM model to domain value object
 func (rit *RecipeIngredientTable) ToValueObject() (valueobject.RecipeIngredient, error) {
 	ingredientId := valueobject.Id{}.Of(rit.IngredientID)
-	
+
 	unit, exists := valueobject.FromString(rit.Unit)
 	if !exists {
 		return valueobject.RecipeIngredient{}, fmt.Errorf("invalid unit: %s", rit.Unit)

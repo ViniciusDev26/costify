@@ -22,7 +22,7 @@ func NewRecipeRepository(db *gorm.DB) *RecipeRepository {
 // Save saves a recipe to the database
 func (r *RecipeRepository) Save(recipe *entity.Recipe) (*entity.Recipe, error) {
 	recipeTable := database.FromRecipeEntity(recipe)
-	
+
 	// Start transaction
 	tx := r.db.Begin()
 	if tx.Error != nil {
@@ -46,7 +46,7 @@ func (r *RecipeRepository) Save(recipe *entity.Recipe) (*entity.Recipe, error) {
 // FindById finds a recipe by ID
 func (r *RecipeRepository) FindById(id valueobject.Id) (*entity.Recipe, error) {
 	var recipeTable database.RecipeTable
-	
+
 	if err := r.db.Preload("RecipeIngredients").Where("id = ?", id.Value()).First(&recipeTable).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, fmt.Errorf("recipe not found with ID: %s", id.Value())
@@ -60,7 +60,7 @@ func (r *RecipeRepository) FindById(id valueobject.Id) (*entity.Recipe, error) {
 // ExistsByName checks if a recipe exists by name
 func (r *RecipeRepository) ExistsByName(name string) (bool, error) {
 	var count int64
-	
+
 	if err := r.db.Model(&database.RecipeTable{}).Where("name = ?", name).Count(&count).Error; err != nil {
 		return false, fmt.Errorf("failed to check recipe existence: %w", err)
 	}
@@ -88,7 +88,7 @@ func (r *RecipeRepository) DeleteById(id valueobject.Id) error {
 		tx.Rollback()
 		return fmt.Errorf("failed to delete recipe: %w", result.Error)
 	}
-	
+
 	if result.RowsAffected == 0 {
 		tx.Rollback()
 		return fmt.Errorf("recipe not found with ID: %s", id.Value())

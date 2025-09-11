@@ -1,6 +1,5 @@
 package errors
 
-
 // ApplicationError represents a base application error
 type ApplicationError struct {
 	message string

@@ -29,7 +29,7 @@ func NewRecipeHandler(
 // RegisterRecipe handles recipe registration
 func (h *RecipeHandler) RegisterRecipe(c *gin.Context) {
 	var request dto.RecipeRegisterRequest
-	
+
 	if err := c.ShouldBindJSON(&request); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

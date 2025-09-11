@@ -13,10 +13,10 @@ import (
 
 // RegisterRecipeUseCase handles the registration of new recipes
 type RegisterRecipeUseCase struct {
-	recipeRepository         contract.RecipeRepository
-	ingredientLoaderService  *service.IngredientLoaderService
-	recipeFactory            *factory.RecipeFactory
-	costCalculationService   *domainservice.RecipeCostCalculationService
+	recipeRepository        contract.RecipeRepository
+	ingredientLoaderService *service.IngredientLoaderService
+	recipeFactory           *factory.RecipeFactory
+	costCalculationService  *domainservice.RecipeCostCalculationService
 }
 
 // NewRegisterRecipeUseCase creates a new RegisterRecipeUseCase
@@ -54,7 +54,7 @@ func (uc *RegisterRecipeUseCase) Execute(cmd command.RegisterRecipeCommand) (ent
 		if !exists {
 			return entity.RecipeDto{}, errors.NewInvalidUnitError("Invalid unit: " + cmdIng.Unit)
 		}
-		
+
 		recipeIngredient, err := valueobject.NewRecipeIngredient(id, cmdIng.Quantity, unit)
 		if err != nil {
 			return entity.RecipeDto{}, err

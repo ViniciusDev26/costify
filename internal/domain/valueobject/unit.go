@@ -19,12 +19,12 @@ type Unit struct {
 var (
 	// Volume units (base: ML)
 	ML   = Unit{"ML", 1.0, Volume}
-	L    = Unit{"L", 1000.0, Volume}    // 1L = 1000ml
-	TBSP = Unit{"TBSP", 15.0, Volume}   // 1 tablespoon = 15ml (for liquids)
+	L    = Unit{"L", 1000.0, Volume}  // 1L = 1000ml
+	TBSP = Unit{"TBSP", 15.0, Volume} // 1 tablespoon = 15ml (for liquids)
 
 	// Weight units (base: G)
 	G           = Unit{"G", 1.0, Weight}
-	KG          = Unit{"KG", 1000.0, Weight}  // 1kg = 1000g
+	KG          = Unit{"KG", 1000.0, Weight}        // 1kg = 1000g
 	TBSP_BUTTER = Unit{"TBSP_BUTTER", 14.0, Weight} // 1 tablespoon butter ≈ 14g
 
 	// Count units

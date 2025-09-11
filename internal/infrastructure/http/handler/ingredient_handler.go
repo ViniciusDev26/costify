@@ -24,7 +24,7 @@ func NewIngredientHandler(registerIngredientUseCase *usecase.RegisterIngredientU
 // RegisterIngredient handles ingredient registration
 func (h *IngredientHandler) RegisterIngredient(c *gin.Context) {
 	var request dto.IngredientRegisterRequest
-	
+
 	if err := c.ShouldBindJSON(&request); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
