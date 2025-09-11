@@ -159,6 +159,59 @@ make migrate       # Run database migrations
 make fmt           # Format code
 make vet           # Vet code
 make lint          # Lint code (requires golangci-lint)
+make setup         # Setup development environment
+make install-hooks # Install lefthook Git hooks
+make uninstall-hooks # Remove lefthook Git hooks
+```
+
+### Git Hooks (Quality Assurance)
+
+This project uses **Lefthook** for managing Git hooks, equivalent to Husky in the JavaScript ecosystem. Hooks automatically run quality checks before commits and pushes.
+
+#### 🚀 Quick Setup (New Contributors)
+
+```bash
+# Complete setup - works on any machine after git clone
+make setup
+```
+
+This will:
+- Download Go dependencies
+- Install **lefthook** automatically
+- Configure all Git hooks via `.lefthook.yml`
+- Install golangci-lint
+
+#### 🎯 Hooks Configuration
+
+**Pre-commit hooks** (run in parallel):
+- **format**: Auto-format code with `go fmt`
+- **vet**: Static analysis with `go vet`
+- **unit-tests**: Fast unit tests (excludes integration)
+
+**Pre-push hooks** (run sequentially):
+- **mod-tidy**: Verify `go mod tidy` is clean
+- **lint**: Run `golangci-lint` (5min timeout)
+- **tests**: Full test suite including integration
+- **build**: Verify application builds
+
+**Commit message validation**:
+- Enforces conventional commits format (`feat:`, `fix:`, `docs:`, etc.)
+
+#### 🔧 Manual Hook Management
+
+```bash
+# Install only Git hooks
+make install-hooks
+
+# Remove Git hooks
+make uninstall-hooks
+
+# Test hooks manually
+lefthook run pre-commit
+lefthook run pre-push
+
+# Skip hooks temporarily
+LEFTHOOK=0 git commit -m "skip hooks"
 ```
 
 ### Environment Variables

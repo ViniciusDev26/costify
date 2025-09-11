@@ -1,0 +1,101 @@
+# Lefthook configuration for Costify Go
+# Equivalent to Husky for JavaScript/Node.js projects
+
+# Pre-commit hooks - run before each commit
+pre-commit:
+  parallel: true
+  commands:
+    format:
+      tags: [formatting]
+      name: Format Go code
+      run: go fmt ./...
+      stage_fixed: true
+    
+    vet:
+      tags: [analysis]
+      name: Go vet analysis
+      run: go vet ./...
+    
+    unit-tests:
+      tags: [testing]
+      name: Run unit tests
+      run: |
+        echo "Running unit tests (excluding integration)..."
+        for package in $(go list ./... | grep -v "test/integration"); do
+          go test -short "$package" 2>/dev/null || exit 1
+        done
+
+# Pre-push hooks - run before each push
+pre-push:
+  parallel: false
+  commands:
+    mod-tidy:
+      tags: [dependencies]
+      name: Verify go.mod is tidy
+      run: |
+        go mod tidy
+        if ! git diff --quiet go.mod go.sum; then
+          echo "❌ go mod tidy made changes. Please commit the updated go.mod and go.sum files."
+          git diff go.mod go.sum
+          exit 1
+        fi
+    
+    lint:
+      tags: [quality]
+      name: Run golangci-lint
+      run: |
+        export PATH=$PATH:$(go env GOPATH)/bin
+        if command -v golangci-lint &> /dev/null; then
+          golangci-lint run --timeout=5m
+        else
+          echo "⚠️  golangci-lint not found. Install it with:"
+          echo "   go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest"
+          exit 1
+        fi
+    
+    tests:
+      tags: [testing]
+      name: Run all tests
+      run: go test -v ./...
+    
+    build:
+      tags: [build]
+      name: Verify application builds
+      run: go build -v ./cmd/server
+
+# Post-merge hooks - run after successful merge
+post-merge:
+  commands:
+    deps:
+      tags: [dependencies]
+      name: Update dependencies
+      run: go mod download
+
+# Commit message hooks
+commit-msg:
+  commands:
+    conventional:
+      tags: [formatting]
+      name: Check conventional commit format
+      run: |
+        # Basic conventional commits validation (feat:, fix:, docs:, etc.)
+        if ! grep -qE "^(feat|fix|docs|style|refactor|test|chore|build|ci|perf|revert)(\(.+\))?: .+" "{1}"; then
+          echo "❌ Commit message must follow conventional commits format:"
+          echo "   type(scope): description"
+          echo "   Examples:"
+          echo "   feat: add user authentication"
+          echo "   fix(api): resolve validation error"
+          echo "   docs: update README installation steps"
+          exit 1
+        fi
+
+# Skip configuration - allows skipping specific hooks
+skip_output:
+  - meta
+  - execution
+
+# Output configuration
+output:
+  - summary
+  - success
+  - failure
