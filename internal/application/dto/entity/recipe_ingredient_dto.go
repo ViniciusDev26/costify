@@ -14,7 +14,7 @@ func FromRecipeIngredient(ingredient valueobject.RecipeIngredient) RecipeIngredi
 	return RecipeIngredientDto{
 		IngredientId: ingredient.IngredientId().Value(),
 		Quantity:     ingredient.Quantity(),
-		Unit:         ingredient.Unit().String(),
+		Unit:         ingredient.Unit().Name(),
 	}
 }
 

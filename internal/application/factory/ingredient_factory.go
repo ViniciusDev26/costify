@@ -31,6 +31,8 @@ func (f *IngredientFactory) Create(
 		return nil, err
 	}
 
+	// Defensive programming: validate unit even though HTTP layer may have validated it
+	// This ensures the factory remains independent and robust
 	unit, exists := valueobject.FromString(packageUnit)
 	if !exists {
 		return nil, errors.NewInvalidUnitError("Invalid unit: " + packageUnit)

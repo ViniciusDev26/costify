@@ -21,7 +21,7 @@ func FromIngredient(ingredient *entity.Ingredient) IngredientDto {
 		Name:            ingredient.Name(),
 		PackageQuantity: ingredient.PackageQuantity(),
 		PackagePrice:    ingredient.PackagePrice().Amount(),
-		PackageUnit:     ingredient.PackageUnit().String(),
+		PackageUnit:     ingredient.PackageUnit().Name(),
 		UnitCost:        ingredient.UnitCost(),
 	}
 }
