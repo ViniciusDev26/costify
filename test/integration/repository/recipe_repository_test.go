@@ -17,7 +17,7 @@ func TestRecipeRepository_Save(t *testing.T) {
 	ctx := context.Background()
 	helper, err := testdata.NewDatabaseTestHelper(ctx)
 	require.NoError(t, err)
-	defer helper.Cleanup(ctx)
+	defer func() { _ = helper.Cleanup(ctx) }()
 
 	recipeRepo := repository.NewRecipeRepository(helper.DB)
 	ingredientRepo := repository.NewIngredientRepository(helper.DB)
@@ -100,7 +100,7 @@ func TestRecipeRepository_FindById(t *testing.T) {
 	ctx := context.Background()
 	helper, err := testdata.NewDatabaseTestHelper(ctx)
 	require.NoError(t, err)
-	defer helper.Cleanup(ctx)
+	defer func() { _ = helper.Cleanup(ctx) }()
 
 	recipeRepo := repository.NewRecipeRepository(helper.DB)
 	ingredientRepo := repository.NewIngredientRepository(helper.DB)
@@ -166,7 +166,7 @@ func TestRecipeRepository_FindById_NotFound(t *testing.T) {
 	ctx := context.Background()
 	helper, err := testdata.NewDatabaseTestHelper(ctx)
 	require.NoError(t, err)
-	defer helper.Cleanup(ctx)
+	defer func() { _ = helper.Cleanup(ctx) }()
 
 	recipeRepo := repository.NewRecipeRepository(helper.DB)
 	nonExistentId := valueobject.Id{}.Of("non-existent-id")
@@ -181,7 +181,7 @@ func TestRecipeRepository_ExistsByName(t *testing.T) {
 	ctx := context.Background()
 	helper, err := testdata.NewDatabaseTestHelper(ctx)
 	require.NoError(t, err)
-	defer helper.Cleanup(ctx)
+	defer func() { _ = helper.Cleanup(ctx) }()
 
 	recipeRepo := repository.NewRecipeRepository(helper.DB)
 	ingredientRepo := repository.NewIngredientRepository(helper.DB)
@@ -241,7 +241,7 @@ func TestRecipeRepository_DeleteById(t *testing.T) {
 	ctx := context.Background()
 	helper, err := testdata.NewDatabaseTestHelper(ctx)
 	require.NoError(t, err)
-	defer helper.Cleanup(ctx)
+	defer func() { _ = helper.Cleanup(ctx) }()
 
 	recipeRepo := repository.NewRecipeRepository(helper.DB)
 	ingredientRepo := repository.NewIngredientRepository(helper.DB)
@@ -300,7 +300,7 @@ func TestRecipeRepository_DeleteById_NotFound(t *testing.T) {
 	ctx := context.Background()
 	helper, err := testdata.NewDatabaseTestHelper(ctx)
 	require.NoError(t, err)
-	defer helper.Cleanup(ctx)
+	defer func() { _ = helper.Cleanup(ctx) }()
 
 	recipeRepo := repository.NewRecipeRepository(helper.DB)
 	nonExistentId := valueobject.Id{}.Of("non-existent-id")

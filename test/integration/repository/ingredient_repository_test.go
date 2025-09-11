@@ -17,7 +17,7 @@ func TestIngredientRepository_Save(t *testing.T) {
 	ctx := context.Background()
 	helper, err := testdata.NewDatabaseTestHelper(ctx)
 	require.NoError(t, err)
-	defer helper.Cleanup(ctx)
+	defer func() { _ = helper.Cleanup(ctx) }()
 
 	repo := repository.NewIngredientRepository(helper.DB)
 	idGenerator := config.NewUuidGenerator()
@@ -51,7 +51,7 @@ func TestIngredientRepository_FindById(t *testing.T) {
 	ctx := context.Background()
 	helper, err := testdata.NewDatabaseTestHelper(ctx)
 	require.NoError(t, err)
-	defer helper.Cleanup(ctx)
+	defer func() { _ = helper.Cleanup(ctx) }()
 
 	repo := repository.NewIngredientRepository(helper.DB)
 	idGenerator := config.NewUuidGenerator()
@@ -88,7 +88,7 @@ func TestIngredientRepository_FindById_NotFound(t *testing.T) {
 	ctx := context.Background()
 	helper, err := testdata.NewDatabaseTestHelper(ctx)
 	require.NoError(t, err)
-	defer helper.Cleanup(ctx)
+	defer func() { _ = helper.Cleanup(ctx) }()
 
 	repo := repository.NewIngredientRepository(helper.DB)
 	nonExistentId := valueobject.Id{}.Of("non-existent-id")
@@ -103,7 +103,7 @@ func TestIngredientRepository_ExistsByName(t *testing.T) {
 	ctx := context.Background()
 	helper, err := testdata.NewDatabaseTestHelper(ctx)
 	require.NoError(t, err)
-	defer helper.Cleanup(ctx)
+	defer func() { _ = helper.Cleanup(ctx) }()
 
 	repo := repository.NewIngredientRepository(helper.DB)
 	idGenerator := config.NewUuidGenerator()
@@ -139,7 +139,7 @@ func TestIngredientRepository_DeleteById(t *testing.T) {
 	ctx := context.Background()
 	helper, err := testdata.NewDatabaseTestHelper(ctx)
 	require.NoError(t, err)
-	defer helper.Cleanup(ctx)
+	defer func() { _ = helper.Cleanup(ctx) }()
 
 	repo := repository.NewIngredientRepository(helper.DB)
 	idGenerator := config.NewUuidGenerator()
@@ -174,7 +174,7 @@ func TestIngredientRepository_DeleteById_NotFound(t *testing.T) {
 	ctx := context.Background()
 	helper, err := testdata.NewDatabaseTestHelper(ctx)
 	require.NoError(t, err)
-	defer helper.Cleanup(ctx)
+	defer func() { _ = helper.Cleanup(ctx) }()
 
 	repo := repository.NewIngredientRepository(helper.DB)
 	nonExistentId := valueobject.Id{}.Of("non-existent-id")
