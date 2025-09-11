@@ -11,12 +11,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up JDK 21
-      uses: actions/setup-java@v3
+    - uses: actions/checkout@v4
+    - name: Set up Go
+      uses: actions/setup-go@v4
       with:
-        java-version: '21'
-        distribution: 'temurin'
-        cache: maven
-    - name: Build and test
-      run: mvn -B clean install
+        go-version: '1.21'
+        cache: true
+    - name: Download dependencies
+      run: go mod download
+    - name: Run tests
+      run: go test -v ./...
+    - name: Build application
+      run: go build -v ./cmd/server
+    - name: Run vet
+      run: go vet ./...
+    - name: Run fmt check
+      run: |
+        if [ "$(gofmt -s -l . | wc -l)" -gt 0 ]; then
+          echo "Code is not formatted correctly"
+          gofmt -s -l .
+          exit 1
+        fi

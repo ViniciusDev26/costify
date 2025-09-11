@@ -46,15 +46,31 @@ func (uc *RegisterRecipeUseCase) Execute(cmd command.RegisterRecipeCommand) (ent
 			"Recipe with name '" + cmd.Name + "' already exists")
 	}
 
+	// Convert command ingredients to value objects
+	var recipeIngredients []valueobject.RecipeIngredient
+	for _, cmdIng := range cmd.Ingredients {
+		id := valueobject.Id{}.Of(cmdIng.IngredientId)
+		unit, exists := valueobject.FromString(cmdIng.Unit)
+		if !exists {
+			return entity.RecipeDto{}, errors.NewInvalidUnitError("Invalid unit: " + cmdIng.Unit)
+		}
+		
+		recipeIngredient, err := valueobject.NewRecipeIngredient(id, cmdIng.Quantity, unit)
+		if err != nil {
+			return entity.RecipeDto{}, err
+		}
+		recipeIngredients = append(recipeIngredients, recipeIngredient)
+	}
+
 	// Load ingredients and calculate cost
-	ingredientMap, err := uc.ingredientLoaderService.LoadIngredients(cmd.Ingredients)
+	ingredientMap, err := uc.ingredientLoaderService.LoadIngredients(recipeIngredients)
 	if err != nil {
 		return entity.RecipeDto{}, err
 	}
 
 	// Create temporary recipe with zero cost for cost calculation
 	zeroMoney := valueobject.Money{}.Zero()
-	tempRecipe, err := uc.recipeFactory.Create(cmd.Name, cmd.Ingredients, zeroMoney)
+	tempRecipe, err := uc.recipeFactory.Create(cmd.Name, recipeIngredients, zeroMoney)
 	if err != nil {
 		return entity.RecipeDto{}, err
 	}
@@ -66,7 +82,7 @@ func (uc *RegisterRecipeUseCase) Execute(cmd command.RegisterRecipeCommand) (ent
 	}
 
 	// Create final recipe with calculated total cost
-	recipe, err := uc.recipeFactory.Create(cmd.Name, cmd.Ingredients, recipeCost.TotalCost())
+	recipe, err := uc.recipeFactory.Create(cmd.Name, recipeIngredients, recipeCost.TotalCost())
 	if err != nil {
 		return entity.RecipeDto{}, err
 	}

@@ -1,6 +1,7 @@
 package factory
 
 import (
+	"github.com/vini/costify-go/internal/application/errors"
 	"github.com/vini/costify-go/internal/domain/contract"
 	"github.com/vini/costify-go/internal/domain/entity"
 	"github.com/vini/costify-go/internal/domain/valueobject"
@@ -23,11 +24,16 @@ func (f *IngredientFactory) Create(
 	name string,
 	packageQuantity float64,
 	packagePrice float64,
-	packageUnit valueobject.Unit,
+	packageUnit string,
 ) (*entity.Ingredient, error) {
 	money, err := valueobject.Money{}.Of(packagePrice)
 	if err != nil {
 		return nil, err
+	}
+
+	unit, exists := valueobject.FromString(packageUnit)
+	if !exists {
+		return nil, errors.NewInvalidUnitError("Invalid unit: " + packageUnit)
 	}
 
 	return entity.NewIngredientWithGenerator(
@@ -35,7 +41,7 @@ func (f *IngredientFactory) Create(
 		name,
 		packageQuantity,
 		money,
-		packageUnit,
+		unit,
 	)
 }
 

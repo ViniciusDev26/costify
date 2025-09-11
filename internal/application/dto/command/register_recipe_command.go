@@ -9,14 +9,14 @@ import (
 
 // RegisterRecipeCommand represents the command to register a new recipe
 type RegisterRecipeCommand struct {
-	Name        string                           `json:"name" validate:"required"`
-	Ingredients []valueobject.RecipeIngredient   `json:"ingredients" validate:"required,min=1"`
+	Name        string                     `json:"name" validate:"required"`
+	Ingredients []RecipeIngredientCommand  `json:"ingredients" validate:"required,min=1"`
 }
 
 // NewRegisterRecipeCommand creates a new RegisterRecipeCommand with validation
 func NewRegisterRecipeCommand(
 	name string,
-	ingredients []valueobject.RecipeIngredient,
+	ingredients []RecipeIngredientCommand,
 ) (RegisterRecipeCommand, error) {
 	if strings.TrimSpace(name) == "" {
 		return RegisterRecipeCommand{}, fmt.Errorf("recipe name cannot be null or empty")

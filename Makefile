@@ -67,22 +67,7 @@ vet:
 	@echo "Vetting code..."
 	@go vet ./...
 
-# Lint code (requires golangci-lint)
-lint:
-	@echo "Linting code..."
-	@golangci-lint run
-
-# Initialize Go modules
-mod-init:
-	@go mod tidy
-
 # Download dependencies
 deps:
 	@echo "Downloading dependencies..."
 	@go mod download
-
-# Setup development environment
-setup: deps
-	@echo "Setting up development environment..."
-	@echo "Make sure to have PostgreSQL running on localhost:5432"
-	@echo "Database: costify, User: postgres, Password: postgres"

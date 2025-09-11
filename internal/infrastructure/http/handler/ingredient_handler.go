@@ -30,19 +30,12 @@ func (h *IngredientHandler) RegisterIngredient(c *gin.Context) {
 		return
 	}
 
-	// Convert string unit to value object
-	unit, exists := request.ToUnit()
-	if !exists {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid unit: " + request.PackageUnit})
-		return
-	}
-
-	// Create command
+	// Create command with primitive types
 	cmd, err := command.NewRegisterIngredientCommand(
 		request.Name,
 		request.PackageQuantity,
 		request.PackagePrice,
-		unit,
+		request.PackageUnit,
 	)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})

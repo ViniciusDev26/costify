@@ -44,3 +44,11 @@ func NewRecipeNotFoundError(message string) error {
 		code:    "RECIPE_NOT_FOUND",
 	}
 }
+
+// Validation errors
+func NewInvalidUnitError(message string) error {
+	return ApplicationError{
+		message: message,
+		code:    "INVALID_UNIT",
+	}
+}

@@ -35,15 +35,18 @@ func (h *RecipeHandler) RegisterRecipe(c *gin.Context) {
 		return
 	}
 
-	// Convert ingredients to domain value objects
-	ingredients, err := request.ToRecipeIngredients()
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
+	// Convert ingredients to command DTOs
+	var ingredientCommands []command.RecipeIngredientCommand
+	for _, ing := range request.Ingredients {
+		ingredientCommands = append(ingredientCommands, command.RecipeIngredientCommand{
+			IngredientId: ing.IngredientID,
+			Quantity:     ing.Quantity,
+			Unit:         ing.Unit,
+		})
 	}
 
 	// Create command
-	cmd, err := command.NewRegisterRecipeCommand(request.Name, ingredients)
+	cmd, err := command.NewRegisterRecipeCommand(request.Name, ingredientCommands)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

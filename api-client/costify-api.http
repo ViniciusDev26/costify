@@ -11,7 +11,7 @@
 ### =============================================================================
 
 ### Register Condensed Milk Ingredient
-POST {{baseUrl}}/api/ingredients
+POST {{baseUrl}}/api/v1/ingredients
 Content-Type: {{contentType}}
 
 {
@@ -22,7 +22,7 @@ Content-Type: {{contentType}}
 }
 
 ### Register Milk Cream Ingredient
-POST {{baseUrl}}/api/ingredients
+POST {{baseUrl}}/api/v1/ingredients
 Content-Type: {{contentType}}
 
 {
@@ -33,7 +33,7 @@ Content-Type: {{contentType}}
 }
 
 ### Register Straberry Juice Ingredient
-POST {{baseUrl}}/api/ingredients
+POST {{baseUrl}}/api/v1/ingredients
 Content-Type: {{contentType}}
 
 {
@@ -44,7 +44,7 @@ Content-Type: {{contentType}}
 }
 
 ### Register Vanilla Extract Ingredient (TBSP for liquids)
-POST {{baseUrl}}/api/ingredients
+POST {{baseUrl}}/api/v1/ingredients
 Content-Type: {{contentType}}
 
 {
@@ -55,7 +55,7 @@ Content-Type: {{contentType}}
 }
 
 ### Register Butter Ingredient (TBSP_BUTTER for solid fats)
-POST {{baseUrl}}/api/ingredients
+POST {{baseUrl}}/api/v1/ingredients
 Content-Type: {{contentType}}
 
 {
@@ -71,24 +71,24 @@ Content-Type: {{contentType}}
 
 ### Register Simple Bread Recipe
 # NOTE: Replace ingredientId values with actual UUIDs from ingredient registration responses
-POST {{baseUrl}}/api/recipes
+POST {{baseUrl}}/api/v1/recipes
 Content-Type: {{contentType}}
 
 {
   "name": "Simple Mousse",
   "ingredients": [
     {
-      "ingredientId": "ba05ef12-2cd2-4e3a-97bc-e35a5ba4d272",
+      "ingredientId": "3fc86365-7e2e-457a-94b8-a407587a30cc",
       "quantity": 395.0,
       "unit": "G"
     },
     {
-      "ingredientId": "4e3d4962-fd74-4980-84f4-d2c8e2d69792",
+      "ingredientId": "d2c59ddf-b5df-4ea2-a8c0-53bcc219998a",
       "quantity": 200.0,
       "unit": "G"
     },
     {
-      "ingredientId": "9346c745-577f-46e7-ad2b-a8b0ab7a384d",
+      "ingredientId": "89a6256f-c4d8-4abe-9501-73dca99ffab8",
       "quantity": 2,
       "unit": "UN"
     }
@@ -97,7 +97,7 @@ Content-Type: {{contentType}}
 
 ### Register Cake Recipe
 # NOTE: Replace ingredientId values with actual UUIDs from ingredient registration responses
-POST {{baseUrl}}/api/recipes
+POST {{baseUrl}}/api/v1/recipes
 Content-Type: {{contentType}}
 
 {
@@ -131,7 +131,7 @@ Content-Type: {{contentType}}
 ### =============================================================================
 
 ### Invalid Ingredient - Missing Name
-POST {{baseUrl}}/api/ingredients
+POST {{baseUrl}}/api/v1/ingredients
 Content-Type: {{contentType}}
 
 {
@@ -141,7 +141,7 @@ Content-Type: {{contentType}}
 }
 
 ### Invalid Ingredient - Negative Price
-POST {{baseUrl}}/api/ingredients
+POST {{baseUrl}}/api/v1/ingredients
 Content-Type: {{contentType}}
 
 {
@@ -152,7 +152,7 @@ Content-Type: {{contentType}}
 }
 
 ### Invalid Recipe - Empty Ingredients
-POST {{baseUrl}}/api/recipes
+POST {{baseUrl}}/api/v1/recipes
 Content-Type: {{contentType}}
 
 {
@@ -161,7 +161,7 @@ Content-Type: {{contentType}}
 }
 
 ### Invalid Recipe - Invalid Unit
-POST {{baseUrl}}/api/recipes
+POST {{baseUrl}}/api/v1/recipes
 Content-Type: {{contentType}}
 
 {
