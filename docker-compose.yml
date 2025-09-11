@@ -21,6 +21,29 @@ services:
       timeout: 5s
       retries: 5
 
+  costify-go:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: costify-go-app
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: costify
+      DB_SSLMODE: disable
+      SERVER_PORT: 8080
+      GIN_MODE: release
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - costify-network
+    restart: unless-stopped
+
 volumes:
   postgres_data:
     driver: local
