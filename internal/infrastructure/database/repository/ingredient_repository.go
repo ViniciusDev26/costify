@@ -5,7 +5,7 @@ import (
 
 	"github.com/vini/costify-go/internal/domain/entity"
 	"github.com/vini/costify-go/internal/domain/valueobject"
-	"github.com/vini/costify-go/internal/infrastructure/database"
+	"github.com/vini/costify-go/internal/infrastructure/database/models"
 	"gorm.io/gorm"
 )
 
@@ -21,7 +21,7 @@ func NewIngredientRepository(db *gorm.DB) *IngredientRepository {
 
 // Save saves an ingredient to the database
 func (r *IngredientRepository) Save(ingredient *entity.Ingredient) (*entity.Ingredient, error) {
-	ingredientTable := database.FromIngredientEntity(ingredient)
+	ingredientTable := models.FromIngredientEntity(ingredient)
 
 	if err := r.db.Create(ingredientTable).Error; err != nil {
 		return nil, fmt.Errorf("failed to save ingredient: %w", err)
@@ -32,7 +32,7 @@ func (r *IngredientRepository) Save(ingredient *entity.Ingredient) (*entity.Ingr
 
 // FindById finds an ingredient by ID
 func (r *IngredientRepository) FindById(id valueobject.Id) (*entity.Ingredient, error) {
-	var ingredientTable database.IngredientTable
+	var ingredientTable models.IngredientTable
 
 	if err := r.db.Where("id = ?", id.Value()).First(&ingredientTable).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
@@ -48,7 +48,7 @@ func (r *IngredientRepository) FindById(id valueobject.Id) (*entity.Ingredient, 
 func (r *IngredientRepository) ExistsByName(name string) (bool, error) {
 	var count int64
 
-	if err := r.db.Model(&database.IngredientTable{}).Where("name = ?", name).Count(&count).Error; err != nil {
+	if err := r.db.Model(&models.IngredientTable{}).Where("name = ?", name).Count(&count).Error; err != nil {
 		return false, fmt.Errorf("failed to check ingredient existence: %w", err)
 	}
 
@@ -57,7 +57,7 @@ func (r *IngredientRepository) ExistsByName(name string) (bool, error) {
 
 // DeleteById deletes an ingredient by ID
 func (r *IngredientRepository) DeleteById(id valueobject.Id) error {
-	result := r.db.Where("id = ?", id.Value()).Delete(&database.IngredientTable{})
+	result := r.db.Where("id = ?", id.Value()).Delete(&models.IngredientTable{})
 
 	if result.Error != nil {
 		return fmt.Errorf("failed to delete ingredient: %w", result.Error)
