@@ -35,11 +35,9 @@
     "elysia": "^1.2.0",
     "@elysiajs/cors": "^1.2.0",
     "zod": "^3.23.8",
-    "uuid": "^10.0.0"
   },
   "devDependencies": {
     "@types/node": "^22.5.4",
-    "@types/uuid": "^10.0.0",
     "@types/bun": "latest",
     "@biomejs/biome": "^1.9.0",
     "@testcontainers/postgresql": "^10.13.1",
