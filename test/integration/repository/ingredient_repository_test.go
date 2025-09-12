@@ -1,7 +1,6 @@
 package repository_test
 
 import (
-	"context"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -10,16 +9,14 @@ import (
 	"github.com/vini/costify-go/internal/domain/valueobject"
 	"github.com/vini/costify-go/internal/infrastructure/config"
 	"github.com/vini/costify-go/internal/infrastructure/database/repository"
-	"github.com/vini/costify-go/test/integration/testdata"
 )
 
-func TestIngredientRepository_Save(t *testing.T) {
-	ctx := context.Background()
-	helper, err := testdata.NewDatabaseTestHelper(ctx)
-	require.NoError(t, err)
-	defer func() { _ = helper.Cleanup(ctx) }()
 
-	repo := repository.NewIngredientRepository(helper.DB)
+func TestIngredientRepository_Save(t *testing.T) {
+	// Clean database before test
+	require.NoError(t, sharedDB.CleanDatabase())
+
+	repo := repository.NewIngredientRepository(sharedDB.GetDB())
 	idGenerator := config.NewUuidGenerator()
 
 	// Create test ingredient
@@ -48,12 +45,10 @@ func TestIngredientRepository_Save(t *testing.T) {
 }
 
 func TestIngredientRepository_FindById(t *testing.T) {
-	ctx := context.Background()
-	helper, err := testdata.NewDatabaseTestHelper(ctx)
-	require.NoError(t, err)
-	defer func() { _ = helper.Cleanup(ctx) }()
+	// Clean database before test
+	require.NoError(t, sharedDB.CleanDatabase())
 
-	repo := repository.NewIngredientRepository(helper.DB)
+	repo := repository.NewIngredientRepository(sharedDB.GetDB())
 	idGenerator := config.NewUuidGenerator()
 
 	// Create and save test ingredient
@@ -85,27 +80,23 @@ func TestIngredientRepository_FindById(t *testing.T) {
 }
 
 func TestIngredientRepository_FindById_NotFound(t *testing.T) {
-	ctx := context.Background()
-	helper, err := testdata.NewDatabaseTestHelper(ctx)
-	require.NoError(t, err)
-	defer func() { _ = helper.Cleanup(ctx) }()
+	// Clean database before test
+	require.NoError(t, sharedDB.CleanDatabase())
 
-	repo := repository.NewIngredientRepository(helper.DB)
+	repo := repository.NewIngredientRepository(sharedDB.GetDB())
 	nonExistentId := valueobject.Id{}.Of("non-existent-id")
 
 	// Try to find non-existent ingredient
-	_, err = repo.FindById(nonExistentId)
+	_, err := repo.FindById(nonExistentId)
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "ingredient not found")
 }
 
 func TestIngredientRepository_ExistsByName(t *testing.T) {
-	ctx := context.Background()
-	helper, err := testdata.NewDatabaseTestHelper(ctx)
-	require.NoError(t, err)
-	defer func() { _ = helper.Cleanup(ctx) }()
+	// Clean database before test
+	require.NoError(t, sharedDB.CleanDatabase())
 
-	repo := repository.NewIngredientRepository(helper.DB)
+	repo := repository.NewIngredientRepository(sharedDB.GetDB())
 	idGenerator := config.NewUuidGenerator()
 
 	// Create and save test ingredient
@@ -136,12 +127,10 @@ func TestIngredientRepository_ExistsByName(t *testing.T) {
 }
 
 func TestIngredientRepository_DeleteById(t *testing.T) {
-	ctx := context.Background()
-	helper, err := testdata.NewDatabaseTestHelper(ctx)
-	require.NoError(t, err)
-	defer func() { _ = helper.Cleanup(ctx) }()
+	// Clean database before test
+	require.NoError(t, sharedDB.CleanDatabase())
 
-	repo := repository.NewIngredientRepository(helper.DB)
+	repo := repository.NewIngredientRepository(sharedDB.GetDB())
 	idGenerator := config.NewUuidGenerator()
 
 	// Create and save test ingredient
@@ -171,16 +160,14 @@ func TestIngredientRepository_DeleteById(t *testing.T) {
 }
 
 func TestIngredientRepository_DeleteById_NotFound(t *testing.T) {
-	ctx := context.Background()
-	helper, err := testdata.NewDatabaseTestHelper(ctx)
-	require.NoError(t, err)
-	defer func() { _ = helper.Cleanup(ctx) }()
+	// Clean database before test
+	require.NoError(t, sharedDB.CleanDatabase())
 
-	repo := repository.NewIngredientRepository(helper.DB)
+	repo := repository.NewIngredientRepository(sharedDB.GetDB())
 	nonExistentId := valueobject.Id{}.Of("non-existent-id")
 
 	// Try to delete non-existent ingredient
-	err = repo.DeleteById(nonExistentId)
+	err := repo.DeleteById(nonExistentId)
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "ingredient not found")
 }

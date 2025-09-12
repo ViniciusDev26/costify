@@ -1,7 +1,6 @@
 package repository_test
 
 import (
-	"context"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -10,17 +9,15 @@ import (
 	"github.com/vini/costify-go/internal/domain/valueobject"
 	"github.com/vini/costify-go/internal/infrastructure/config"
 	"github.com/vini/costify-go/internal/infrastructure/database/repository"
-	"github.com/vini/costify-go/test/integration/testdata"
 )
 
-func TestRecipeRepository_Save(t *testing.T) {
-	ctx := context.Background()
-	helper, err := testdata.NewDatabaseTestHelper(ctx)
-	require.NoError(t, err)
-	defer func() { _ = helper.Cleanup(ctx) }()
 
-	recipeRepo := repository.NewRecipeRepository(helper.DB)
-	ingredientRepo := repository.NewIngredientRepository(helper.DB)
+func TestRecipeRepository_Save(t *testing.T) {
+	// Clean database before test
+	require.NoError(t, sharedDB.CleanDatabase())
+
+	recipeRepo := repository.NewRecipeRepository(sharedDB.GetDB())
+	ingredientRepo := repository.NewIngredientRepository(sharedDB.GetDB())
 	idGenerator := config.NewUuidGenerator()
 
 	// Create test ingredients first
@@ -97,13 +94,11 @@ func TestRecipeRepository_Save(t *testing.T) {
 }
 
 func TestRecipeRepository_FindById(t *testing.T) {
-	ctx := context.Background()
-	helper, err := testdata.NewDatabaseTestHelper(ctx)
-	require.NoError(t, err)
-	defer func() { _ = helper.Cleanup(ctx) }()
+	// Clean database before test
+	require.NoError(t, sharedDB.CleanDatabase())
 
-	recipeRepo := repository.NewRecipeRepository(helper.DB)
-	ingredientRepo := repository.NewIngredientRepository(helper.DB)
+	recipeRepo := repository.NewRecipeRepository(sharedDB.GetDB())
+	ingredientRepo := repository.NewIngredientRepository(sharedDB.GetDB())
 	idGenerator := config.NewUuidGenerator()
 
 	// Create test ingredient
@@ -163,28 +158,24 @@ func TestRecipeRepository_FindById(t *testing.T) {
 }
 
 func TestRecipeRepository_FindById_NotFound(t *testing.T) {
-	ctx := context.Background()
-	helper, err := testdata.NewDatabaseTestHelper(ctx)
-	require.NoError(t, err)
-	defer func() { _ = helper.Cleanup(ctx) }()
+	// Clean database before test
+	require.NoError(t, sharedDB.CleanDatabase())
 
-	recipeRepo := repository.NewRecipeRepository(helper.DB)
+	recipeRepo := repository.NewRecipeRepository(sharedDB.GetDB())
 	nonExistentId := valueobject.Id{}.Of("non-existent-id")
 
 	// Try to find non-existent recipe
-	_, err = recipeRepo.FindById(nonExistentId)
+	_, err := recipeRepo.FindById(nonExistentId)
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "recipe not found")
 }
 
 func TestRecipeRepository_ExistsByName(t *testing.T) {
-	ctx := context.Background()
-	helper, err := testdata.NewDatabaseTestHelper(ctx)
-	require.NoError(t, err)
-	defer func() { _ = helper.Cleanup(ctx) }()
+	// Clean database before test
+	require.NoError(t, sharedDB.CleanDatabase())
 
-	recipeRepo := repository.NewRecipeRepository(helper.DB)
-	ingredientRepo := repository.NewIngredientRepository(helper.DB)
+	recipeRepo := repository.NewRecipeRepository(sharedDB.GetDB())
+	ingredientRepo := repository.NewIngredientRepository(sharedDB.GetDB())
 	idGenerator := config.NewUuidGenerator()
 
 	// Create test ingredient
@@ -238,13 +229,11 @@ func TestRecipeRepository_ExistsByName(t *testing.T) {
 }
 
 func TestRecipeRepository_DeleteById(t *testing.T) {
-	ctx := context.Background()
-	helper, err := testdata.NewDatabaseTestHelper(ctx)
-	require.NoError(t, err)
-	defer func() { _ = helper.Cleanup(ctx) }()
+	// Clean database before test
+	require.NoError(t, sharedDB.CleanDatabase())
 
-	recipeRepo := repository.NewRecipeRepository(helper.DB)
-	ingredientRepo := repository.NewIngredientRepository(helper.DB)
+	recipeRepo := repository.NewRecipeRepository(sharedDB.GetDB())
+	ingredientRepo := repository.NewIngredientRepository(sharedDB.GetDB())
 	idGenerator := config.NewUuidGenerator()
 
 	// Create test ingredient
@@ -297,16 +286,14 @@ func TestRecipeRepository_DeleteById(t *testing.T) {
 }
 
 func TestRecipeRepository_DeleteById_NotFound(t *testing.T) {
-	ctx := context.Background()
-	helper, err := testdata.NewDatabaseTestHelper(ctx)
-	require.NoError(t, err)
-	defer func() { _ = helper.Cleanup(ctx) }()
+	// Clean database before test
+	require.NoError(t, sharedDB.CleanDatabase())
 
-	recipeRepo := repository.NewRecipeRepository(helper.DB)
+	recipeRepo := repository.NewRecipeRepository(sharedDB.GetDB())
 	nonExistentId := valueobject.Id{}.Of("non-existent-id")
 
 	// Try to delete non-existent recipe
-	err = recipeRepo.DeleteById(nonExistentId)
+	err := recipeRepo.DeleteById(nonExistentId)
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "recipe not found")
 }

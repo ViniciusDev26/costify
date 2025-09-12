@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"sync"
 	"time"
 
 	"github.com/testcontainers/testcontainers-go"
@@ -20,6 +21,17 @@ type DatabaseTestHelper struct {
 	container testcontainers.Container
 	DB        *gorm.DB
 }
+
+// SharedDatabaseTestSuite manages a single database instance for multiple tests
+type SharedDatabaseTestSuite struct {
+	helper *DatabaseTestHelper
+	mu     sync.Mutex
+}
+
+var (
+	sharedInstance *SharedDatabaseTestSuite
+	once           sync.Once
+)
 
 func NewDatabaseTestHelper(ctx context.Context) (*DatabaseTestHelper, error) {
 	// Create postgres container
@@ -110,4 +122,44 @@ func (h *DatabaseTestHelper) CleanDatabase() error {
 	}
 	
 	return nil
+}
+
+// GetSharedDatabaseTestSuite returns a singleton instance of the shared database test suite
+func GetSharedDatabaseTestSuite(ctx context.Context) (*SharedDatabaseTestSuite, error) {
+	var err error
+	once.Do(func() {
+		helper, helperErr := NewDatabaseTestHelper(ctx)
+		if helperErr != nil {
+			err = helperErr
+			return
+		}
+		sharedInstance = &SharedDatabaseTestSuite{
+			helper: helper,
+		}
+	})
+	
+	if err != nil {
+		return nil, err
+	}
+	
+	return sharedInstance, nil
+}
+
+// GetDB returns the shared database connection
+func (s *SharedDatabaseTestSuite) GetDB() *gorm.DB {
+	return s.helper.DB
+}
+
+// CleanDatabase cleans all tables in the shared database (thread-safe)
+func (s *SharedDatabaseTestSuite) CleanDatabase() error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	return s.helper.CleanDatabase()
+}
+
+// Cleanup terminates the shared database container
+func (s *SharedDatabaseTestSuite) Cleanup(ctx context.Context) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	return s.helper.Cleanup(ctx)
 }
