@@ -10,6 +10,8 @@
     "start": "bun dist/main.js",
     "test": "bun test",
     "test:watch": "bun test --watch",
+    "test:unit": "bun test test/unit",
+    "test:integration": "bun test test/integration",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "bun run src/infrastructure/database/migrate.ts",
     "db:push": "drizzle-kit push",
