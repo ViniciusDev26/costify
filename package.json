@@ -1,0 +1,55 @@
+{
+  "name": "costify",
+  "version": "1.0.0",
+  "description": "A TypeScript platform for calculating product costs from recipes using Clean Architecture principles",
+  "main": "src/main.ts",
+  "type": "module",
+  "scripts": {
+    "build": "bun build src/main.ts --outdir dist --target bun",
+    "dev": "bun --watch src/main.ts",
+    "start": "bun dist/main.js",
+    "test": "vitest",
+    "test:coverage": "vitest --coverage",
+    "test:ui": "vitest --ui",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:deploy": "prisma migrate deploy",
+    "db:studio": "prisma studio",
+    "lint": "biome lint src/",
+    "lint:fix": "biome lint --apply src/",
+    "format": "biome format --write src/",
+    "check": "biome check src/"
+  },
+  "keywords": [
+    "typescript",
+    "clean-architecture",
+    "recipe-cost-calculator",
+    "ddd"
+  ],
+  "author": "Claude Code",
+  "license": "MIT",
+  "dependencies": {
+    "@prisma/client": "^5.19.1",
+    "decimal.js": "^10.4.3",
+    "elysia": "^1.2.0",
+    "@elysia/cors": "^1.2.0",
+    "zod": "^3.23.8",
+    "uuid": "^10.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.5.4",
+    "@types/uuid": "^10.0.0",
+    "@types/bun": "latest",
+    "@biomejs/biome": "^1.9.0",
+    "@testcontainers/postgresql": "^10.13.1",
+    "prisma": "^5.19.1",
+    "testcontainers": "^10.13.1",
+    "typescript": "^5.6.2",
+    "vitest": "^2.0.5",
+    "@vitest/coverage-v8": "^2.0.5",
+    "@vitest/ui": "^2.0.5"
+  },
+  "engines": {
+    "bun": ">=1.0.0"
+  }
+}

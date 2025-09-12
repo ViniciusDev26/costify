@@ -3,11 +3,11 @@ version: '3.8'
 services:
   postgres:
     image: postgres:16.9-alpine
-    container_name: costify-postgres
+    container_name: costify-ts-postgres
     environment:
-      POSTGRES_DB: costify
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: costify_ts
+      POSTGRES_USER: costify
+      POSTGRES_PASSWORD: costify123
     ports:
       - "5432:5432"
     volumes:
@@ -16,7 +16,7 @@ services:
     networks:
       - costify-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD-SHELL", "pg_isready -U costify -d costify_ts"]
       interval: 10s
       timeout: 5s
       retries: 5
