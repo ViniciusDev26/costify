@@ -1,7 +1,11 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, beforeAll } from 'bun:test'
 import { Money } from '@domain/valueobjects/Money.js'
+import { DecimalJsProvider } from '@infrastructure/providers/DecimalJsProvider.js'
 
 describe('Money', () => {
+  beforeAll(() => {
+    Money.configure(new DecimalJsProvider())
+  })
   describe('creation', () => {
     it('should create money with valid amount', () => {
       const money = new Money('10.50')

@@ -1,10 +1,14 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, beforeAll } from 'bun:test'
 import { Ingredient } from '@domain/entities/Ingredient.js'
 import { Id } from '@domain/valueobjects/Id.js'
 import { Money } from '@domain/valueobjects/Money.js'
 import { Unit } from '@domain/valueobjects/Unit.js'
+import { DecimalJsProvider } from '@infrastructure/providers/DecimalJsProvider.js'
 
 describe('Ingredient', () => {
+  beforeAll(() => {
+    Money.configure(new DecimalJsProvider())
+  })
   const validId = new Id('550e8400-e29b-41d4-a716-446655440000')
   const validPrice = new Money('2.50')
 
