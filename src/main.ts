@@ -1,5 +1,5 @@
 import { Elysia } from 'elysia'
-import { cors } from '@elysia/cors'
+import { cors } from '@elysiajs/cors'
 import { AppConfig } from './infrastructure/config/AppConfig.js'
 import { errorHandler } from './infrastructure/middleware/ErrorHandler.js'
 
@@ -7,11 +7,13 @@ const app = new Elysia()
 const config = AppConfig.getInstance()
 
 // Configure CORS
-app.use(cors({
-  origin: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-}))
+app.use(
+  cors({
+    origin: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  })
+)
 
 // Add error handler
 app.use(errorHandler)
@@ -25,9 +27,7 @@ app.get('/health', () => ({
 
 // API routes
 app.group('/api/v1', (app) =>
-  app
-    .use(config.ingredientController.routes())
-    .use(config.recipeController.routes())
+  app.use(config.ingredientController.routes()).use(config.recipeController.routes())
 )
 
 // Handle graceful shutdown

@@ -18,78 +18,97 @@ export class RecipeController {
     private readonly idGenerator: IdGenerator
   ) {
     this.registerUseCase = new RegisterRecipeUseCase(
-      recipeRepository, 
-      ingredientRepository, 
+      recipeRepository,
+      ingredientRepository,
       idGenerator
     )
     this.calculateCostUseCase = new CalculateRecipeCostUseCase(
-      recipeRepository, 
+      recipeRepository,
       ingredientRepository
     )
   }
 
   routes() {
     return new Elysia({ prefix: '/recipes' })
-      .post('/', async ({ body }) => {
-        const result = await this.registerUseCase.execute(body)
-        return { success: true, data: result }
-      }, {
-        body: t.Object({
-          name: t.String({ minLength: 1, maxLength: 255 }),
-          ingredients: t.Array(t.Object({
-            ingredientId: t.String(),
-            quantity: t.Union([t.String(), t.Number()]),
-            unit: t.Enum(Unit)
-          }), { minItems: 1 })
-        })
-      })
-      
+      .post(
+        '/',
+        async ({ body }) => {
+          const result = await this.registerUseCase.execute(body)
+          return { success: true, data: result }
+        },
+        {
+          body: t.Object({
+            name: t.String({ minLength: 1, maxLength: 255 }),
+            ingredients: t.Array(
+              t.Object({
+                ingredientId: t.String(),
+                quantity: t.Union([t.String(), t.Number()]),
+                unit: t.Enum(Unit),
+              }),
+              { minItems: 1 }
+            ),
+          }),
+        }
+      )
+
       .get('/', async () => {
         const recipes = await this.recipeRepository.findAll()
-        return { 
-          success: true, 
-          data: RecipeMapper.toDtoList(recipes)
+        return {
+          success: true,
+          data: RecipeMapper.toDtoList(recipes),
         }
       })
-      
-      .get('/:id', async ({ params }) => {
-        const recipe = await this.recipeRepository.findById(new Id(params.id))
-        if (!recipe) {
-          return { success: false, error: 'Recipe not found' }
+
+      .get(
+        '/:id',
+        async ({ params }) => {
+          const recipe = await this.recipeRepository.findById(new Id(params.id))
+          if (!recipe) {
+            return { success: false, error: 'Recipe not found' }
+          }
+          return {
+            success: true,
+            data: RecipeMapper.toDto(recipe),
+          }
+        },
+        {
+          params: t.Object({
+            id: t.String(),
+          }),
         }
-        return { 
-          success: true, 
-          data: RecipeMapper.toDto(recipe)
+      )
+
+      .get(
+        '/:id/cost',
+        async ({ params }) => {
+          const result = await this.calculateCostUseCase.execute({
+            recipeId: params.id,
+          })
+          return { success: true, data: result }
+        },
+        {
+          params: t.Object({
+            id: t.String(),
+          }),
         }
-      }, {
-        params: t.Object({
-          id: t.String()
-        })
-      })
-      
-      .get('/:id/cost', async ({ params }) => {
-        const result = await this.calculateCostUseCase.execute({ 
-          recipeId: params.id 
-        })
-        return { success: true, data: result }
-      }, {
-        params: t.Object({
-          id: t.String()
-        })
-      })
-      
-      .delete('/:id', async ({ params }) => {
-        const id = new Id(params.id)
-        const exists = await this.recipeRepository.existsById(id)
-        if (!exists) {
-          return { success: false, error: 'Recipe not found' }
+      )
+
+      .delete(
+        '/:id',
+        async ({ params }) => {
+          const id = new Id(params.id)
+          const exists = await this.recipeRepository.existsById(id)
+          if (!exists) {
+            return { success: false, error: 'Recipe not found' }
+          }
+          await this.recipeRepository.delete(id)
+          return { success: true, message: 'Recipe deleted successfully' }
+        },
+        {
+          params: t.Object({
+            id: t.String(),
+          }),
         }
-        await this.recipeRepository.delete(id)
-        return { success: true, message: 'Recipe deleted successfully' }
-      }, {
-        params: t.Object({
-          id: t.String()
-        })
-      })
+      )
   }
 }

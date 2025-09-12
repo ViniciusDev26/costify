@@ -21,8 +21,8 @@ export const errorHandler = new Elysia()
           error: {
             code: domainError.errorCode,
             message: domainError.message,
-            type: 'domain_error'
-          }
+            type: 'domain_error',
+          },
         }
       }
 
@@ -34,8 +34,8 @@ export const errorHandler = new Elysia()
           error: {
             code: appError.errorCode,
             message: appError.message,
-            type: 'application_error'
-          }
+            type: 'application_error',
+          },
         }
       }
 
@@ -47,8 +47,8 @@ export const errorHandler = new Elysia()
             code: 'VALIDATION_ERROR',
             message: 'Invalid request data',
             details: error.message,
-            type: 'validation_error'
-          }
+            type: 'validation_error',
+          },
         }
       }
 
@@ -59,8 +59,8 @@ export const errorHandler = new Elysia()
           error: {
             code: 'NOT_FOUND',
             message: 'Resource not found',
-            type: 'not_found'
-          }
+            type: 'not_found',
+          },
         }
       }
 
@@ -71,8 +71,8 @@ export const errorHandler = new Elysia()
           error: {
             code: 'INTERNAL_ERROR',
             message: 'An unexpected error occurred',
-            type: 'internal_error'
-          }
+            type: 'internal_error',
+          },
         }
       }
     }

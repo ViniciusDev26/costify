@@ -20,7 +20,7 @@ export class CalculateRecipeCostUseCase {
 
   async execute(command: CalculateRecipeCostCommand): Promise<RecipeCostDto> {
     const recipeId = new Id(command.recipeId)
-    
+
     // Find recipe
     const recipe = await this.recipeRepository.findById(recipeId)
     if (!recipe) {
@@ -30,7 +30,9 @@ export class CalculateRecipeCostUseCase {
     // Get all required ingredients
     const ingredients = []
     for (const recipeIngredient of recipe.getIngredients()) {
-      const ingredient = await this.ingredientRepository.findById(recipeIngredient.getIngredientId())
+      const ingredient = await this.ingredientRepository.findById(
+        recipeIngredient.getIngredientId()
+      )
       if (!ingredient) {
         throw new IngredientNotFoundException(recipeIngredient.getIngredientId().getValue())
       }

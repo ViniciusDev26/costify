@@ -53,8 +53,8 @@ Thumbs.db
 tmp/
 temp/
 
-# Prisma
-prisma/generated/
+# Database
+drizzle/
 
 # TypeScript
 *.tsbuildinfo

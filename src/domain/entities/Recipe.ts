@@ -13,7 +13,7 @@ export class Recipe {
   constructor(id: Id, name: string, ingredients: RecipeIngredient[], totalCost: Money) {
     this.validateName(name)
     this.validateIngredients(ingredients)
-    
+
     this.id = id
     this.name = name.trim()
     this.ingredients = [...ingredients] // Defensive copy
@@ -24,7 +24,7 @@ export class Recipe {
     if (!name || name.trim().length === 0) {
       throw new Error('Recipe name cannot be empty')
     }
-    
+
     if (name.trim().length > 255) {
       throw new Error('Recipe name too long (max 255 characters)')
     }
@@ -74,38 +74,36 @@ export class Recipe {
 
   addIngredient(ingredient: RecipeIngredient): void {
     // Check if ingredient already exists
-    const existingIngredient = this.ingredients.find(ing => 
+    const existingIngredient = this.ingredients.find((ing) =>
       ing.getIngredientId().equals(ingredient.getIngredientId())
     )
-    
+
     if (existingIngredient) {
-      throw new Error(`Ingredient ${ingredient.getIngredientId().getValue()} already exists in recipe`)
+      throw new Error(
+        `Ingredient ${ingredient.getIngredientId().getValue()} already exists in recipe`
+      )
     }
 
     this.ingredients.push(ingredient)
   }
 
   removeIngredient(ingredientId: Id): void {
-    const index = this.ingredients.findIndex(ing => 
-      ing.getIngredientId().equals(ingredientId)
-    )
-    
+    const index = this.ingredients.findIndex((ing) => ing.getIngredientId().equals(ingredientId))
+
     if (index === -1) {
       throw new Error(`Ingredient ${ingredientId.getValue()} not found in recipe`)
     }
 
     this.ingredients.splice(index, 1)
-    
+
     if (this.ingredients.length === 0) {
       throw new EmptyRecipeException()
     }
   }
 
   updateIngredientQuantity(ingredientId: Id, newQuantity: string | number): void {
-    const ingredient = this.ingredients.find(ing => 
-      ing.getIngredientId().equals(ingredientId)
-    )
-    
+    const ingredient = this.ingredients.find((ing) => ing.getIngredientId().equals(ingredientId))
+
     if (!ingredient) {
       throw new Error(`Ingredient ${ingredientId.getValue()} not found in recipe`)
     }
@@ -118,9 +116,7 @@ export class Recipe {
     )
 
     // Replace the ingredient
-    const index = this.ingredients.findIndex(ing => 
-      ing.getIngredientId().equals(ingredientId)
-    )
+    const index = this.ingredients.findIndex((ing) => ing.getIngredientId().equals(ingredientId))
     this.ingredients[index] = updatedIngredient
   }
 
@@ -133,9 +129,7 @@ export class Recipe {
   }
 
   hasIngredient(ingredientId: Id): boolean {
-    return this.ingredients.some(ing => 
-      ing.getIngredientId().equals(ingredientId)
-    )
+    return this.ingredients.some((ing) => ing.getIngredientId().equals(ingredientId))
   }
 
   equals(other: Recipe): boolean {

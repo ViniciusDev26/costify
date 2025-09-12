@@ -12,6 +12,6 @@ export class IngredientMapper {
   }
 
   static toDtoList(ingredients: Ingredient[]): IngredientDto[] {
-    return ingredients.map(ingredient => this.toDto(ingredient))
+    return ingredients.map((ingredient) => this.toDto(ingredient))
   }
 }

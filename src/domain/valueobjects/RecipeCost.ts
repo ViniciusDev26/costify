@@ -33,9 +33,7 @@ export class RecipeCost {
   }
 
   getIngredientCostById(ingredientId: string): IngredientCost | undefined {
-    return this.ingredientCosts.find(cost => 
-      cost.getIngredientId().getValue() === ingredientId
-    )
+    return this.ingredientCosts.find((cost) => cost.getIngredientId().getValue() === ingredientId)
   }
 
   getIngredientCount(): number {
@@ -55,16 +53,12 @@ export class RecipeCost {
       return false
     }
 
-    return this.ingredientCosts.every((cost, index) => 
-      cost.equals(other.ingredientCosts[index])
-    )
+    return this.ingredientCosts.every((cost, index) => cost.equals(other.ingredientCosts[index]))
   }
 
   toString(): string {
-    const ingredientLines = this.ingredientCosts
-      .map(cost => `  - ${cost.toString()}`)
-      .join('\n')
-    
+    const ingredientLines = this.ingredientCosts.map((cost) => `  - ${cost.toString()}`).join('\n')
+
     return `Recipe Cost: ${this.totalCost.toFixed(2)}\nIngredients:\n${ingredientLines}`
   }
 }

@@ -11,12 +11,13 @@ export class RecipeFactory {
 
   createFromCommand(command: RegisterRecipeCommand): Recipe {
     const id = new Id(this.idGenerator.generate())
-    
-    const ingredients = command.ingredients.map(ingredientCommand => {
+
+    const ingredients = command.ingredients.map((ingredientCommand) => {
       const ingredientId = new Id(ingredientCommand.ingredientId)
-      const unit = typeof ingredientCommand.unit === 'string' 
-        ? UnitUtils.fromString(ingredientCommand.unit) 
-        : ingredientCommand.unit
+      const unit =
+        typeof ingredientCommand.unit === 'string'
+          ? UnitUtils.fromString(ingredientCommand.unit)
+          : ingredientCommand.unit
 
       return new RecipeIngredient(ingredientId, ingredientCommand.quantity, unit)
     })

@@ -8,11 +8,12 @@ export class Money {
     if (!Money.decimalProvider) {
       throw new Error('DecimalProvider must be configured before using Money')
     }
-    
-    const decimal = typeof amount === 'object' && 'toNumber' in amount 
-      ? amount 
-      : Money.decimalProvider.create(amount)
-      
+
+    const decimal =
+      typeof amount === 'object' && 'toNumber' in amount
+        ? amount
+        : Money.decimalProvider.create(amount)
+
     if (decimal.isNegative()) {
       throw new Error('Money amount cannot be negative')
     }
@@ -43,16 +44,18 @@ export class Money {
   }
 
   multiply(multiplier: string | number | IDecimal): Money {
-    const multiplierDecimal = typeof multiplier === 'object' && 'toNumber' in multiplier
-      ? multiplier
-      : Money.decimalProvider.create(multiplier)
+    const multiplierDecimal =
+      typeof multiplier === 'object' && 'toNumber' in multiplier
+        ? multiplier
+        : Money.decimalProvider.create(multiplier)
     return new Money(this.amount.multiply(multiplierDecimal))
   }
 
   divide(divisor: string | number | IDecimal): Money {
-    const divisorDecimal = typeof divisor === 'object' && 'toNumber' in divisor
-      ? divisor
-      : Money.decimalProvider.create(divisor)
+    const divisorDecimal =
+      typeof divisor === 'object' && 'toNumber' in divisor
+        ? divisor
+        : Money.decimalProvider.create(divisor)
     if (divisorDecimal.isZero()) {
       throw new Error('Cannot divide by zero')
     }

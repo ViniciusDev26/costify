@@ -20,7 +20,7 @@ export class UpdateIngredientUseCase {
 
   async execute(command: UpdateIngredientCommand): Promise<IngredientDto> {
     const id = new Id(command.id)
-    
+
     // Find existing ingredient
     const existingIngredient = await this.ingredientRepository.findById(id)
     if (!existingIngredient) {

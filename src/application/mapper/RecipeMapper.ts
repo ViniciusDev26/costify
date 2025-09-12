@@ -10,7 +10,7 @@ export class RecipeMapper {
     return {
       id: recipe.getId().getValue(),
       name: recipe.getName(),
-      ingredients: recipe.getIngredients().map(ingredient => ({
+      ingredients: recipe.getIngredients().map((ingredient) => ({
         ingredientId: ingredient.getIngredientId().getValue(),
         quantity: ingredient.getQuantity().toString(),
         unit: ingredient.getUnit(),
@@ -20,15 +20,15 @@ export class RecipeMapper {
   }
 
   static toDtoList(recipes: Recipe[]): RecipeDto[] {
-    return recipes.map(recipe => this.toDto(recipe))
+    return recipes.map((recipe) => this.toDto(recipe))
   }
 
   static recipeCostToDto(recipeCost: RecipeCost): RecipeCostDto {
     return {
       totalCost: recipeCost.getTotalCost().toFixed(2),
-      ingredientCosts: recipeCost.getIngredientCosts().map(cost => 
-        this.ingredientCostToDto(cost)
-      ),
+      ingredientCosts: recipeCost
+        .getIngredientCosts()
+        .map((cost) => this.ingredientCostToDto(cost)),
     }
   }
 

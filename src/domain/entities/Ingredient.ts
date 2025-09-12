@@ -11,7 +11,7 @@ export class Ingredient {
 
   constructor(id: Id, name: string, pricePerUnit: Money, unit: Unit) {
     this.validateName(name)
-    
+
     this.id = id
     this.name = name.trim()
     this.pricePerUnit = pricePerUnit
@@ -22,7 +22,7 @@ export class Ingredient {
     if (!name || name.trim().length === 0) {
       throw new InvalidIngredientNameException(name || 'null')
     }
-    
+
     if (name.trim().length > 255) {
       throw new InvalidIngredientNameException('Name too long (max 255 characters)')
     }

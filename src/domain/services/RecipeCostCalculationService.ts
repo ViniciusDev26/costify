@@ -14,7 +14,7 @@ export class RecipeCostCalculationService {
     let totalCost = Money.zero()
 
     for (const recipeIngredient of recipe.getIngredients()) {
-      const ingredient = ingredients.find(ing => 
+      const ingredient = ingredients.find((ing) =>
         ing.getId().equals(recipeIngredient.getIngredientId())
       )
 
@@ -26,12 +26,12 @@ export class RecipeCostCalculationService {
       if (ingredient.getUnit() !== recipeIngredient.getUnit()) {
         throw new Error(
           `Unit mismatch for ingredient ${ingredient.getName()}: ` +
-          `recipe requires ${recipeIngredient.getUnit()}, but ingredient is priced per ${ingredient.getUnit()}`
+            `recipe requires ${recipeIngredient.getUnit()}, but ingredient is priced per ${ingredient.getUnit()}`
         )
       }
 
       const ingredientTotalCost = ingredient.calculateCost(recipeIngredient.getQuantity())
-      
+
       const ingredientCost = new IngredientCost(
         ingredient.getId(),
         ingredient.getName(),

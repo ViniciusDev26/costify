@@ -12,9 +12,8 @@ export class IngredientFactory {
   createFromCommand(command: RegisterIngredientCommand): Ingredient {
     const id = new Id(this.idGenerator.generate())
     const money = new Money(command.pricePerUnit)
-    const unit = typeof command.unit === 'string' 
-      ? UnitUtils.fromString(command.unit) 
-      : command.unit
+    const unit =
+      typeof command.unit === 'string' ? UnitUtils.fromString(command.unit) : command.unit
 
     return new Ingredient(id, command.name, money, unit)
   }
@@ -24,8 +23,10 @@ export class IngredientFactory {
       existing.getId(),
       command.name ?? existing.getName(),
       command.pricePerUnit ? new Money(command.pricePerUnit) : existing.getPricePerUnit(),
-      command.unit 
-        ? (typeof command.unit === 'string' ? UnitUtils.fromString(command.unit) : command.unit)
+      command.unit
+        ? typeof command.unit === 'string'
+          ? UnitUtils.fromString(command.unit)
+          : command.unit
         : existing.getUnit()
     )
 

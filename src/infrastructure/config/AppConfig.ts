@@ -1,20 +1,19 @@
-import { PrismaClient } from '@prisma/client'
 import { Money } from '@domain/valueobjects/Money.js'
 import { RecipeIngredient } from '@domain/valueobjects/RecipeIngredient.js'
 import { DecimalJsProvider } from '../providers/DecimalJsProvider.js'
 import { UuidGenerator } from '../providers/UuidGenerator.js'
-import { PrismaIngredientRepository } from '../repositories/PrismaIngredientRepository.js'
-import { PrismaRecipeRepository } from '../repositories/PrismaRecipeRepository.js'
+import { DrizzleIngredientRepository } from '../repositories/DrizzleIngredientRepository.js'
+import { DrizzleRecipeRepository } from '../repositories/DrizzleRecipeRepository.js'
 import { IngredientController } from '../controllers/IngredientController.js'
 import { RecipeController } from '../controllers/RecipeController.js'
+import { db, client } from '../database/connection.js'
 
 export class AppConfig {
   private static instance: AppConfig
-  private readonly prisma: PrismaClient
   private readonly decimalProvider: DecimalJsProvider
   private readonly idGenerator: UuidGenerator
-  private readonly ingredientRepository: PrismaIngredientRepository
-  private readonly recipeRepository: PrismaRecipeRepository
+  private readonly ingredientRepository: DrizzleIngredientRepository
+  private readonly recipeRepository: DrizzleRecipeRepository
   public readonly ingredientController: IngredientController
   public readonly recipeController: RecipeController
 
@@ -22,19 +21,14 @@ export class AppConfig {
     // Initialize providers
     this.decimalProvider = new DecimalJsProvider()
     this.idGenerator = new UuidGenerator()
-    
+
     // Configure domain value objects
     Money.configure(this.decimalProvider)
     RecipeIngredient.configure(this.decimalProvider)
 
-    // Initialize database
-    this.prisma = new PrismaClient({
-      log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error']
-    })
-
-    // Initialize repositories
-    this.ingredientRepository = new PrismaIngredientRepository(this.prisma)
-    this.recipeRepository = new PrismaRecipeRepository(this.prisma)
+    // Initialize repositories with Drizzle database
+    this.ingredientRepository = new DrizzleIngredientRepository(db)
+    this.recipeRepository = new DrizzleRecipeRepository(db)
 
     // Initialize controllers
     this.ingredientController = new IngredientController(
@@ -56,10 +50,10 @@ export class AppConfig {
   }
 
   async close(): Promise<void> {
-    await this.prisma.$disconnect()
+    await client.end()
   }
 
-  getPrisma(): PrismaClient {
-    return this.prisma
+  getDatabase() {
+    return db
   }
 }

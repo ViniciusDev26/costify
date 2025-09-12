@@ -12,11 +12,12 @@ export class RecipeIngredient {
     if (!RecipeIngredient.decimalProvider) {
       throw new Error('DecimalProvider must be configured before using RecipeIngredient')
     }
-    
-    const quantityDecimal = typeof quantity === 'object' && 'toNumber' in quantity
-      ? quantity
-      : RecipeIngredient.decimalProvider.create(quantity)
-    
+
+    const quantityDecimal =
+      typeof quantity === 'object' && 'toNumber' in quantity
+        ? quantity
+        : RecipeIngredient.decimalProvider.create(quantity)
+
     if (quantityDecimal.isNegative() || quantityDecimal.isZero()) {
       throw new Error('Recipe ingredient quantity must be positive')
     }
@@ -50,7 +51,7 @@ export class RecipeIngredient {
     if (!(other instanceof RecipeIngredient)) {
       return false
     }
-    
+
     return (
       this.ingredientId.equals(other.ingredientId) &&
       this.quantity.equals(other.quantity) &&
