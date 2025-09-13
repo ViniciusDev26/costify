@@ -114,23 +114,23 @@ describe('DrizzleRecipeRepository Integration Tests', () => {
 
       // Verify recipe data
       expect(retrieved).not.toBeNull()
-      expect(retrieved!.getId().getValue()).toBe(recipeId)
-      expect(retrieved!.getName()).toBe('Test Recipe Cake')
-      expect(retrieved!.getTotalCost().toFixed(2)).toBe('3.38')
-      expect(retrieved!.getIngredients()).toHaveLength(2)
+      expect(retrieved?.getId().getValue()).toBe(recipeId)
+      expect(retrieved?.getName()).toBe('Test Recipe Cake')
+      expect(retrieved?.getTotalCost().toFixed(2)).toBe('3.38')
+      expect(retrieved?.getIngredients()).toHaveLength(2)
 
       // Verify ingredients
-      const ingredients = retrieved!.getIngredients()
+      const ingredients = retrieved?.getIngredients()
       const flour = ingredients.find((i) => i.getIngredientId().equals(testIngredient1.getId()))
       const sugar = ingredients.find((i) => i.getIngredientId().equals(testIngredient2.getId()))
 
       expect(flour).toBeDefined()
-      expect(flour!.getQuantity().toString()).toBe('1')
-      expect(flour!.getUnit()).toBe(Unit.KILOGRAM)
+      expect(flour?.getQuantity().toString()).toBe('1')
+      expect(flour?.getUnit()).toBe(Unit.KILOGRAM)
 
       expect(sugar).toBeDefined()
-      expect(sugar!.getQuantity().toString()).toBe('0.5')
-      expect(sugar!.getUnit()).toBe(Unit.KILOGRAM)
+      expect(sugar?.getQuantity().toString()).toBe('0.5')
+      expect(sugar?.getUnit()).toBe(Unit.KILOGRAM)
     })
 
     it('should return null for non-existent recipe', async () => {
@@ -162,9 +162,9 @@ describe('DrizzleRecipeRepository Integration Tests', () => {
 
       // Verify
       expect(retrieved).not.toBeNull()
-      expect(retrieved!.getName()).toBe('Test Recipe Bread')
-      expect(retrieved!.getTotalCost().toFixed(2)).toBe('5.00')
-      expect(retrieved!.getIngredients()).toHaveLength(1)
+      expect(retrieved?.getName()).toBe('Test Recipe Bread')
+      expect(retrieved?.getTotalCost().toFixed(2)).toBe('5.00')
+      expect(retrieved?.getIngredients()).toHaveLength(1)
     })
 
     it('should return null for non-existent recipe name', async () => {
@@ -210,17 +210,17 @@ describe('DrizzleRecipeRepository Integration Tests', () => {
       const retrieved = await recipeRepository.findById(new Id(recipeId))
 
       expect(retrieved).not.toBeNull()
-      expect(retrieved!.getName()).toBe('Test Recipe Updated Pizza')
-      expect(retrieved!.getTotalCost().toFixed(2)).toBe('4.19')
-      expect(retrieved!.getIngredients()).toHaveLength(2)
+      expect(retrieved?.getName()).toBe('Test Recipe Updated Pizza')
+      expect(retrieved?.getTotalCost().toFixed(2)).toBe('4.19')
+      expect(retrieved?.getIngredients()).toHaveLength(2)
 
       // Verify updated ingredients
-      const ingredients = retrieved!.getIngredients()
+      const ingredients = retrieved?.getIngredients()
       const flour = ingredients.find((i) => i.getIngredientId().equals(testIngredient1.getId()))
       const sugar = ingredients.find((i) => i.getIngredientId().equals(testIngredient2.getId()))
 
-      expect(flour!.getQuantity().toString()).toBe('1.5')
-      expect(sugar!.getQuantity().toString()).toBe('0.25')
+      expect(flour?.getQuantity().toString()).toBe('1.5')
+      expect(sugar?.getQuantity().toString()).toBe('0.25')
     })
   })
 
@@ -350,7 +350,7 @@ describe('DrizzleRecipeRepository Integration Tests', () => {
 
       // Find our test recipes (should be sorted by name)
       const testRecipes = allRecipes.filter(
-        (r) => r.getName().includes(`Test Recipe`) && r.getName().includes(`${timestamp}`)
+        (r) => r.getName().includes('Test Recipe') && r.getName().includes(`${timestamp}`)
       )
 
       expect(testRecipes.length).toBeGreaterThanOrEqual(3)

@@ -73,10 +73,10 @@ describe('DrizzleIngredientRepository Integration Tests', () => {
 
       // Verify
       expect(retrieved).not.toBeNull()
-      expect(retrieved!.getId().getValue()).toBe(ingredientId)
-      expect(retrieved!.getName()).toBe('Test Flour Integration')
-      expect(retrieved!.getPricePerUnit().toFixed(2)).toBe('3.50')
-      expect(retrieved!.getUnit()).toBe(Unit.KILOGRAM)
+      expect(retrieved?.getId().getValue()).toBe(ingredientId)
+      expect(retrieved?.getName()).toBe('Test Flour Integration')
+      expect(retrieved?.getPricePerUnit().toFixed(2)).toBe('3.50')
+      expect(retrieved?.getUnit()).toBe(Unit.KILOGRAM)
     })
 
     it('should return null for non-existent ingredient id', async () => {
@@ -104,9 +104,9 @@ describe('DrizzleIngredientRepository Integration Tests', () => {
 
       // Verify
       expect(retrieved).not.toBeNull()
-      expect(retrieved!.getName()).toBe('Test Sugar Integration')
-      expect(retrieved!.getPricePerUnit().toFixed(2)).toBe('2.25')
-      expect(retrieved!.getUnit()).toBe(Unit.KILOGRAM)
+      expect(retrieved?.getName()).toBe('Test Sugar Integration')
+      expect(retrieved?.getPricePerUnit().toFixed(2)).toBe('2.25')
+      expect(retrieved?.getUnit()).toBe(Unit.KILOGRAM)
     })
 
     it('should return null for non-existent ingredient name', async () => {
@@ -140,9 +140,9 @@ describe('DrizzleIngredientRepository Integration Tests', () => {
       const retrieved = await repository.findById(new Id(ingredientId))
 
       expect(retrieved).not.toBeNull()
-      expect(retrieved!.getName()).toBe('Test Premium Salt Integration')
-      expect(retrieved!.getPricePerUnit().toFixed(2)).toBe('1.50')
-      expect(retrieved!.getUnit()).toBe(Unit.GRAM)
+      expect(retrieved?.getName()).toBe('Test Premium Salt Integration')
+      expect(retrieved?.getPricePerUnit().toFixed(2)).toBe('1.50')
+      expect(retrieved?.getUnit()).toBe(Unit.GRAM)
     })
   })
 
@@ -260,7 +260,7 @@ describe('DrizzleIngredientRepository Integration Tests', () => {
 
       // Find our test ingredients (should be sorted by name)
       const testIngredients = allIngredients.filter(
-        (i) => i.getName().includes(`Test`) && i.getName().includes(`${timestamp}`)
+        (i) => i.getName().includes('Test') && i.getName().includes(`${timestamp}`)
       )
 
       expect(testIngredients.length).toBeGreaterThanOrEqual(3)

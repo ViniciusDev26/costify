@@ -4,14 +4,14 @@ import type { Id } from '@domain/valueobjects/Id.js'
 import { asc, eq } from 'drizzle-orm'
 import type { Database } from '../database/connection.js'
 import { recipeIngredients, recipes } from '../database/schema/index.js'
-import { DrizzleRecipeMapper } from '../mappers/DrizzleRecipeMapper.js'
+import { toDatabase, toDomain, toRecipeIngredients } from '../mappers/DrizzleRecipeMapper.js'
 
 export class DrizzleRecipeRepository implements RecipeRepository {
   constructor(private readonly db: Database) {}
 
   async save(recipe: Recipe): Promise<void> {
-    const recipeData = DrizzleRecipeMapper.toDatabase(recipe)
-    const ingredientsData = DrizzleRecipeMapper.toRecipeIngredients(recipe)
+    const recipeData = toDatabase(recipe)
+    const ingredientsData = toRecipeIngredients(recipe)
 
     await this.db.transaction(async (tx) => {
       // Create recipe
@@ -36,7 +36,7 @@ export class DrizzleRecipeRepository implements RecipeRepository {
       return null
     }
 
-    return DrizzleRecipeMapper.toDomain(result)
+    return toDomain(result)
   }
 
   async findByName(name: string): Promise<Recipe | null> {
@@ -51,7 +51,7 @@ export class DrizzleRecipeRepository implements RecipeRepository {
       return null
     }
 
-    return DrizzleRecipeMapper.toDomain(result)
+    return toDomain(result)
   }
 
   async findAll(): Promise<Recipe[]> {
@@ -62,12 +62,12 @@ export class DrizzleRecipeRepository implements RecipeRepository {
       orderBy: asc(recipes.name),
     })
 
-    return result.map((recipe) => DrizzleRecipeMapper.toDomain(recipe))
+    return result.map((recipe) => toDomain(recipe))
   }
 
   async update(recipe: Recipe): Promise<void> {
-    const recipeData = DrizzleRecipeMapper.toDatabase(recipe)
-    const ingredientsData = DrizzleRecipeMapper.toRecipeIngredients(recipe)
+    const recipeData = toDatabase(recipe)
+    const ingredientsData = toRecipeIngredients(recipe)
 
     await this.db.transaction(async (tx) => {
       // Update recipe

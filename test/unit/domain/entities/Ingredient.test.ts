@@ -29,9 +29,9 @@ describe('Ingredient', () => {
     })
 
     it('should throw error for null name', () => {
-      expect(() => new Ingredient(validId, null as any, validPrice, Unit.KILOGRAM)).toThrow(
-        'Invalid ingredient name'
-      )
+      expect(
+        () => new Ingredient(validId, null as unknown as string, validPrice, Unit.KILOGRAM)
+      ).toThrow('Invalid ingredient name')
     })
 
     it('should trim ingredient name', () => {

@@ -9,52 +9,52 @@ type DrizzleRecipeWithIngredients = SelectRecipe & {
   recipeIngredients: SelectRecipeIngredient[]
 }
 
-export class DrizzleRecipeMapper {
-  static toDomain(dbRecipe: DrizzleRecipeWithIngredients): Recipe {
-    const ingredients = dbRecipe.recipeIngredients.map(
-      (dbIngredient) =>
-        new RecipeIngredient(
-          new Id(dbIngredient.ingredientId),
-          dbIngredient.quantity,
-          this.mapUnit(dbIngredient.unit)
-        )
-    )
+function mapUnit(dbUnit: string): Unit {
+  return dbUnit as Unit // String enum mapping
+}
 
-    return new Recipe(
-      new Id(dbRecipe.id),
-      dbRecipe.name,
-      ingredients,
-      new Money(dbRecipe.totalCost)
-    )
-  }
+export function toDomain(dbRecipe: DrizzleRecipeWithIngredients): Recipe {
+  const ingredients = dbRecipe.recipeIngredients.map(
+    (dbIngredient) =>
+      new RecipeIngredient(
+        new Id(dbIngredient.ingredientId),
+        dbIngredient.quantity,
+        mapUnit(dbIngredient.unit)
+      )
+  )
 
-  static toDatabase(recipe: Recipe): {
-    id: string
-    name: string
-    totalCost: string
-  } {
-    return {
-      id: recipe.getId().getValue(),
-      name: recipe.getName(),
-      totalCost: recipe.getTotalCost().toString(),
-    }
-  }
+  return new Recipe(new Id(dbRecipe.id), dbRecipe.name, ingredients, new Money(dbRecipe.totalCost))
+}
 
-  static toRecipeIngredients(recipe: Recipe): {
-    recipeId: string
-    ingredientId: string
-    quantity: string
-    unit: string
-  }[] {
-    return recipe.getIngredients().map((ingredient) => ({
-      recipeId: recipe.getId().getValue(),
-      ingredientId: ingredient.getIngredientId().getValue(),
-      quantity: ingredient.getQuantity().toString(),
-      unit: ingredient.getUnit(),
-    }))
+export function toDatabase(recipe: Recipe): {
+  id: string
+  name: string
+  totalCost: string
+} {
+  return {
+    id: recipe.getId().getValue(),
+    name: recipe.getName(),
+    totalCost: recipe.getTotalCost().toString(),
   }
+}
 
-  private static mapUnit(dbUnit: string): Unit {
-    return dbUnit as Unit // String enum mapping
-  }
+export function toRecipeIngredients(recipe: Recipe): {
+  recipeId: string
+  ingredientId: string
+  quantity: string
+  unit: string
+}[] {
+  return recipe.getIngredients().map((ingredient) => ({
+    recipeId: recipe.getId().getValue(),
+    ingredientId: ingredient.getIngredientId().getValue(),
+    quantity: ingredient.getQuantity().toString(),
+    unit: ingredient.getUnit(),
+  }))
+}
+
+// Legacy compatibility
+export const DrizzleRecipeMapper = {
+  toDomain,
+  toDatabase,
+  toRecipeIngredients,
 }
