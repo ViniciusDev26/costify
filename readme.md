@@ -9,7 +9,7 @@ A modern TypeScript platform for calculating product costs from recipes using Cl
 - **Cost Calculation**: Real-time recipe cost calculation with ingredient breakdown
 - **Clean Architecture**: Domain-driven design with clear separation of concerns
 - **Precise Math**: Uses Decimal.js for accurate financial calculations (no floating-point errors)
-- **Modern Stack**: Bun runtime + Elysia framework + PostgreSQL + Prisma ORM
+- **Modern Stack**: Bun runtime + Elysia framework + PostgreSQL + Drizzle ORM
 
 ## 🏗️ Architecture
 
@@ -31,7 +31,7 @@ A modern TypeScript platform for calculating product costs from recipes using Cl
                   │
 ┌─────────────────┴───────────────────────────────────────────┐
 │                Infrastructure Layer                         │
-│        (Prisma Repositories, External APIs)                │
+│        (Drizzle Repositories, External APIs)               │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -39,9 +39,9 @@ A modern TypeScript platform for calculating product costs from recipes using Cl
 
 - **Runtime**: [Bun](https://bun.sh) (Fast JavaScript runtime)
 - **Framework**: [Elysia](https://elysiajs.com) (Fast and lightweight HTTP framework)
-- **Database**: PostgreSQL 16 + Prisma ORM
+- **Database**: PostgreSQL 16 + Drizzle ORM
 - **Language**: TypeScript
-- **Testing**: Vitest + Testcontainers
+- **Testing**: Bun Test + Testcontainers
 - **Linting/Formatting**: Biome
 - **Math**: Decimal.js (for precise financial calculations)
 
@@ -72,9 +72,9 @@ A modern TypeScript platform for calculating product costs from recipes using Cl
 
 4. **Setup database**
    ```bash
-   # Generate Prisma client
+   # Generate Drizzle client types
    bun db:generate
-   
+
    # Run migrations
    bun db:migrate
    ```
@@ -95,20 +95,20 @@ bun start                  # Start production server
 bun build                  # Build for production
 
 # Database
-bun db:generate           # Generate Prisma client
+bun db:generate           # Generate Drizzle client types
 bun db:migrate            # Run database migrations
-bun db:deploy             # Deploy migrations (production)
-bun db:studio             # Open Prisma Studio
+bun db:push               # Push schema changes to database
+bun db:studio             # Open Drizzle Studio
 
 # Testing
-bun test                  # Run tests
-bun test:coverage         # Run tests with coverage
-bun test:ui               # Run tests with UI
+bun test                  # Run all tests (unit + integration)
+bun test:unit             # Run unit tests only
+bun test:integration      # Run integration tests only
+bun test:watch            # Run tests in watch mode
 
 # Code Quality
 bun lint                  # Run linter
 bun lint:fix              # Fix linting issues
-bun format                # Format code
 bun check                 # Run all checks (lint + format)
 ```
 
@@ -150,24 +150,27 @@ All monetary values are handled through the `Money` value object, which uses Dec
 
 ## 🧪 Testing
 
-The project includes comprehensive testing:
+The project includes comprehensive testing with **Bun Test**:
 
 - **Unit Tests**: Domain entities, value objects, and use cases
-- **Integration Tests**: Database repositories with Testcontainers
-- **API Tests**: HTTP endpoints (planned)
+- **Integration Tests**: Database repositories with real PostgreSQL using Testcontainers
+- **Financial Precision Tests**: Specialized tests for Decimal.js monetary calculations
 
 ```bash
 # Run all tests
 bun test
 
-# Run with coverage
-bun test:coverage
+# Run unit tests only
+bun test:unit
 
 # Run integration tests only
-bun test integration
+bun test:integration
+
+# Run tests in watch mode
+bun test:watch
 
 # Run specific test file
-bun test src/domain/entities/Money.test.ts
+bun test test/unit/domain/valueobjects/Money.test.ts
 ```
 
 ## 🏛️ Clean Architecture Principles
@@ -186,7 +189,7 @@ bun test src/domain/entities/Money.test.ts
 
 ### Infrastructure Layer (`src/infrastructure/`)
 - **Controllers**: HTTP request handlers (Elysia)
-- **Repositories**: Database access (Prisma)
+- **Repositories**: Database access (Drizzle)
 - **Providers**: External service implementations
 
 ## 🌍 Environment Variables
@@ -243,7 +246,7 @@ curl http://localhost:3000/api/v1/recipes/{recipe-id}/cost
 
 2. **Setup production database**
    ```bash
-   bun db:deploy
+   bun db:migrate
    ```
 
 3. **Start production server**
@@ -287,7 +290,7 @@ docker compose logs postgres
 rm -rf node_modules bun.lockb
 bun install
 
-# Regenerate Prisma client
+# Regenerate Drizzle client
 bun db:generate
 ```
 

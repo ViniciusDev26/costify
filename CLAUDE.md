@@ -1,7 +1,7 @@
 # Costify - Architecture Overview
 
 ## Project Summary
-Costify is a Java platform for calculating product costs from recipes using Clean Architecture principles. Each ingredient has quantity, unit, and price data to compute real recipe costs.
+Costify is a TypeScript platform for calculating product costs from recipes using Clean Architecture principles. Built with Bun + Elysia for high performance and Decimal.js for precise financial calculations. Each ingredient has quantity, unit, and price data to compute real recipe costs.
 
 ## Architecture Overview
 
@@ -68,168 +68,133 @@ The project follows Clean/Hexagonal Architecture with clear separation of concer
 - **Dependencies**: Depends on Application and Domain layers
 
 ### Technology Stack
-- **Java 21**
-- **Spring Boot 3.5.5**
-- **Maven** (build tool)
+- **Bun** (JavaScript runtime)
+- **TypeScript** (type-safe JavaScript)
+- **Elysia** (fast and lightweight HTTP framework)
+- **Drizzle ORM** (TypeScript ORM with SQL-like syntax)
 - **PostgreSQL** (database)
-- **Flyway** (database migrations)
-- **JUnit 5** (testing)
+- **Decimal.js** (precise financial calculations)
+- **Zod** (schema validation)
 - **Testcontainers** (integration testing)
-- **Lombok** (boilerplate reduction)
-- **Spring Security** (authentication/authorization)
+- **Biome** (linting and formatting)
 
 ## Current Folder Structure
 
 ```
 costify/
 ├── src/
-│   ├── main/
-│   │   ├── java/
-│   │   │   └── br/unifor/costify/
-│   │   │       ├── CostifyApplication.java          # Spring Boot main class
-│   │   │       ├── application/                     # Application Layer (Use Cases & DTOs)
-│   │   │       │   ├── contracts/
-│   │   │       │   │   ├── IngredientRepository.java # Ingredient repository interface
-│   │   │       │   │   └── RecipeRepository.java    # Recipe repository interface
-│   │   │       │   ├── dto/
-│   │   │       │   │   ├── command/                 # Input DTOs for commands
-│   │   │       │   │   │   ├── RegisterIngredientCommand.java
-│   │   │       │   │   │   ├── RegisterRecipeCommand.java
-│   │   │       │   │   │   └── UpdateIngredientCommand.java
-│   │   │       │   │   ├── entity/                  # Output DTOs for entities
-│   │   │       │   │   │   ├── IngredientDto.java
-│   │   │       │   │   │   └── RecipeDto.java
-│   │   │       │   │   └── response/                # Response DTOs
-│   │   │       │   │   │   ├── IngredientCostDto.java
-│   │   │       │   │   │   └── RecipeCostDto.java
-│   │   │       │   ├── errors/                      # Application exceptions
-│   │   │       │   │   ├── IngredientAlreadyExistsException.java
-│   │   │       │   │   ├── IngredientNotFoundException.java
-│   │   │       │   │   ├── RecipeAlreadyExistsException.java
-│   │   │       │   │   └── RecipeNotFoundException.java
-│   │   │       │   ├── config/
-│   │   │       │   │   └── ValidationConfig.java     # Validation configuration
-│   │   │       │   ├── events/                      # Application events (empty)
-│   │   │       │   ├── service/
-│   │   │       │   │   └── IngredientLoaderService.java # Ingredient loading service
-│   │   │       │   ├── validation/
-│   │   │       │   │   └── ValidationService.java   # Input validation service
-│   │   │       │   ├── factory/
-│   │   │       │   │   ├── IngredientFactory.java   # Ingredient creation factory
-│   │   │       │   │   └── RecipeFactory.java       # Recipe creation factory
-│   │   │       │   └── usecase/
-│   │   │       │       ├── CalculateRecipeCostUseCase.java # Recipe cost calculation logic
-│   │   │       │       ├── RegisterIngredientUseCase.java # Ingredient registration logic
-│   │   │       │       ├── RegisterRecipeUseCase.java     # Recipe registration logic
-│   │   │       │       └── UpdateIngredientUseCase.java   # Ingredient update logic
-│   │   │       ├── domain/                          # Domain Layer (Core Business Logic)
-│   │   │       │   ├── contracts/
-│   │   │       │   │   └── IdGenerator.java         # Abstract ID generation
-│   │   │       │   ├── entity/
-│   │   │       │   │   ├── Ingredient.java          # Ingredient domain entity
-│   │   │       │   │   └── Recipe.java              # Recipe domain entity
-│   │   │       │   ├── errors/                      # Domain exceptions
-│   │   │       │   │   ├── DomainException.java     # Base domain exception
-│   │   │       │   │   ├── ingredient/
-│   │   │       │   │   │   └── InvalidIngredientNameException.java
-│   │   │       │   │   ├── money/
-│   │   │       │   │   │   └── NegativeMoneyException.java
-│   │   │       │   │   └── recipe/
-│   │   │       │   │       ├── EmptyRecipeException.java
-│   │   │       │   │       ├── InvalidQuantityException.java
-│   │   │       │   │       └── InvalidTotalCostException.java
-│   │   │       │   ├── events/                      # Domain events
-│   │   │       │   │   ├── ingredient/              # Ingredient domain events (empty)
-│   │   │       │   │   └── recipe/                  # Recipe domain events (empty)
-│   │   │       │   ├── service/
-│   │   │       │   │   └── RecipeCostCalculationService.java # Cost calculation domain service
-│   │   │       │   └── valueobject/
-│   │   │       │       ├── Id.java                  # Domain ID value object
-│   │   │       │       ├── IngredientCost.java      # Ingredient cost value object
-│   │   │       │       ├── Money.java               # Money value object
-│   │   │       │       ├── RecipeCost.java          # Recipe cost value object
-│   │   │       │       ├── RecipeIngredient.java    # Recipe-ingredient relationship
-│   │   │       │       └── Unit.java                # Measurement unit value object
-│   │   │       ├── infra/                           # Infrastructure Layer (Implemented)
-│   │   │       │   ├── config/
-│   │   │       │   │   ├── SecurityConfig.java      # Security configuration
-│   │   │       │   │   └── UuidGenerator.java       # UUID generation implementation
-│   │   │       │   ├── controllers/
-│   │   │       │   │   ├── IngredientController.java # REST endpoints for ingredients
-│   │   │       │   │   ├── RecipeController.java    # REST endpoints for recipes
-│   │   │       │   │   └── dto/
-│   │   │       │   │       ├── IngredientControllerRegisterRequest.java
-│   │   │       │   │       ├── RecipeControllerRegisterRequest.java
-│   │   │       │   │       └── RecipeControllerRegisterIngredientDto.java
-│   │   │       │   └── data/
-│   │   │       │       ├── entities/
-│   │   │       │       │   ├── IngredientTable.java # JPA entity for ingredients
-│   │   │       │       │   ├── RecipeTable.java     # JPA entity for recipes
-│   │   │       │       │   └── RecipeIngredientTable.java # JPA entity for recipe-ingredient relationship
-│   │   │       │       └── repositories/
-│   │   │       │           ├── jpa/
-│   │   │       │           │   ├── JpaIngredientRepository.java # JPA repository interface
-│   │   │       │           │   └── JpaRecipeRepository.java # JPA recipe repository interface
-│   │   │       │           └── postgres/
-│   │   │       │               ├── PostgresIngredientRepository.java # Repository implementation
-│   │   │       │               └── PostgresRecipeRepository.java # Recipe repository implementation
-│   │   │       └── infrastructure/                  # Additional infrastructure (mostly empty)
-│   │   │           └── events/                      # Infrastructure events (empty)
-│   │   └── resources/
-│   │       ├── application.properties               # Spring configuration
-│   │       └── db/migration/                        # Flyway migrations (4 files)
-│   │           ├── V1__Create_ingredients_and_recipes_tables.sql
-│   │           ├── V2__Convert_unit_fields_to_enum.sql
-│   │           ├── V3__Remove_unit_cost_column.sql
-│   │           └── V4__Add_total_cost_column_to_recipes.sql
-│   └── test/
-│       └── java/
-│           └── br/unifor/costify/
-│               ├── CostifyApplicationTests.java     # Application context tests
-│               ├── TestCostifyApplication.java     # Test configuration
-│               ├── TestcontainersConfiguration.java # Testcontainers setup
-│               ├── application/                     # Application layer tests
-│               │   ├── dto/                         # DTO tests
-│               │   │   ├── command/                 # Command DTO tests (empty)
-│               │   │   ├── response/                # Response DTO tests (empty)
-│               │   │   ├── IngredientDtoTest.java
-│               │   │   ├── RecipeDtoTest.java
-│               │   │   ├── RegisterIngredientCommandTest.java
-│               │   │   └── RegisterRecipeCommandTest.java
-│               │   └── usecase/                     # Use case tests
-│               │       ├── CalculateRecipeCostUseCaseTest.java
-│               │       ├── RegisterIngredientUseCaseTest.java
-│               │       └── RegisterRecipeUseCaseTest.java
-│               ├── domain/                          # Domain unit tests
-│               │   ├── entity/
-│               │   │   ├── IngredientTest.java
-│               │   │   └── RecipeTest.java
-│               │   ├── events/                      # Domain event tests (empty)
-│               │   ├── service/
-│               │   │   └── RecipeCostCalculationServiceTest.java
-│               │   └── valueobject/
-│               │       ├── IdTest.java
-│               │       ├── MoneyTest.java
-│               │       ├── RecipeIngredientTest.java
-│               │       └── UnitTest.java
-│               └── integration/
-│                   ├── flyway/
-│                   │   └── FlywayMigrationIntegrationTest.java
-│                   └── repository/
-│                       ├── ingredient/
-│                       │   ├── IngredientRepositoryConstraintsIntegrationTest.java
-│                       │   └── PostgresIngredientRepositoryIntegrationTest.java
-│                       └── recipe/
-│                           ├── AdvancedRecipeRepositoryIntegrationTest.java
-│                           ├── BasicRecipeRepositoryIntegrationTest.java
-│                           └── RecipeRepositoryConstraintsIntegrationTest.java
-├── target/                                          # Maven build output
-├── docker-compose.yml                               # PostgreSQL container setup
-├── pom.xml                                         # Maven configuration
-├── mvnw                                            # Maven wrapper (Unix)
-├── mvnw.cmd                                        # Maven wrapper (Windows)
+│   ├── main.ts                                     # Application entry point (Bun + Elysia)
+│   ├── application/                                # Application Layer (Use Cases & DTOs)
+│   │   ├── contracts/
+│   │   │   ├── IngredientRepository.ts             # Ingredient repository interface
+│   │   │   └── RecipeRepository.ts                 # Recipe repository interface
+│   │   ├── dto/
+│   │   │   ├── command/                            # Input DTOs for commands
+│   │   │   │   ├── RegisterIngredientCommand.ts
+│   │   │   │   ├── RegisterRecipeCommand.ts
+│   │   │   │   ├── UpdateIngredientCommand.ts
+│   │   │   │   └── CalculateRecipeCostCommand.ts
+│   │   │   ├── entity/                             # Output DTOs for entities
+│   │   │   │   ├── IngredientDto.ts
+│   │   │   │   └── RecipeDto.ts
+│   │   │   └── response/                           # Response DTOs
+│   │   │       ├── IngredientCostDto.ts
+│   │   │       └── RecipeCostDto.ts
+│   │   ├── errors/                                 # Application exceptions
+│   │   │   ├── ApplicationException.ts
+│   │   │   ├── IngredientAlreadyExistsException.ts
+│   │   │   ├── IngredientNotFoundException.ts
+│   │   │   ├── RecipeAlreadyExistsException.ts
+│   │   │   └── RecipeNotFoundException.ts
+│   │   ├── factory/
+│   │   │   ├── IngredientFactory.ts                # Ingredient creation factory
+│   │   │   └── RecipeFactory.ts                    # Recipe creation factory
+│   │   ├── mapper/
+│   │   │   ├── IngredientMapper.ts                 # Domain <-> DTO mapping
+│   │   │   └── RecipeMapper.ts                     # Domain <-> DTO mapping
+│   │   └── usecase/
+│   │       ├── CalculateRecipeCostUseCase.ts       # Recipe cost calculation logic
+│   │       ├── RegisterIngredientUseCase.ts        # Ingredient registration logic
+│   │       ├── RegisterRecipeUseCase.ts            # Recipe registration logic
+│   │       └── UpdateIngredientUseCase.ts          # Ingredient update logic
+│   ├── domain/                                     # Domain Layer (Core Business Logic)
+│   │   ├── contracts/
+│   │   │   └── IdGenerator.ts                      # Abstract ID generation
+│   │   ├── entities/
+│   │   │   ├── Ingredient.ts                       # Ingredient domain entity
+│   │   │   └── Recipe.ts                           # Recipe domain entity
+│   │   ├── errors/                                 # Domain exceptions
+│   │   │   ├── DomainException.ts                  # Base domain exception
+│   │   │   ├── ingredient/
+│   │   │   │   └── InvalidIngredientNameException.ts
+│   │   │   ├── money/
+│   │   │   │   └── NegativeMoneyException.ts
+│   │   │   └── recipe/
+│   │   │       ├── EmptyRecipeException.ts
+│   │   │       ├── InvalidQuantityException.ts
+│   │   │       └── InvalidTotalCostException.ts
+│   │   ├── services/
+│   │   │   └── RecipeCostCalculationService.ts     # Cost calculation domain service
+│   │   └── valueobjects/
+│   │       ├── Id.ts                               # Domain ID value object
+│   │       ├── IngredientCost.ts                   # Ingredient cost value object
+│   │       ├── Money.ts                            # Money value object (Decimal.js)
+│   │       ├── RecipeCost.ts                       # Recipe cost value object
+│   │       ├── RecipeIngredient.ts                 # Recipe-ingredient relationship
+│   │       └── Unit.ts                             # Measurement unit enum
+│   └── infrastructure/                             # Infrastructure Layer
+│       ├── config/
+│       │   ├── database.ts                         # Drizzle database configuration
+│       │   └── dependencies.ts                     # Dependency injection setup
+│       ├── controllers/
+│       │   ├── IngredientController.ts             # REST endpoints for ingredients
+│       │   └── RecipeController.ts                 # REST endpoints for recipes
+│       ├── database/
+│       │   ├── migrate.ts                          # Database migration runner
+│       │   ├── migrations/                         # Drizzle migrations
+│       │   │   ├── meta/
+│       │   │   └── [timestamp]_*.sql               # SQL migration files
+│       │   └── schema/
+│       │       ├── enums/
+│       │       │   └── unit.ts                     # Unit enum definition
+│       │       └── tables/
+│       │           ├── ingredients.ts              # Ingredients table schema
+│       │           ├── recipes.ts                  # Recipes table schema
+│       │           └── recipe-ingredients.ts       # Recipe-ingredients join table
+│       ├── mappers/
+│       │   ├── IngredientDbMapper.ts               # Domain <-> DB mapping
+│       │   └── RecipeDbMapper.ts                   # Domain <-> DB mapping
+│       ├── middleware/
+│       │   ├── cors.ts                             # CORS configuration
+│       │   └── error-handler.ts                    # Global error handling
+│       ├── providers/
+│       │   ├── DatabaseProvider.ts                 # Database connection provider
+│       │   └── UuidGenerator.ts                    # UUID generation implementation
+│       └── repositories/
+│           ├── DrizzleIngredientRepository.ts      # Ingredient repository implementation
+│           └── DrizzleRecipeRepository.ts          # Recipe repository implementation
+├── test/
+│   ├── unit/                                       # Unit tests
+│   │   ├── application/
+│   │   │   └── usecase/
+│   │   │       └── RegisterIngredientUseCase.test.ts
+│   │   └── domain/
+│   │       ├── entities/
+│   │       │   └── Ingredient.test.ts
+│   │       └── valueobjects/
+│   │           └── Money.test.ts
+│   └── integration/                                # Integration tests
+│       └── repositories/
+│           ├── DrizzleIngredientRepository.integration.test.ts
+│           └── DrizzleRecipeRepository.integration.test.ts
+├── drizzle.config.ts                               # Drizzle ORM configuration
+├── docker-compose.yml                              # PostgreSQL container setup
+├── package.json                                    # NPM/Bun configuration
+├── bun.lockb                                       # Bun lock file
+├── tsconfig.json                                   # TypeScript configuration
+├── biome.json                                      # Biome linter/formatter config
 ├── CLAUDE.md                                       # Architecture documentation
-└── README.md                                       # Project documentation
+└── readme.md                                       # Project documentation
 ```
 
 ## Architecture Implementation Status
@@ -397,107 +362,221 @@ The Costify application now has a complete Clean Architecture implementation wit
 
 ## Comprehensive Testing Strategy
 
-The Costify application has extensive test coverage across all architectural layers:
+The Costify application has extensive test coverage across all architectural layers using **Bun Test** framework:
 
 ### ✅ Test Coverage Overview
 
 #### 1. Unit Tests (Domain & Application Layers)
 - **Domain Entities**: Complete test coverage for `Ingredient` and `Recipe` entities
-- **Value Objects**: Comprehensive tests for `Money`, `Unit`, `Id`, and `RecipeIngredient`
-- **Use Cases**: Full test coverage for all business workflows
-- **DTOs**: Complete validation and mapping tests for all data transfer objects
+- **Value Objects**: Comprehensive tests for `Money` value object with Decimal.js integration
+- **Use Cases**: Full test coverage for business workflows including `RegisterIngredientUseCase`
+- **Financial Operations**: Rigorous testing of monetary calculations to prevent floating-point errors
 
 #### 2. Integration Tests (Infrastructure Layer)
-- **Repository Tests**: Comprehensive database integration tests with Testcontainers
-- **Database Constraints**: Complete constraint validation testing
-- **Migration Tests**: Flyway migration verification tests
+- **Repository Tests**: Comprehensive database integration tests with real PostgreSQL
+- **Database Operations**: Full CRUD operations testing for both ingredients and recipes
+- **Data Integrity**: Complete constraint validation and cascade delete testing
+- **Connection Management**: Proper database connection lifecycle management
 
 #### 3. Test Statistics
-- **Total Test Files**: 20+ test classes
-- **Coverage Areas**: Domain (6 test classes), Application (7 test classes), Integration (7 test classes)
-- **Database Testing**: PostgreSQL integration with Testcontainers for realistic testing
-- **Migration Testing**: Complete database schema evolution verification
+- **Total Test Files**: 5 comprehensive test suites
+- **Coverage Areas**: 
+  - Unit Tests: Domain value objects and application use cases
+  - Integration Tests: Database repositories with real PostgreSQL
+- **Database Testing**: Direct PostgreSQL integration for realistic testing scenarios
+- **Financial Precision**: Specialized tests for Decimal.js monetary calculations
 
 ### 🧪 Key Testing Features
 
 #### Repository Integration Testing
 ```text
-integration/repository/
-├── ingredient/
-│   ├── IngredientRepositoryConstraintsIntegrationTest.java
-│   └── PostgresIngredientRepositoryIntegrationTest.java
-└── recipe/
-    ├── AdvancedRecipeRepositoryIntegrationTest.java
-    ├── BasicRecipeRepositoryIntegrationTest.java
-    └── RecipeRepositoryConstraintsIntegrationTest.java
+test/integration/repositories/
+├── DrizzleIngredientRepository.integration.test.ts
+└── DrizzleRecipeRepository.integration.test.ts
 ```
+
+**Features:**
+- Real PostgreSQL database connections
+- Complete CRUD operations testing
+- Data integrity and constraint validation
+- Proper cleanup between tests
+- Connection lifecycle management
 
 #### Use Case Testing
 ```text
-application/usecase/
-├── CalculateRecipeCostUseCaseTest.java
-├── RegisterIngredientUseCaseTest.java
-└── RegisterRecipeUseCaseTest.java
+test/unit/application/usecase/
+└── RegisterIngredientUseCase.test.ts
 ```
+
+**Features:**
+- Business workflow validation
+- Error handling scenarios
+- Input validation testing
+- Repository integration mocking
 
 #### Domain Model Testing
 ```text
-domain/
-├── entity/
-│   ├── IngredientTest.java
-│   └── RecipeTest.java
-├── service/
-│   └── RecipeCostCalculationServiceTest.java
-└── valueobject/
-    ├── IdTest.java
-    ├── MoneyTest.java
-    ├── RecipeIngredientTest.java
-    └── UnitTest.java
+test/unit/domain/
+├── entities/
+│   └── Ingredient.test.ts
+└── valueobjects/
+    └── Money.test.ts
 ```
+
+**Features:**
+- **Money Value Object**: Comprehensive testing of Decimal.js integration
+  - Creation and validation
+  - Arithmetic operations (add, subtract, multiply, divide)
+  - Comparison operations
+  - Error handling for negative amounts and division by zero
+- **Ingredient Entity**: Business logic and invariant validation
+- **Domain Rules**: Enforcement of business constraints
 
 ## Build & Development Commands
 
-### Essential Maven Commands
+### Essential Bun Commands
 ```bash
-# Clean build
-./mvnw clean compile
+# Development
+bun dev                    # Start development server with hot reload
+bun start                  # Start production server
+bun build                  # Build for production
 
-# Run application
-./mvnw spring-boot:run
+# Database
+bun db:generate           # Generate Drizzle client types
+bun db:migrate            # Run database migrations
+bun db:push               # Push schema changes to database
+bun db:studio             # Open Drizzle Studio
 
-# Run tests (with Java assertions)
-./mvnw test -DargLine="-ea"
+# Testing
+bun test                  # Run all tests (unit + integration)
+bun test:unit             # Run unit tests only
+bun test:integration      # Run integration tests only
+bun test:watch            # Run tests in watch mode
 
-# Full build with tests
-./mvnw clean install
-
-# Run specific test class
-./mvnw test -Dtest=IngredientTest
-
-# Run integration tests only
-./mvnw test -Dtest="**/*IntegrationTest"
+# Code Quality
+bun lint                  # Run linter (Biome)
+bun lint:fix              # Fix linting issues automatically
+bun check                 # Run all checks (lint + format)
 ```
 
+### Testing Setup and Environment
+
+#### Prerequisites for Integration Tests
+```bash
+# Start PostgreSQL database
+docker compose up -d
+
+# Run database migrations
+bun db:migrate
+
+# Run all tests
+bun test
+```
+
+#### Test Environment Configuration
+- **Unit Tests**: No external dependencies, pure domain/application logic
+- **Integration Tests**: Require PostgreSQL database connection
+- **Database URL**: Uses `DATABASE_URL` environment variable or defaults to local PostgreSQL
+- **Test Isolation**: Each integration test cleans up its data to prevent interference
+- **Decimal.js Provider**: Money value object configured with DecimalJsProvider for precise calculations
+
 ### Development Workflow
-1. **Database**: Ensure PostgreSQL is running locally
-2. **Migrations**: Create and run Flyway migrations
-3. **Testing**: Use `-DargLine="-ea"` to enable Java assertions
-4. **Integration Tests**: Use Testcontainers for database testing
+1. **Database**: Ensure PostgreSQL is running locally with Docker Compose
+2. **Migrations**: Use Drizzle Kit for schema management and evolution
+3. **Testing**: 
+   - Unit tests for domain logic and value objects
+   - Integration tests with real PostgreSQL database
+   - Financial calculation tests ensuring decimal precision
+4. **Hot Reload**: Automatic restart on file changes during development
+5. **Code Quality**: Biome for consistent linting and formatting
+
+## Database Schema
+
+The Costify application uses PostgreSQL with the following schema:
+
+### Tables
+
+#### `ingredients`
+```sql
+CREATE TABLE ingredients (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  name varchar(255) NOT NULL UNIQUE,
+  price_per_unit numeric(10, 2) NOT NULL,
+  unit unit NOT NULL,
+  created_at timestamp DEFAULT now() NOT NULL,
+  updated_at timestamp DEFAULT now() NOT NULL
+);
+```
+
+#### `recipes`
+```sql
+CREATE TABLE recipes (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  name varchar(255) NOT NULL UNIQUE,
+  total_cost numeric(10, 2) NOT NULL,
+  created_at timestamp DEFAULT now() NOT NULL,
+  updated_at timestamp DEFAULT now() NOT NULL
+);
+```
+
+#### `recipe_ingredients`
+```sql
+CREATE TABLE recipe_ingredients (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  recipe_id uuid NOT NULL REFERENCES recipes(id) ON DELETE CASCADE,
+  ingredient_id uuid NOT NULL REFERENCES ingredients(id) ON DELETE CASCADE,
+  quantity numeric(10, 4) NOT NULL,
+  unit unit NOT NULL,
+  created_at timestamp DEFAULT now() NOT NULL
+);
+```
+
+### Enums
+
+#### `unit`
+```sql
+CREATE TYPE unit AS ENUM(
+  'GRAM', 'KILOGRAM', 'MILLILITER', 'LITER', 'PIECE', 
+  'TABLESPOON', 'TEASPOON', 'CUP', 'OUNCE', 'POUND', 
+  'TBSP', 'TBSP_BUTTER', 'UNIT'
+);
+```
+
+### Relationships
+
+- `recipes` has many `recipe_ingredients` (one-to-many)
+- `ingredients` has many `recipe_ingredients` (one-to-many)
+- `recipe_ingredients` belongs to one `recipe` and one `ingredient` (many-to-one)
+
+### Constraints
+
+- **Unique Names**: Both ingredients and recipes must have unique names
+- **Cascade Deletes**: Deleting a recipe or ingredient cascades to related `recipe_ingredients`
+- **Not Null**: All price and quantity fields are required
+- **Precision**: Prices use `numeric(10,2)` and quantities use `numeric(10,4)` for exact calculations
 
 ## Key Design Principles
 
 ### Domain-Driven Design
 - **Entities**: `Ingredient` and `Recipe` aggregates with business identity and behavior
-- **Value Objects**: `Id`, `Unit`, `RecipeIngredient` for immutable domain concepts
+- **Value Objects**: `Id`, `Money`, `Unit`, `RecipeIngredient` for immutable domain concepts
 - **Contracts**: `IdGenerator` for dependency inversion
 - **Repository Interfaces**: `IngredientRepository`, `RecipeRepository` for data persistence abstraction
-- **Use Cases**: `RegisterIngredientUseCase`, `RegisterRecipeUseCase` for application workflows
+- **Use Cases**: `RegisterIngredientUseCase`, `RegisterRecipeUseCase`, `CalculateRecipeCostUseCase` for application workflows
+
+### Financial Precision
+- **Decimal.js Integration**: All monetary calculations use Decimal.js through the `Money` value object
+- **No Floating Point Errors**: Ensures accurate financial calculations for recipe costing
+- **Type Safety**: TypeScript ensures compile-time validation of monetary operations
+- **Immutability**: Money value objects are immutable, preventing accidental modifications
 
 ### Clean Architecture Benefits
-- **Independence**: Domain logic isolated from frameworks
-- **Testability**: Each layer can be tested independently  
-- **Maintainability**: Clear separation of concerns
-- **Flexibility**: Easy to swap infrastructure components
+- **Independence**: Domain logic isolated from frameworks (Elysia, Drizzle)
+- **Testability**: Each layer can be tested independently with mocks and Testcontainers
+- **Maintainability**: Clear separation of concerns across layers
+- **Flexibility**: Easy to swap infrastructure components (e.g., database, web framework)
+- **Type Safety**: Full TypeScript coverage ensures compile-time error detection
+- **Performance**: Bun runtime provides exceptional performance for I/O operations
 
 ## Claude Development Protocol
 
