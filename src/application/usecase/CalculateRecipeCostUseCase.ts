@@ -17,7 +17,7 @@ export class CalculateRecipeCostUseCase {
     private readonly ingredientRepository: IngredientRepository,
     private readonly decimalProvider: DecimalProvider
   ) {
-    this.costCalculationService = new RecipeCostCalculationService(decimalProvider)
+    this.costCalculationService = new RecipeCostCalculationService(this.decimalProvider)
   }
 
   async execute(command: CalculateRecipeCostCommand): Promise<RecipeCostDto> {

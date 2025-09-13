@@ -18,11 +18,11 @@ export class RegisterRecipeUseCase {
   constructor(
     private readonly recipeRepository: RecipeRepository,
     private readonly ingredientRepository: IngredientRepository,
-    idGenerator: IdGenerator,
+    private readonly idGenerator: IdGenerator,
     private readonly decimalProvider: DecimalProvider
   ) {
-    this.recipeFactory = new RecipeFactory(idGenerator)
-    this.costCalculationService = new RecipeCostCalculationService(decimalProvider)
+    this.recipeFactory = new RecipeFactory(this.idGenerator)
+    this.costCalculationService = new RecipeCostCalculationService(this.decimalProvider)
   }
 
   async execute(command: RegisterRecipeCommand): Promise<RecipeDto> {

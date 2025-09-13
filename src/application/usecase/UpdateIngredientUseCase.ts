@@ -13,9 +13,9 @@ export class UpdateIngredientUseCase {
 
   constructor(
     private readonly ingredientRepository: IngredientRepository,
-    idGenerator: IdGenerator
+    private readonly idGenerator: IdGenerator
   ) {
-    this.ingredientFactory = new IngredientFactory(idGenerator)
+    this.ingredientFactory = new IngredientFactory(this.idGenerator)
   }
 
   async execute(command: UpdateIngredientCommand): Promise<IngredientDto> {
