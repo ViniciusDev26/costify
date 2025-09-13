@@ -12,20 +12,17 @@ import postgres from 'postgres'
 describe('DrizzleIngredientRepository Integration Tests', () => {
   let repository: DrizzleIngredientRepository
   let client: postgres.Sql
-  let db: ReturnType<typeof drizzle>
+  let db: ReturnType<typeof drizzle<typeof schema>>
 
   beforeAll(async () => {
     // Configure Money provider
     Money.configure(new DecimalJsProvider())
 
-    // Use existing database connection
-    const connectionString = 'postgresql://costify:costify123@localhost:5432/costify_ts'
+    // Use database connection from environment or default to local
+    const connectionString =
+      process.env.DATABASE_URL || 'postgresql://costify:costify123@localhost:5432/costify_ts'
 
-    client = postgres(connectionString, {
-      max: 1,
-      idle_timeout: 5,
-      connect_timeout: 10,
-    })
+    client = postgres(connectionString)
 
     db = drizzle(client, { schema })
     repository = new DrizzleIngredientRepository(db)

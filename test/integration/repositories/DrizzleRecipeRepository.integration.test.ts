@@ -16,7 +16,7 @@ describe('DrizzleRecipeRepository Integration Tests', () => {
   let recipeRepository: DrizzleRecipeRepository
   let ingredientRepository: DrizzleIngredientRepository
   let client: postgres.Sql
-  let db: ReturnType<typeof drizzle>
+  let db: ReturnType<typeof drizzle<typeof schema>>
 
   // Test ingredients that will be reused
   let testIngredient1: Ingredient
@@ -28,8 +28,9 @@ describe('DrizzleRecipeRepository Integration Tests', () => {
     Money.configure(decimalProvider)
     RecipeIngredient.configure(decimalProvider)
 
-    // Use existing database connection
-    const connectionString = 'postgresql://costify:costify123@localhost:5432/costify_ts'
+    // Use database connection from environment or default to local
+    const connectionString =
+      process.env.DATABASE_URL || 'postgresql://costify:costify123@localhost:5432/costify_ts'
 
     client = postgres(connectionString, {
       max: 1,
@@ -121,8 +122,8 @@ describe('DrizzleRecipeRepository Integration Tests', () => {
 
       // Verify ingredients
       const ingredients = retrieved?.getIngredients()
-      const flour = ingredients.find((i) => i.getIngredientId().equals(testIngredient1.getId()))
-      const sugar = ingredients.find((i) => i.getIngredientId().equals(testIngredient2.getId()))
+      const flour = ingredients?.find((i) => i.getIngredientId().equals(testIngredient1.getId()))
+      const sugar = ingredients?.find((i) => i.getIngredientId().equals(testIngredient2.getId()))
 
       expect(flour).toBeDefined()
       expect(flour?.getQuantity().toString()).toBe('1')
@@ -216,8 +217,8 @@ describe('DrizzleRecipeRepository Integration Tests', () => {
 
       // Verify updated ingredients
       const ingredients = retrieved?.getIngredients()
-      const flour = ingredients.find((i) => i.getIngredientId().equals(testIngredient1.getId()))
-      const sugar = ingredients.find((i) => i.getIngredientId().equals(testIngredient2.getId()))
+      const flour = ingredients?.find((i) => i.getIngredientId().equals(testIngredient1.getId()))
+      const sugar = ingredients?.find((i) => i.getIngredientId().equals(testIngredient2.getId()))
 
       expect(flour?.getQuantity().toString()).toBe('1.5')
       expect(sugar?.getQuantity().toString()).toBe('0.25')
