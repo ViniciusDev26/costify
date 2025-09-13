@@ -5,9 +5,9 @@
   "main": "src/main.ts",
   "type": "module",
   "scripts": {
-    "build": "bun build src/main.ts --outdir dist --target bun",
+    "build": "bun build src/main.ts --compile --outfile dist/costify",
     "dev": "bun --watch src/main.ts",
-    "start": "bun dist/main.js",
+    "start": "./dist/costify",
     "test": "bun test",
     "test:watch": "bun test --watch",
     "test:unit": "bun test test/unit",
@@ -35,7 +35,7 @@
     "decimal.js": "^10.4.3",
     "elysia": "^1.2.0",
     "@elysiajs/cors": "^1.2.0",
-    "zod": "^3.23.8",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/node": "^22.5.4",
@@ -44,7 +44,7 @@
     "@testcontainers/postgresql": "^10.13.1",
     "drizzle-kit": "^0.24.0",
     "testcontainers": "^10.13.1",
-    "typescript": "^5.6.2",
+    "typescript": "^5.6.2"
   },
   "engines": {
     "bun": ">=1.0.0"
