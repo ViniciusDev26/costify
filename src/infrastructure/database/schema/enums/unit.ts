@@ -5,7 +5,6 @@ export const unitEnum = pgEnum('unit', [
   'KILOGRAM',
   'MILLILITER',
   'LITER',
-  'PIECE',
   'UNIT',
   'TABLESPOON',
   'TEASPOON',

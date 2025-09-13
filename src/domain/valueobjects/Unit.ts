@@ -5,7 +5,6 @@ export enum Unit {
   KILOGRAM = 'KILOGRAM',
   MILLILITER = 'MILLILITER',
   LITER = 'LITER',
-  PIECE = 'PIECE',
   UNIT = 'UNIT',
   TABLESPOON = 'TABLESPOON',
   TEASPOON = 'TEASPOON',
@@ -38,9 +37,8 @@ const CONVERSION_RATES: Record<Unit, ConversionRate> = {
   [Unit.TBSP_BUTTER]: { baseUnit: Unit.MILLILITER, factor: '14.7868' }, // Same as tablespoon for butter
   [Unit.CUP]: { baseUnit: Unit.MILLILITER, factor: '236.588' },
 
-  // Count conversions (base: piece)
-  [Unit.PIECE]: { baseUnit: Unit.PIECE, factor: '1' },
-  [Unit.UNIT]: { baseUnit: Unit.PIECE, factor: '1' },
+  // Count conversions (base: unit)
+  [Unit.UNIT]: { baseUnit: Unit.UNIT, factor: '1' },
 }
 
 export function fromString(value: string): Unit {
@@ -117,7 +115,7 @@ export function getUnitCategory(unit: Unit): 'weight' | 'volume' | 'count' {
       return 'weight'
     case Unit.MILLILITER:
       return 'volume'
-    case Unit.PIECE:
+    case Unit.UNIT:
       return 'count'
     default:
       throw new Error(`Unknown base unit: ${baseUnit}`)
