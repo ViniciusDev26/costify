@@ -1,10 +1,11 @@
 import type { RecipeRepository } from '../contracts/RecipeRepository.js'
 import type { IngredientRepository } from '../contracts/IngredientRepository.js'
+import type { DecimalProvider } from '@domain/contracts/DecimalProvider.js'
 import { Id } from '@domain/valueobjects/Id.js'
 import { RecipeMapper } from '../mapper/RecipeMapper.js'
 import { RecipeCostCalculationService } from '@domain/services/RecipeCostCalculationService.js'
-import { CalculateRecipeCostCommand } from '../dto/command/CalculateRecipeCostCommand.js'
-import { RecipeCostDto } from '../dto/response/RecipeCostDto.js'
+import type { CalculateRecipeCostCommand } from '../dto/command/CalculateRecipeCostCommand.js'
+import type { RecipeCostDto } from '../dto/response/RecipeCostDto.js'
 import { RecipeNotFoundException } from '../errors/RecipeNotFoundException.js'
 import { IngredientNotFoundException } from '../errors/IngredientNotFoundException.js'
 
@@ -13,9 +14,10 @@ export class CalculateRecipeCostUseCase {
 
   constructor(
     private readonly recipeRepository: RecipeRepository,
-    private readonly ingredientRepository: IngredientRepository
+    private readonly ingredientRepository: IngredientRepository,
+    private readonly decimalProvider: DecimalProvider
   ) {
-    this.costCalculationService = new RecipeCostCalculationService()
+    this.costCalculationService = new RecipeCostCalculationService(decimalProvider)
   }
 
   async execute(command: CalculateRecipeCostCommand): Promise<RecipeCostDto> {

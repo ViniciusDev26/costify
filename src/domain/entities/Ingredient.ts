@@ -1,7 +1,8 @@
-import { Id } from '../valueobjects/Id.js'
-import { Money } from '../valueobjects/Money.js'
-import { Unit } from '../valueobjects/Unit.js'
+import type { Id } from '../valueobjects/Id.js'
+import type { Money } from '../valueobjects/Money.js'
+import type { Unit } from '../valueobjects/Unit.js'
 import { InvalidIngredientNameException } from '../errors/ingredient/InvalidIngredientNameException.js'
+import type { IDecimal } from '../contracts/DecimalProvider.js'
 
 export class Ingredient {
   private readonly id: Id
@@ -57,7 +58,7 @@ export class Ingredient {
     this.unit = newUnit
   }
 
-  calculateCost(quantity: string | number): Money {
+  calculateCost(quantity: string | number | IDecimal): Money {
     return this.pricePerUnit.multiply(quantity)
   }
 

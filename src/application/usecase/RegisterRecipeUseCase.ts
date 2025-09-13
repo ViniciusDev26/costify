@@ -1,12 +1,13 @@
 import type { RecipeRepository } from '../contracts/RecipeRepository.js'
 import type { IngredientRepository } from '../contracts/IngredientRepository.js'
 import type { IdGenerator } from '@domain/contracts/IdGenerator.js'
+import type { DecimalProvider } from '@domain/contracts/DecimalProvider.js'
 import { Id } from '@domain/valueobjects/Id.js'
 import { RecipeFactory } from '../factory/RecipeFactory.js'
 import { RecipeMapper } from '../mapper/RecipeMapper.js'
 import { RecipeCostCalculationService } from '@domain/services/RecipeCostCalculationService.js'
-import { RegisterRecipeCommand } from '../dto/command/RegisterRecipeCommand.js'
-import { RecipeDto } from '../dto/entity/RecipeDto.js'
+import type { RegisterRecipeCommand } from '../dto/command/RegisterRecipeCommand.js'
+import type { RecipeDto } from '../dto/entity/RecipeDto.js'
 import { RecipeAlreadyExistsException } from '../errors/RecipeAlreadyExistsException.js'
 import { IngredientNotFoundException } from '../errors/IngredientNotFoundException.js'
 
@@ -17,10 +18,11 @@ export class RegisterRecipeUseCase {
   constructor(
     private readonly recipeRepository: RecipeRepository,
     private readonly ingredientRepository: IngredientRepository,
-    idGenerator: IdGenerator
+    idGenerator: IdGenerator,
+    private readonly decimalProvider: DecimalProvider
   ) {
     this.recipeFactory = new RecipeFactory(idGenerator)
-    this.costCalculationService = new RecipeCostCalculationService()
+    this.costCalculationService = new RecipeCostCalculationService(decimalProvider)
   }
 
   async execute(command: RegisterRecipeCommand): Promise<RecipeDto> {
