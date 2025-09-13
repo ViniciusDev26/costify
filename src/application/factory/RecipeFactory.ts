@@ -1,9 +1,9 @@
+import type { IdGenerator } from '@domain/contracts/IdGenerator.js'
 import { Recipe } from '@domain/entities/Recipe.js'
 import { Id } from '@domain/valueobjects/Id.js'
 import { Money } from '@domain/valueobjects/Money.js'
 import { RecipeIngredient } from '@domain/valueobjects/RecipeIngredient.js'
 import { UnitUtils } from '@domain/valueobjects/Unit.js'
-import type { IdGenerator } from '@domain/contracts/IdGenerator.js'
 import type { RegisterRecipeCommand } from '../dto/command/RegisterRecipeCommand.js'
 
 export class RecipeFactory {

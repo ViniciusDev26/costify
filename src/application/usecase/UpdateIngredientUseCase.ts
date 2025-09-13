@@ -1,12 +1,12 @@
-import type { IngredientRepository } from '../contracts/IngredientRepository.js'
 import type { IdGenerator } from '@domain/contracts/IdGenerator.js'
 import { Id } from '@domain/valueobjects/Id.js'
-import { IngredientFactory } from '../factory/IngredientFactory.js'
-import { IngredientMapper } from '../mapper/IngredientMapper.js'
+import type { IngredientRepository } from '../contracts/IngredientRepository.js'
 import type { UpdateIngredientCommand } from '../dto/command/UpdateIngredientCommand.js'
 import type { IngredientDto } from '../dto/entity/IngredientDto.js'
-import { IngredientNotFoundException } from '../errors/IngredientNotFoundException.js'
 import { IngredientAlreadyExistsException } from '../errors/IngredientAlreadyExistsException.js'
+import { IngredientNotFoundException } from '../errors/IngredientNotFoundException.js'
+import { IngredientFactory } from '../factory/IngredientFactory.js'
+import { IngredientMapper } from '../mapper/IngredientMapper.js'
 
 export class UpdateIngredientUseCase {
   private readonly ingredientFactory: IngredientFactory

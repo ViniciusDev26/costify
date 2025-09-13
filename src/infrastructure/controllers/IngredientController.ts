@@ -1,11 +1,11 @@
-import { Elysia, t } from 'elysia'
+import type { IngredientRepository } from '@application/contracts/IngredientRepository.js'
+import { IngredientMapper } from '@application/mapper/IngredientMapper.js'
 import { RegisterIngredientUseCase } from '@application/usecase/RegisterIngredientUseCase.js'
 import { UpdateIngredientUseCase } from '@application/usecase/UpdateIngredientUseCase.js'
-import { IngredientMapper } from '@application/mapper/IngredientMapper.js'
-import type { IngredientRepository } from '@application/contracts/IngredientRepository.js'
 import type { IdGenerator } from '@domain/contracts/IdGenerator.js'
 import { Id } from '@domain/valueobjects/Id.js'
 import { Unit } from '@domain/valueobjects/Unit.js'
+import { Elysia, t } from 'elysia'
 
 export class IngredientController {
   private readonly registerUseCase: RegisterIngredientUseCase

@@ -1,13 +1,13 @@
-import { describe, expect, it, beforeAll, afterAll, beforeEach } from 'bun:test'
-import postgres from 'postgres'
-import { drizzle } from 'drizzle-orm/postgres-js'
-import { DrizzleIngredientRepository } from '@infrastructure/repositories/DrizzleIngredientRepository.js'
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'bun:test'
 import { Ingredient } from '@domain/entities/Ingredient.js'
 import { Id } from '@domain/valueobjects/Id.js'
 import { Money } from '@domain/valueobjects/Money.js'
 import { Unit } from '@domain/valueobjects/Unit.js'
-import { DecimalJsProvider } from '@infrastructure/providers/DecimalJsProvider.js'
 import * as schema from '@infrastructure/database/schema/index.js'
+import { DecimalJsProvider } from '@infrastructure/providers/DecimalJsProvider.js'
+import { DrizzleIngredientRepository } from '@infrastructure/repositories/DrizzleIngredientRepository.js'
+import { drizzle } from 'drizzle-orm/postgres-js'
+import postgres from 'postgres'
 
 describe('DrizzleIngredientRepository Integration Tests', () => {
   let repository: DrizzleIngredientRepository
@@ -20,13 +20,13 @@ describe('DrizzleIngredientRepository Integration Tests', () => {
 
     // Use existing database connection
     const connectionString = 'postgresql://costify:costify123@localhost:5432/costify_ts'
-    
+
     client = postgres(connectionString, {
       max: 1,
       idle_timeout: 5,
       connect_timeout: 10,
     })
-    
+
     db = drizzle(client, { schema })
     repository = new DrizzleIngredientRepository(db)
   })
@@ -259,14 +259,14 @@ describe('DrizzleIngredientRepository Integration Tests', () => {
       const allIngredients = await repository.findAll()
 
       // Find our test ingredients (should be sorted by name)
-      const testIngredients = allIngredients.filter(i => 
-        i.getName().includes(`Test`) && i.getName().includes(`${timestamp}`)
+      const testIngredients = allIngredients.filter(
+        (i) => i.getName().includes(`Test`) && i.getName().includes(`${timestamp}`)
       )
-      
+
       expect(testIngredients.length).toBeGreaterThanOrEqual(3)
-      
+
       // Verify they exist (order might vary due to other ingredients in database)
-      const names = testIngredients.map(i => i.getName())
+      const names = testIngredients.map((i) => i.getName())
       expect(names).toContain(`Test A Ingredient ${timestamp}`)
       expect(names).toContain(`Test M Ingredient ${timestamp}`)
       expect(names).toContain(`Test Z Ingredient ${timestamp}`)

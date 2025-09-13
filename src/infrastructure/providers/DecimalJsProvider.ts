@@ -1,5 +1,5 @@
+import type { DecimalProvider, IDecimal } from '@domain/contracts/DecimalProvider.js'
 import { Decimal } from 'decimal.js'
-import type { IDecimal, DecimalProvider } from '@domain/contracts/DecimalProvider.js'
 
 class DecimalJsWrapper implements IDecimal {
   constructor(private readonly decimal: Decimal) {}

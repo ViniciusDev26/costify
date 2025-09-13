@@ -1,9 +1,9 @@
-import type { SelectRecipe, SelectRecipeIngredient } from '../database/schema/index.js'
 import { Recipe } from '@domain/entities/Recipe.js'
 import { Id } from '@domain/valueobjects/Id.js'
 import { Money } from '@domain/valueobjects/Money.js'
 import { RecipeIngredient } from '@domain/valueobjects/RecipeIngredient.js'
 import type { Unit } from '@domain/valueobjects/Unit.js'
+import type { SelectRecipe, SelectRecipeIngredient } from '../database/schema/index.js'
 
 type DrizzleRecipeWithIngredients = SelectRecipe & {
   recipeIngredients: SelectRecipeIngredient[]

@@ -102,7 +102,7 @@ export function convert(
   // Convert to base unit, then to target unit using precise decimal arithmetic
   const fromFactor = decimalProvider.create(fromInfo.factor)
   const toFactor = decimalProvider.create(toInfo.factor)
-  
+
   const baseQuantity = quantity.multiply(fromFactor)
   return baseQuantity.divide(toFactor)
 }
@@ -128,7 +128,7 @@ export function getUnitCategory(unit: Unit): 'weight' | 'volume' | 'count' {
  * Get all units in the same category
  */
 export function getUnitsInCategory(category: 'weight' | 'volume' | 'count'): Unit[] {
-  return Object.values(Unit).filter(unit => getUnitCategory(unit) === category)
+  return Object.values(Unit).filter((unit) => getUnitCategory(unit) === category)
 }
 
 // Legacy compatibility - kept for backward compatibility but marked as deprecated

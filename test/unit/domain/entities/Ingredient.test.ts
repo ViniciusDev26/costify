@@ -1,4 +1,4 @@
-import { describe, expect, it, beforeAll } from 'bun:test'
+import { beforeAll, describe, expect, it } from 'bun:test'
 import { Ingredient } from '@domain/entities/Ingredient.js'
 import { Id } from '@domain/valueobjects/Id.js'
 import { Money } from '@domain/valueobjects/Money.js'
@@ -15,7 +15,7 @@ describe('Ingredient', () => {
   describe('creation', () => {
     it('should create ingredient with valid data', () => {
       const ingredient = new Ingredient(validId, 'Flour', validPrice, Unit.KILOGRAM)
-      
+
       expect(ingredient.getId()).toEqual(validId)
       expect(ingredient.getName()).toBe('Flour')
       expect(ingredient.getPricePerUnit()).toEqual(validPrice)
@@ -23,13 +23,15 @@ describe('Ingredient', () => {
     })
 
     it('should throw error for empty name', () => {
-      expect(() => new Ingredient(validId, '', validPrice, Unit.KILOGRAM))
-        .toThrow('Invalid ingredient name')
+      expect(() => new Ingredient(validId, '', validPrice, Unit.KILOGRAM)).toThrow(
+        'Invalid ingredient name'
+      )
     })
 
     it('should throw error for null name', () => {
-      expect(() => new Ingredient(validId, null as any, validPrice, Unit.KILOGRAM))
-        .toThrow('Invalid ingredient name')
+      expect(() => new Ingredient(validId, null as any, validPrice, Unit.KILOGRAM)).toThrow(
+        'Invalid ingredient name'
+      )
     })
 
     it('should trim ingredient name', () => {
@@ -71,14 +73,14 @@ describe('Ingredient', () => {
     it('should be equal if same id', () => {
       const ingredient1 = new Ingredient(validId, 'Flour', validPrice, Unit.KILOGRAM)
       const ingredient2 = new Ingredient(validId, 'Different Name', new Money('5.00'), Unit.GRAM)
-      
+
       expect(ingredient1.equals(ingredient2)).toBe(true)
     })
 
     it('should not be equal if different id', () => {
       const ingredient1 = new Ingredient(validId, 'Flour', validPrice, Unit.KILOGRAM)
       const ingredient2 = new Ingredient(new Id('different-id'), 'Flour', validPrice, Unit.KILOGRAM)
-      
+
       expect(ingredient1.equals(ingredient2)).toBe(false)
     })
   })

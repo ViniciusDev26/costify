@@ -2,23 +2,23 @@
 export { unitEnum } from './enums/unit'
 
 // Export tables and their relations
-export { 
-  ingredients, 
+export {
+  ingredients,
   ingredientsRelations,
   type InsertIngredient,
-  type SelectIngredient
+  type SelectIngredient,
 } from './tables/ingredients'
 
-export { 
-  recipes, 
+export {
+  recipes,
   recipesRelations,
   type InsertRecipe,
-  type SelectRecipe
+  type SelectRecipe,
 } from './tables/recipes'
 
-export { 
-  recipeIngredients, 
+export {
+  recipeIngredients,
   recipeIngredientsRelations,
   type InsertRecipeIngredient,
-  type SelectRecipeIngredient
+  type SelectRecipeIngredient,
 } from './tables/recipe-ingredients'

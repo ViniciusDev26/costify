@@ -1,5 +1,5 @@
-import { Elysia } from 'elysia'
 import { cors } from '@elysiajs/cors'
+import { Elysia } from 'elysia'
 import { AppConfig } from './infrastructure/config/AppConfig.js'
 import { errorHandler } from './infrastructure/middleware/ErrorHandler.js'
 

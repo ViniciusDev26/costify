@@ -1,5 +1,5 @@
-import { pgTable, uuid, varchar, decimal, timestamp } from 'drizzle-orm/pg-core'
 import { relations } from 'drizzle-orm'
+import { decimal, pgTable, timestamp, uuid, varchar } from 'drizzle-orm/pg-core'
 import { recipeIngredients } from './recipe-ingredients'
 
 export const recipes = pgTable('recipes', {

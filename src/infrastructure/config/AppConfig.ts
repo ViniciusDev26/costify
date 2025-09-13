@@ -1,12 +1,12 @@
 import { Money } from '@domain/valueobjects/Money.js'
 import { RecipeIngredient } from '@domain/valueobjects/RecipeIngredient.js'
+import { IngredientController } from '../controllers/IngredientController.js'
+import { RecipeController } from '../controllers/RecipeController.js'
+import { client, db } from '../database/connection.js'
 import { DecimalJsProvider } from '../providers/DecimalJsProvider.js'
 import { UuidGenerator } from '../providers/UuidGenerator.js'
 import { DrizzleIngredientRepository } from '../repositories/DrizzleIngredientRepository.js'
 import { DrizzleRecipeRepository } from '../repositories/DrizzleRecipeRepository.js'
-import { IngredientController } from '../controllers/IngredientController.js'
-import { RecipeController } from '../controllers/RecipeController.js'
-import { db, client } from '../database/connection.js'
 
 export class AppConfig {
   private static instance: AppConfig

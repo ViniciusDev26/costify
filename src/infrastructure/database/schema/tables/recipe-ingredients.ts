@@ -1,8 +1,8 @@
-import { pgTable, uuid, decimal, timestamp } from 'drizzle-orm/pg-core'
 import { relations } from 'drizzle-orm'
+import { decimal, pgTable, timestamp, uuid } from 'drizzle-orm/pg-core'
 import { unitEnum } from '../enums/unit'
-import { recipes } from './recipes'
 import { ingredients } from './ingredients'
+import { recipes } from './recipes'
 
 export const recipeIngredients = pgTable('recipe_ingredients', {
   id: uuid('id').primaryKey().defaultRandom(),

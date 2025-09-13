@@ -1,4 +1,4 @@
-import type { IDecimal, DecimalProvider } from '../contracts/DecimalProvider.js'
+import type { DecimalProvider, IDecimal } from '../contracts/DecimalProvider.js'
 
 export class Money {
   private readonly amount: IDecimal

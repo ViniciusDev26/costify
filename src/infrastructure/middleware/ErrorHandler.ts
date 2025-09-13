@@ -1,6 +1,6 @@
-import { Elysia } from 'elysia'
-import { DomainException } from '@domain/errors/DomainException.js'
 import { ApplicationException } from '@application/errors/ApplicationException.js'
+import { DomainException } from '@domain/errors/DomainException.js'
+import { Elysia } from 'elysia'
 
 export const errorHandler = new Elysia()
   .error({

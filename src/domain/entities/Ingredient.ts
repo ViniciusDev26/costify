@@ -1,8 +1,8 @@
+import type { IDecimal } from '../contracts/DecimalProvider.js'
+import { InvalidIngredientNameException } from '../errors/ingredient/InvalidIngredientNameException.js'
 import type { Id } from '../valueobjects/Id.js'
 import type { Money } from '../valueobjects/Money.js'
 import type { Unit } from '../valueobjects/Unit.js'
-import { InvalidIngredientNameException } from '../errors/ingredient/InvalidIngredientNameException.js'
-import type { IDecimal } from '../contracts/DecimalProvider.js'
 
 export class Ingredient {
   private readonly id: Id

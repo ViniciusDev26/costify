@@ -1,8 +1,8 @@
+import type { IdGenerator } from '@domain/contracts/IdGenerator.js'
 import { Ingredient } from '@domain/entities/Ingredient.js'
 import { Id } from '@domain/valueobjects/Id.js'
 import { Money } from '@domain/valueobjects/Money.js'
 import { Unit, UnitUtils } from '@domain/valueobjects/Unit.js'
-import type { IdGenerator } from '@domain/contracts/IdGenerator.js'
 import type { RegisterIngredientCommand } from '../dto/command/RegisterIngredientCommand.js'
 import type { UpdateIngredientCommand } from '../dto/command/UpdateIngredientCommand.js'
 

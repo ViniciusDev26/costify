@@ -1,12 +1,12 @@
-import { describe, expect, it, beforeEach, beforeAll, mock } from 'bun:test'
-import { RegisterIngredientUseCase } from '@application/usecase/RegisterIngredientUseCase.js'
+import { beforeAll, beforeEach, describe, expect, it, mock } from 'bun:test'
 import type { IngredientRepository } from '@application/contracts/IngredientRepository.js'
+import { IngredientAlreadyExistsException } from '@application/errors/IngredientAlreadyExistsException.js'
+import { RegisterIngredientUseCase } from '@application/usecase/RegisterIngredientUseCase.js'
 import type { IdGenerator } from '@domain/contracts/IdGenerator.js'
 import { Ingredient } from '@domain/entities/Ingredient.js'
-import { Unit } from '@domain/valueobjects/Unit.js'
-import { Money } from '@domain/valueobjects/Money.js'
 import { Id } from '@domain/valueobjects/Id.js'
-import { IngredientAlreadyExistsException } from '@application/errors/IngredientAlreadyExistsException.js'
+import { Money } from '@domain/valueobjects/Money.js'
+import { Unit } from '@domain/valueobjects/Unit.js'
 import { DecimalJsProvider } from '@infrastructure/providers/DecimalJsProvider.js'
 
 describe('RegisterIngredientUseCase', () => {
@@ -31,7 +31,7 @@ describe('RegisterIngredientUseCase', () => {
     }
 
     mockIdGenerator = {
-      generate: mock(() => '550e8400-e29b-41d4-a716-446655440000')
+      generate: mock(() => '550e8400-e29b-41d4-a716-446655440000'),
     }
 
     useCase = new RegisterIngredientUseCase(mockRepository, mockIdGenerator)
@@ -41,7 +41,7 @@ describe('RegisterIngredientUseCase', () => {
     const command = {
       name: 'Flour',
       pricePerUnit: '2.50',
-      unit: Unit.KILOGRAM
+      unit: Unit.KILOGRAM,
     }
 
     mockRepository.findByName = mock(() => Promise.resolve(null))
@@ -52,7 +52,7 @@ describe('RegisterIngredientUseCase', () => {
       id: '550e8400-e29b-41d4-a716-446655440000',
       name: 'Flour',
       pricePerUnit: '2.50',
-      unit: Unit.KILOGRAM
+      unit: Unit.KILOGRAM,
     })
     expect(mockRepository.save).toHaveBeenCalledTimes(1)
   })
@@ -61,7 +61,7 @@ describe('RegisterIngredientUseCase', () => {
     const command = {
       name: 'Flour',
       pricePerUnit: '2.50',
-      unit: Unit.KILOGRAM
+      unit: Unit.KILOGRAM,
     }
 
     const existingIngredient = new Ingredient(
@@ -73,8 +73,7 @@ describe('RegisterIngredientUseCase', () => {
 
     mockRepository.findByName = mock(() => Promise.resolve(existingIngredient))
 
-    await expect(useCase.execute(command))
-      .rejects.toThrow(IngredientAlreadyExistsException)
+    await expect(useCase.execute(command)).rejects.toThrow(IngredientAlreadyExistsException)
 
     expect(mockRepository.save).not.toHaveBeenCalled()
   })

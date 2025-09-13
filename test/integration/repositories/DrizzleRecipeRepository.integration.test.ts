@@ -1,16 +1,16 @@
-import { describe, expect, it, beforeAll, afterAll, beforeEach } from 'bun:test'
-import postgres from 'postgres'
-import { drizzle } from 'drizzle-orm/postgres-js'
-import { DrizzleRecipeRepository } from '@infrastructure/repositories/DrizzleRecipeRepository.js'
-import { DrizzleIngredientRepository } from '@infrastructure/repositories/DrizzleIngredientRepository.js'
-import { Recipe } from '@domain/entities/Recipe.js'
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'bun:test'
 import { Ingredient } from '@domain/entities/Ingredient.js'
+import { Recipe } from '@domain/entities/Recipe.js'
 import { Id } from '@domain/valueobjects/Id.js'
 import { Money } from '@domain/valueobjects/Money.js'
-import { Unit } from '@domain/valueobjects/Unit.js'
 import { RecipeIngredient } from '@domain/valueobjects/RecipeIngredient.js'
-import { DecimalJsProvider } from '@infrastructure/providers/DecimalJsProvider.js'
+import { Unit } from '@domain/valueobjects/Unit.js'
 import * as schema from '@infrastructure/database/schema/index.js'
+import { DecimalJsProvider } from '@infrastructure/providers/DecimalJsProvider.js'
+import { DrizzleIngredientRepository } from '@infrastructure/repositories/DrizzleIngredientRepository.js'
+import { DrizzleRecipeRepository } from '@infrastructure/repositories/DrizzleRecipeRepository.js'
+import { drizzle } from 'drizzle-orm/postgres-js'
+import postgres from 'postgres'
 
 describe('DrizzleRecipeRepository Integration Tests', () => {
   let recipeRepository: DrizzleRecipeRepository
@@ -30,13 +30,13 @@ describe('DrizzleRecipeRepository Integration Tests', () => {
 
     // Use existing database connection
     const connectionString = 'postgresql://costify:costify123@localhost:5432/costify_ts'
-    
+
     client = postgres(connectionString, {
       max: 1,
       idle_timeout: 5,
       connect_timeout: 10,
     })
-    
+
     db = drizzle(client, { schema })
     recipeRepository = new DrizzleRecipeRepository(db)
     ingredientRepository = new DrizzleIngredientRepository(db)
@@ -48,7 +48,7 @@ describe('DrizzleRecipeRepository Integration Tests', () => {
       new Money('2.50'),
       Unit.KILOGRAM
     )
-    
+
     testIngredient2 = new Ingredient(
       new Id(crypto.randomUUID()),
       'Test Recipe Sugar',
@@ -65,7 +65,7 @@ describe('DrizzleRecipeRepository Integration Tests', () => {
       // Clean up test ingredients
       await ingredientRepository.delete(testIngredient1.getId())
       await ingredientRepository.delete(testIngredient2.getId())
-      
+
       if (client) {
         await client.end()
       }
@@ -118,16 +118,16 @@ describe('DrizzleRecipeRepository Integration Tests', () => {
       expect(retrieved!.getName()).toBe('Test Recipe Cake')
       expect(retrieved!.getTotalCost().toFixed(2)).toBe('3.38')
       expect(retrieved!.getIngredients()).toHaveLength(2)
-      
+
       // Verify ingredients
       const ingredients = retrieved!.getIngredients()
-      const flour = ingredients.find(i => i.getIngredientId().equals(testIngredient1.getId()))
-      const sugar = ingredients.find(i => i.getIngredientId().equals(testIngredient2.getId()))
-      
+      const flour = ingredients.find((i) => i.getIngredientId().equals(testIngredient1.getId()))
+      const sugar = ingredients.find((i) => i.getIngredientId().equals(testIngredient2.getId()))
+
       expect(flour).toBeDefined()
       expect(flour!.getQuantity().toString()).toBe('1')
       expect(flour!.getUnit()).toBe(Unit.KILOGRAM)
-      
+
       expect(sugar).toBeDefined()
       expect(sugar!.getQuantity().toString()).toBe('0.5')
       expect(sugar!.getUnit()).toBe(Unit.KILOGRAM)
@@ -216,9 +216,9 @@ describe('DrizzleRecipeRepository Integration Tests', () => {
 
       // Verify updated ingredients
       const ingredients = retrieved!.getIngredients()
-      const flour = ingredients.find(i => i.getIngredientId().equals(testIngredient1.getId()))
-      const sugar = ingredients.find(i => i.getIngredientId().equals(testIngredient2.getId()))
-      
+      const flour = ingredients.find((i) => i.getIngredientId().equals(testIngredient1.getId()))
+      const sugar = ingredients.find((i) => i.getIngredientId().equals(testIngredient2.getId()))
+
       expect(flour!.getQuantity().toString()).toBe('1.5')
       expect(sugar!.getQuantity().toString()).toBe('0.25')
     })
@@ -349,14 +349,14 @@ describe('DrizzleRecipeRepository Integration Tests', () => {
       const allRecipes = await recipeRepository.findAll()
 
       // Find our test recipes (should be sorted by name)
-      const testRecipes = allRecipes.filter(r => 
-        r.getName().includes(`Test Recipe`) && r.getName().includes(`${timestamp}`)
+      const testRecipes = allRecipes.filter(
+        (r) => r.getName().includes(`Test Recipe`) && r.getName().includes(`${timestamp}`)
       )
-      
+
       expect(testRecipes.length).toBeGreaterThanOrEqual(3)
-      
+
       // Verify they exist (order might vary due to other recipes in database)
-      const names = testRecipes.map(r => r.getName())
+      const names = testRecipes.map((r) => r.getName())
       expect(names).toContain(`Test Recipe A Recipe ${timestamp}`)
       expect(names).toContain(`Test Recipe M Recipe ${timestamp}`)
       expect(names).toContain(`Test Recipe Z Recipe ${timestamp}`)
