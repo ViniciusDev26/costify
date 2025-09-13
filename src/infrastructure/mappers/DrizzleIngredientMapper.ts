@@ -2,7 +2,7 @@ import type { SelectIngredient } from '../database/schema/index.js'
 import { Ingredient } from '@domain/entities/Ingredient.js'
 import { Id } from '@domain/valueobjects/Id.js'
 import { Money } from '@domain/valueobjects/Money.js'
-import { Unit } from '@domain/valueobjects/Unit.js'
+import type { Unit } from '@domain/valueobjects/Unit.js'
 
 export class DrizzleIngredientMapper {
   static toDomain(dbIngredient: SelectIngredient): Ingredient {

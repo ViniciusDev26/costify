@@ -1,5 +1,5 @@
-import { Recipe } from '@domain/entities/Recipe.js'
-import { Id } from '@domain/valueobjects/Id.js'
+import type { Recipe } from '@domain/entities/Recipe.js'
+import type { Id } from '@domain/valueobjects/Id.js'
 
 export interface RecipeRepository {
   save(recipe: Recipe): Promise<void>

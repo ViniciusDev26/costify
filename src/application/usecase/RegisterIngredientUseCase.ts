@@ -2,8 +2,8 @@ import type { IngredientRepository } from '../contracts/IngredientRepository.js'
 import type { IdGenerator } from '@domain/contracts/IdGenerator.js'
 import { IngredientFactory } from '../factory/IngredientFactory.js'
 import { IngredientMapper } from '../mapper/IngredientMapper.js'
-import { RegisterIngredientCommand } from '../dto/command/RegisterIngredientCommand.js'
-import { IngredientDto } from '../dto/entity/IngredientDto.js'
+import type { RegisterIngredientCommand } from '../dto/command/RegisterIngredientCommand.js'
+import type { IngredientDto } from '../dto/entity/IngredientDto.js'
 import { IngredientAlreadyExistsException } from '../errors/IngredientAlreadyExistsException.js'
 
 export class RegisterIngredientUseCase {

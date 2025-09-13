@@ -1,6 +1,6 @@
 import type { IDecimal, DecimalProvider } from '../contracts/DecimalProvider.js'
-import { Id } from './Id.js'
-import { Unit } from './Unit.js'
+import type { Id } from './Id.js'
+import type { Unit } from './Unit.js'
 
 export class RecipeIngredient {
   private readonly ingredientId: Id

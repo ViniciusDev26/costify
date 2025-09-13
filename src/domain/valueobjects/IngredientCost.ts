@@ -1,6 +1,6 @@
-import { Id } from './Id.js'
-import { Money } from './Money.js'
-import { Unit } from './Unit.js'
+import type { Id } from './Id.js'
+import type { Money } from './Money.js'
+import type { Unit } from './Unit.js'
 
 export class IngredientCost {
   private readonly ingredientId: Id

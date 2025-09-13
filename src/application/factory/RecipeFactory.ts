@@ -4,7 +4,7 @@ import { Money } from '@domain/valueobjects/Money.js'
 import { RecipeIngredient } from '@domain/valueobjects/RecipeIngredient.js'
 import { UnitUtils } from '@domain/valueobjects/Unit.js'
 import type { IdGenerator } from '@domain/contracts/IdGenerator.js'
-import { RegisterRecipeCommand } from '../dto/command/RegisterRecipeCommand.js'
+import type { RegisterRecipeCommand } from '../dto/command/RegisterRecipeCommand.js'
 
 export class RecipeFactory {
   constructor(private readonly idGenerator: IdGenerator) {}

@@ -1,5 +1,5 @@
-import { Ingredient } from '@domain/entities/Ingredient.js'
-import { IngredientDto } from '../dto/entity/IngredientDto.js'
+import type { Ingredient } from '@domain/entities/Ingredient.js'
+import type { IngredientDto } from '../dto/entity/IngredientDto.js'
 
 export class IngredientMapper {
   static toDto(ingredient: Ingredient): IngredientDto {

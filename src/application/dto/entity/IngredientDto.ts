@@ -1,4 +1,4 @@
-import { Unit } from '@domain/valueobjects/Unit.js'
+import type { Unit } from '@domain/valueobjects/Unit.js'
 
 export interface IngredientDto {
   readonly id: string

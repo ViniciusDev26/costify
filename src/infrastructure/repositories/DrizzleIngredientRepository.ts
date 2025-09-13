@@ -2,8 +2,8 @@ import { eq, asc } from 'drizzle-orm'
 import type { Database } from '../database/connection.js'
 import { ingredients } from '../database/schema/index.js'
 import type { IngredientRepository } from '@application/contracts/IngredientRepository.js'
-import { Ingredient } from '@domain/entities/Ingredient.js'
-import { Id } from '@domain/valueobjects/Id.js'
+import type { Ingredient } from '@domain/entities/Ingredient.js'
+import type { Id } from '@domain/valueobjects/Id.js'
 import { DrizzleIngredientMapper } from '../mappers/DrizzleIngredientMapper.js'
 
 export class DrizzleIngredientRepository implements IngredientRepository {

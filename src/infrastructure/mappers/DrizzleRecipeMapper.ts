@@ -3,7 +3,7 @@ import { Recipe } from '@domain/entities/Recipe.js'
 import { Id } from '@domain/valueobjects/Id.js'
 import { Money } from '@domain/valueobjects/Money.js'
 import { RecipeIngredient } from '@domain/valueobjects/RecipeIngredient.js'
-import { Unit } from '@domain/valueobjects/Unit.js'
+import type { Unit } from '@domain/valueobjects/Unit.js'
 
 type DrizzleRecipeWithIngredients = SelectRecipe & {
   recipeIngredients: SelectRecipeIngredient[]

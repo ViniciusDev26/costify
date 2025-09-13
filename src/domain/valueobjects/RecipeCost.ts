@@ -1,5 +1,5 @@
 import { Money } from './Money.js'
-import { IngredientCost } from './IngredientCost.js'
+import type { IngredientCost } from './IngredientCost.js'
 
 export class RecipeCost {
   private readonly totalCost: Money
