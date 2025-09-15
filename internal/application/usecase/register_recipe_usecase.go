@@ -69,7 +69,7 @@ func (uc *RegisterRecipeUseCase) Execute(cmd command.RegisterRecipeCommand) (ent
 	}
 
 	// Create temporary recipe with zero cost for cost calculation
-	zeroMoney := valueobject.Money{}.Zero()
+	zeroMoney := valueobject.ZeroMoney()
 	tempRecipe, err := uc.recipeFactory.Create(cmd.Name, recipeIngredients, zeroMoney)
 	if err != nil {
 		return entity.RecipeDto{}, err

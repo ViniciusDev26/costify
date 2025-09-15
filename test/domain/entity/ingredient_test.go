@@ -11,8 +11,8 @@ import (
 
 func TestIngredient_NewIngredient(t *testing.T) {
 	id := valueobject.Id{}.Of("test-id")
-	money, _ := valueobject.Money{}.Of(10.50)
-	unit := valueobject.KG
+	money, _ := valueobject.NewMoney(10.50)
+	unit := valueobject.KG()
 
 	ingredient, err := entity.NewIngredient(id, "Test Ingredient", 1.0, money, unit)
 
@@ -25,8 +25,8 @@ func TestIngredient_NewIngredient(t *testing.T) {
 
 func TestIngredient_NewIngredient_InvalidName(t *testing.T) {
 	id := valueobject.Id{}.Of("test-id")
-	money, _ := valueobject.Money{}.Of(10.50)
-	unit := valueobject.KG
+	money, _ := valueobject.NewMoney(10.50)
+	unit := valueobject.KG()
 
 	_, err := entity.NewIngredient(id, "", 1.0, money, unit)
 
@@ -35,8 +35,8 @@ func TestIngredient_NewIngredient_InvalidName(t *testing.T) {
 
 func TestIngredient_NewIngredient_InvalidQuantity(t *testing.T) {
 	id := valueobject.Id{}.Of("test-id")
-	money, _ := valueobject.Money{}.Of(10.50)
-	unit := valueobject.KG
+	money, _ := valueobject.NewMoney(10.50)
+	unit := valueobject.KG()
 
 	_, err := entity.NewIngredient(id, "Test Ingredient", 0.0, money, unit)
 
@@ -45,8 +45,8 @@ func TestIngredient_NewIngredient_InvalidQuantity(t *testing.T) {
 
 func TestIngredient_NewIngredientWithGenerator(t *testing.T) {
 	idGenerator := config.NewUuidGenerator()
-	money, _ := valueobject.Money{}.Of(10.50)
-	unit := valueobject.KG
+	money, _ := valueobject.NewMoney(10.50)
+	unit := valueobject.KG()
 
 	ingredient, err := entity.NewIngredientWithGenerator(idGenerator, "Test Ingredient", 1.0, money, unit)
 
@@ -57,8 +57,8 @@ func TestIngredient_NewIngredientWithGenerator(t *testing.T) {
 
 func TestIngredient_UnitCost(t *testing.T) {
 	id := valueobject.Id{}.Of("test-id")
-	money, _ := valueobject.Money{}.Of(10.0) // $10 for 1000g (1kg)
-	unit := valueobject.KG
+	money, _ := valueobject.NewMoney(10.0) // $10 for 1000g (1kg)
+	unit := valueobject.KG()
 
 	ingredient, _ := entity.NewIngredient(id, "Test Ingredient", 1.0, money, unit)
 

@@ -17,8 +17,8 @@ const (
 	MoneyScale = 100.0
 )
 
-// Of creates a Money instance from a float64 amount
-func (Money) Of(amount float64) (Money, error) {
+// NewMoney creates a Money instance from a float64 amount
+func NewMoney(amount float64) (Money, error) {
 	if amount < 0 {
 		return Money{}, errors.NewNegativeMoneyError("Money cannot be negative in business context")
 	}
@@ -27,8 +27,8 @@ func (Money) Of(amount float64) (Money, error) {
 	return Money{amount: rounded}, nil
 }
 
-// Zero creates a Money instance with zero value
-func (Money) Zero() Money {
+// ZeroMoney creates a Money instance with zero value
+func ZeroMoney() Money {
 	return Money{amount: 0.0}
 }
 
@@ -62,7 +62,7 @@ func (m Money) Multiply(multiplier float64) (Money, error) {
 // Divide divides Money by a divisor
 func (m Money) Divide(divisor float64) (Money, error) {
 	if divisor == 0 {
-		return Money{}, fmt.Errorf("cannot divide by zero")
+		return Money{}, errors.NewDivisionByZeroError("Cannot divide money by zero")
 	}
 	result := m.amount / divisor
 	if result < 0 {

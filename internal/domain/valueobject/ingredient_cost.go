@@ -3,6 +3,8 @@ package valueobject
 import (
 	"fmt"
 	"strings"
+
+	"github.com/vini/costify-go/internal/domain/errors"
 )
 
 // IngredientCost represents the cost breakdown for an ingredient in a recipe
@@ -23,10 +25,10 @@ func NewIngredientCost(
 	cost Money,
 ) (IngredientCost, error) {
 	if strings.TrimSpace(ingredientName) == "" {
-		return IngredientCost{}, fmt.Errorf("ingredient name cannot be null or empty")
+		return IngredientCost{}, errors.NewInvalidIngredientNameError("Ingredient name cannot be null or empty")
 	}
 	if quantityUsed <= 0 {
-		return IngredientCost{}, fmt.Errorf("quantity used must be greater than zero")
+		return IngredientCost{}, errors.NewInvalidQuantityError("Quantity used must be greater than zero")
 	}
 
 	return IngredientCost{

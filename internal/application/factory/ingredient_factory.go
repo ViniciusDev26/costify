@@ -26,7 +26,7 @@ func (f *IngredientFactory) Create(
 	packagePrice float64,
 	packageUnit string,
 ) (*entity.Ingredient, error) {
-	money, err := valueobject.Money{}.Of(packagePrice)
+	money, err := valueobject.NewMoney(packagePrice)
 	if err != nil {
 		return nil, err
 	}
@@ -55,7 +55,7 @@ func (f *IngredientFactory) CreateWithId(
 	packagePrice float64,
 	packageUnit valueobject.Unit,
 ) (*entity.Ingredient, error) {
-	money, err := valueobject.Money{}.Of(packagePrice)
+	money, err := valueobject.NewMoney(packagePrice)
 	if err != nil {
 		return nil, err
 	}

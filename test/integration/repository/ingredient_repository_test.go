@@ -20,7 +20,7 @@ func TestIngredientRepository_Save(t *testing.T) {
 	idGenerator := config.NewUuidGenerator()
 
 	// Create test ingredient
-	money, err := valueobject.Money{}.Of(10.50)
+	money, err := valueobject.NewMoney(10.50)
 	require.NoError(t, err)
 
 	ingredient, err := entity.NewIngredientWithGenerator(
@@ -28,7 +28,7 @@ func TestIngredientRepository_Save(t *testing.T) {
 		"Test Ingredient",
 		1.0,
 		money,
-		valueobject.KG,
+		valueobject.KG(),
 	)
 	require.NoError(t, err)
 
@@ -41,7 +41,7 @@ func TestIngredientRepository_Save(t *testing.T) {
 	assert.Equal(t, "Test Ingredient", savedIngredient.Name())
 	assert.Equal(t, 1.0, savedIngredient.PackageQuantity())
 	assert.True(t, savedIngredient.PackagePrice().Equals(money))
-	assert.Equal(t, valueobject.KG, savedIngredient.PackageUnit())
+	assert.Equal(t, valueobject.KG(), savedIngredient.PackageUnit())
 }
 
 func TestIngredientRepository_FindById(t *testing.T) {
@@ -52,7 +52,7 @@ func TestIngredientRepository_FindById(t *testing.T) {
 	idGenerator := config.NewUuidGenerator()
 
 	// Create and save test ingredient
-	money, err := valueobject.Money{}.Of(15.75)
+	money, err := valueobject.NewMoney(15.75)
 	require.NoError(t, err)
 
 	ingredient, err := entity.NewIngredientWithGenerator(
@@ -60,7 +60,7 @@ func TestIngredientRepository_FindById(t *testing.T) {
 		"Find Test Ingredient",
 		2.5,
 		money,
-		valueobject.G,
+		valueobject.G(),
 	)
 	require.NoError(t, err)
 
@@ -76,7 +76,7 @@ func TestIngredientRepository_FindById(t *testing.T) {
 	assert.Equal(t, "Find Test Ingredient", foundIngredient.Name())
 	assert.Equal(t, 2.5, foundIngredient.PackageQuantity())
 	assert.True(t, foundIngredient.PackagePrice().Equals(money))
-	assert.Equal(t, valueobject.G, foundIngredient.PackageUnit())
+	assert.Equal(t, valueobject.G(), foundIngredient.PackageUnit())
 }
 
 func TestIngredientRepository_FindById_NotFound(t *testing.T) {
@@ -100,7 +100,7 @@ func TestIngredientRepository_ExistsByName(t *testing.T) {
 	idGenerator := config.NewUuidGenerator()
 
 	// Create and save test ingredient
-	money, err := valueobject.Money{}.Of(5.25)
+	money, err := valueobject.NewMoney(5.25)
 	require.NoError(t, err)
 
 	ingredient, err := entity.NewIngredientWithGenerator(
@@ -108,7 +108,7 @@ func TestIngredientRepository_ExistsByName(t *testing.T) {
 		"Exists Test Ingredient",
 		1.0,
 		money,
-		valueobject.KG,
+		valueobject.KG(),
 	)
 	require.NoError(t, err)
 
@@ -134,7 +134,7 @@ func TestIngredientRepository_DeleteById(t *testing.T) {
 	idGenerator := config.NewUuidGenerator()
 
 	// Create and save test ingredient
-	money, err := valueobject.Money{}.Of(8.90)
+	money, err := valueobject.NewMoney(8.90)
 	require.NoError(t, err)
 
 	ingredient, err := entity.NewIngredientWithGenerator(
@@ -142,7 +142,7 @@ func TestIngredientRepository_DeleteById(t *testing.T) {
 		"Delete Test Ingredient",
 		1.5,
 		money,
-		valueobject.G,
+		valueobject.G(),
 	)
 	require.NoError(t, err)
 

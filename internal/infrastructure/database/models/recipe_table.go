@@ -37,7 +37,7 @@ func (rt *RecipeTable) ToEntity() (*entity.Recipe, error) {
 		ingredients = append(ingredients, ingredient)
 	}
 
-	totalCost, err := valueobject.Money{}.Of(rt.TotalCost)
+	totalCost, err := valueobject.NewMoney(rt.TotalCost)
 	if err != nil {
 		return nil, err
 	}

@@ -3,6 +3,8 @@ package valueobject
 import (
 	"fmt"
 	"strings"
+
+	"github.com/vini/costify-go/internal/domain/errors"
 )
 
 // RecipeCost represents the complete cost breakdown for a recipe
@@ -20,14 +22,14 @@ func NewRecipeCost(
 	ingredientCosts []IngredientCost,
 ) (RecipeCost, error) {
 	if strings.TrimSpace(recipeName) == "" {
-		return RecipeCost{}, fmt.Errorf("recipe name cannot be null or empty")
+		return RecipeCost{}, errors.NewInvalidIngredientNameError("Recipe name cannot be null or empty")
 	}
 	if len(ingredientCosts) == 0 {
-		return RecipeCost{}, fmt.Errorf("recipe must have at least one ingredient cost")
+		return RecipeCost{}, errors.NewEmptyRecipeError("Recipe must have at least one ingredient cost")
 	}
 
 	// Calculate total cost by summing all ingredient costs
-	totalCost := Money{}.Zero()
+	totalCost := ZeroMoney()
 	for _, ingredientCost := range ingredientCosts {
 		totalCost = totalCost.Add(ingredientCost.Cost())
 	}

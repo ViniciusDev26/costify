@@ -22,6 +22,13 @@ func NewNegativeMoneyError(message string) error {
 	}
 }
 
+func NewDivisionByZeroError(message string) error {
+	return DomainError{
+		message: message,
+		code:    "DIVISION_BY_ZERO",
+	}
+}
+
 // Recipe errors
 func NewInvalidQuantityError(message string) error {
 	return DomainError{
@@ -49,5 +56,27 @@ func NewInvalidIngredientNameError(message string) error {
 	return DomainError{
 		message: message,
 		code:    "INVALID_INGREDIENT_NAME",
+	}
+}
+
+// Unit errors
+func NewInvalidUnitError(message string) error {
+	return DomainError{
+		message: message,
+		code:    "INVALID_UNIT",
+	}
+}
+
+func NewInvalidUnitNameError(message string) error {
+	return DomainError{
+		message: message,
+		code:    "INVALID_UNIT_NAME",
+	}
+}
+
+func NewInvalidConversionFactorError(message string) error {
+	return DomainError{
+		message: message,
+		code:    "INVALID_CONVERSION_FACTOR",
 	}
 }

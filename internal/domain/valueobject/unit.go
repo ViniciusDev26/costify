@@ -1,5 +1,11 @@
 package valueobject
 
+import (
+	"strings"
+
+	"github.com/vini/costify-go/internal/domain/errors"
+)
+
 // UnitType represents the type of measurement unit
 type UnitType int
 
@@ -16,23 +22,61 @@ type Unit struct {
 	unitType     UnitType
 }
 
-var (
-	// Volume units (base: ML)
-	ML   = Unit{"ML", 1.0, Volume}
-	L    = Unit{"L", 1000.0, Volume}  // 1L = 1000ml
-	TBSP = Unit{"TBSP", 15.0, Volume} // 1 tablespoon = 15ml (for liquids)
+// NewUnit creates a validated Unit instance
+func NewUnit(name string, factorToBase float64, unitType UnitType) (Unit, error) {
+	if strings.TrimSpace(name) == "" {
+		return Unit{}, errors.NewInvalidUnitNameError("Unit name cannot be empty")
+	}
+	if factorToBase <= 0 {
+		return Unit{}, errors.NewInvalidConversionFactorError("Conversion factor must be positive")
+	}
+	return Unit{
+		name:         strings.TrimSpace(name),
+		factorToBase: factorToBase,
+		unitType:     unitType,
+	}, nil
+}
 
-	// Weight units (base: G)
-	G           = Unit{"G", 1.0, Weight}
-	KG          = Unit{"KG", 1000.0, Weight}        // 1kg = 1000g
-	TBSP_BUTTER = Unit{"TBSP_BUTTER", 14.0, Weight} // 1 tablespoon butter ≈ 14g
+// Predefined units as functions to ensure immutability
+func ML() Unit {
+	unit, _ := NewUnit("ML", 1.0, Volume)
+	return unit
+}
 
-	// Count units
-	UN = Unit{"UN", 1.0, UnitCount}
+func L() Unit {
+	unit, _ := NewUnit("L", 1000.0, Volume)
+	return unit
+}
 
-	// AllUnits provides a slice of all available units
-	AllUnits = []Unit{ML, L, TBSP, G, KG, TBSP_BUTTER, UN}
-)
+func TBSP() Unit {
+	unit, _ := NewUnit("TBSP", 15.0, Volume)
+	return unit
+}
+
+func G() Unit {
+	unit, _ := NewUnit("G", 1.0, Weight)
+	return unit
+}
+
+func KG() Unit {
+	unit, _ := NewUnit("KG", 1000.0, Weight)
+	return unit
+}
+
+func TBSP_BUTTER() Unit {
+	unit, _ := NewUnit("TBSP_BUTTER", 14.0, Weight)
+	return unit
+}
+
+func UN() Unit {
+	unit, _ := NewUnit("UN", 1.0, UnitCount)
+	return unit
+}
+
+// AllUnits returns all available units
+func AllUnits() []Unit {
+	return []Unit{ML(), L(), TBSP(), G(), KG(), TBSP_BUTTER(), UN()}
+}
 
 // ToBase converts the given quantity to the base unit for this unit type
 func (u Unit) ToBase(quantity float64) float64 {
@@ -56,7 +100,7 @@ func (u Unit) String() string {
 
 // FromString returns a Unit from its string representation
 func FromString(name string) (Unit, bool) {
-	for _, unit := range AllUnits {
+	for _, unit := range AllUnits() {
 		if unit.name == name {
 			return unit, true
 		}

@@ -71,7 +71,7 @@ func (s *RecipeCostCalculationService) calculateIngredientCost(
 
 	// Calculate total cost for the recipe quantity
 	totalCostAmount := unitCost * recipeQuantityInBaseUnits
-	totalCost, err := valueobject.Money{}.Of(totalCostAmount)
+	totalCost, err := valueobject.NewMoney(totalCostAmount)
 	if err != nil {
 		return valueobject.IngredientCost{}, err
 	}

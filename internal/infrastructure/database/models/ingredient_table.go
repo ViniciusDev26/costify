@@ -28,7 +28,7 @@ func (IngredientTable) TableName() string {
 func (it *IngredientTable) ToEntity() (*entity.Ingredient, error) {
 	id := valueobject.Id{}.Of(it.ID)
 
-	money, err := valueobject.Money{}.Of(it.PackagePrice)
+	money, err := valueobject.NewMoney(it.PackagePrice)
 	if err != nil {
 		return nil, err
 	}
