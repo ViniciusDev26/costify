@@ -132,11 +132,42 @@ fi
 
 echo "✅ Mermaid diagram generated: $MERMAID_FILE"
 
-# Update README with embedded diagram
+# Update README with embedded diagram (only the section between markers)
 README_FILE="$OUTPUT_DIR/README.md"
 echo "📝 Updating docs README..."
 
-cat > "$README_FILE" << 'HEADER'
+# Create the new diagram section
+TEMP_DIAGRAM=$(mktemp)
+cat > "$TEMP_DIAGRAM" << 'DIAGRAM_START'
+<!-- ER_DIAGRAM_START -->
+```mermaid
+DIAGRAM_START
+
+cat "$MERMAID_FILE" >> "$TEMP_DIAGRAM"
+
+cat >> "$TEMP_DIAGRAM" << 'DIAGRAM_END'
+```
+<!-- ER_DIAGRAM_END -->
+DIAGRAM_END
+
+# Check if README exists and has markers
+if [ -f "$README_FILE" ] && grep -q "<!-- ER_DIAGRAM_START -->" "$README_FILE" && grep -q "<!-- ER_DIAGRAM_END -->" "$README_FILE"; then
+    # Replace content between markers
+    # Extract content before marker
+    sed -n '1,/<!-- ER_DIAGRAM_START -->/p' "$README_FILE" | sed '$d' > "$README_FILE.tmp"
+
+    # Add new diagram
+    cat "$TEMP_DIAGRAM" >> "$README_FILE.tmp"
+
+    # Extract content after marker
+    sed -n '/<!-- ER_DIAGRAM_END -->/,$p' "$README_FILE" | tail -n +2 >> "$README_FILE.tmp"
+
+    # Replace original file
+    mv "$README_FILE.tmp" "$README_FILE"
+    echo "✅ README updated (diagram section replaced): $README_FILE"
+else
+    # README doesn't exist or doesn't have markers - create it with full template
+    cat > "$README_FILE" << 'HEADER'
 # Documentation
 
 This directory contains automatically generated project documentation.
@@ -147,13 +178,11 @@ This directory contains automatically generated project documentation.
 
 The ER diagram below represents the database schema with all tables, relationships, and constraints.
 
-```mermaid
 HEADER
 
-cat "$MERMAID_FILE" >> "$README_FILE"
+    cat "$TEMP_DIAGRAM" >> "$README_FILE"
 
-cat >> "$README_FILE" << 'FOOTER'
-```
+    cat >> "$README_FILE" << 'FOOTER'
 
 ### How It Works
 
@@ -187,5 +216,9 @@ PGHOST=localhost PGPORT=5432 PGDATABASE=costify PGUSER=postgres PGPASSWORD=postg
 *This documentation is automatically updated by the CI/CD pipeline.*
 FOOTER
 
-echo "✅ README updated: $README_FILE"
+    echo "✅ README created with markers: $README_FILE"
+fi
+
+# Cleanup
+rm -f "$TEMP_DIAGRAM"
 echo "🎉 ER diagram generation complete!"

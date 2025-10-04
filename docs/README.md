@@ -8,6 +8,7 @@ This directory contains automatically generated project documentation.
 
 The ER diagram below represents the database schema with all tables, relationships, and constraints.
 
+<!-- ER_DIAGRAM_START -->
 ```mermaid
 erDiagram
 
@@ -41,6 +42,7 @@ erDiagram
     ingredients ||--o{ recipe_ingredients : "has"
     recipes ||--o{ recipe_ingredients : "has"
 ```
+<!-- ER_DIAGRAM_END -->
 
 ### How It Works
 
@@ -68,6 +70,12 @@ PGHOST=localhost PGPORT=5432 PGDATABASE=costify PGUSER=postgres PGPASSWORD=postg
 - **GitHub**: The Mermaid diagram renders natively in GitHub's markdown viewer
 - **VS Code**: Install "Markdown Preview Mermaid Support" extension
 - **Other editors**: Any Mermaid-compatible markdown viewer
+
+---
+
+## Additional Notes
+
+You can add custom content here and it will be preserved when the diagram is updated.
 
 ---
 
