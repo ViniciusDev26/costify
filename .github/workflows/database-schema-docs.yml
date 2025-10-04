@@ -53,6 +53,14 @@ jobs:
       run: |
         npm install -g @mermaid-js/mermaid-cli
 
+    - name: Configure Puppeteer for CI
+      run: |
+        cat > /tmp/puppeteer-config.json << 'EOF'
+        {
+          "args": ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"]
+        }
+        EOF
+
     - name: Generate schema documentation
       env:
         PGHOST: localhost
@@ -65,6 +73,12 @@ jobs:
         ./scripts/generate-schema-docs.sh
 
     - name: Generate ER diagram images
+      env:
+        PGHOST: localhost
+        PGPORT: 5432
+        PGDATABASE: costify_db
+        PGUSER: costify_user
+        PGPASSWORD: costify_pass
       run: |
         chmod +x ./scripts/generate-er-diagram.sh
         ./scripts/generate-er-diagram.sh
