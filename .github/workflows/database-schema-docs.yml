@@ -11,6 +11,8 @@ on:
 jobs:
   generate-schema-docs:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     services:
       postgres:
