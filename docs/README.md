@@ -12,6 +12,16 @@ The ER diagram below represents the database schema with all tables, relationshi
 ```mermaid
 erDiagram
 
+    measurement_unit {
+        string ML
+        string L
+        string G
+        string KG
+        string UN
+        string TBSP
+        string TBSP_BUTTER
+    }
+
     ingredients {
         id varchar(255) PK
         name varchar(255) UK

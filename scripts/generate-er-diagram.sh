@@ -29,6 +29,25 @@ cat > "$MERMAID_FILE" << 'EOF'
 erDiagram
 EOF
 
+# Get all ENUMs first and add them as entities
+ENUMS=$(query_db "SELECT t.typname AS enum_name FROM pg_type t JOIN pg_catalog.pg_namespace n ON n.oid = t.typnamespace WHERE n.nspname = 'public' AND t.typtype = 'e' ORDER BY t.typname;")
+
+if [ ! -z "$ENUMS" ] && [ "$ENUMS" != "" ]; then
+    for enum_name in $ENUMS; do
+        echo "" >> "$MERMAID_FILE"
+        echo "    $enum_name {" >> "$MERMAID_FILE"
+
+        # Get ENUM values
+        ENUM_VALUES=$(query_db "SELECT e.enumlabel FROM pg_enum e JOIN pg_type t ON e.enumtypid = t.oid WHERE t.typname = '$enum_name' ORDER BY e.enumsortorder;")
+
+        while IFS='|' read -r value; do
+            echo "        string $value" >> "$MERMAID_FILE"
+        done <<< "$ENUM_VALUES"
+
+        echo "    }" >> "$MERMAID_FILE"
+    done
+fi
+
 # Get all tables (excluding Flyway history)
 TABLES=$(query_db "SELECT tablename FROM pg_tables WHERE schemaname = 'public' AND tablename != 'flyway_schema_history' ORDER BY tablename;")
 
@@ -130,9 +149,9 @@ if [ ! -z "$FK_RELATIONSHIPS" ] && [ "$FK_RELATIONSHIPS" != "" ]; then
     done <<< "$FK_RELATIONSHIPS"
 fi
 
-echo "✅ Mermaid diagram generated: $MERMAID_FILE"
+echo "✅ Mermaid diagram with ENUMs generated: $MERMAID_FILE"
 
-# Update README with embedded diagram (only the section between markers)
+# Update README with embedded diagram (only section between markers)
 README_FILE="$OUTPUT_DIR/README.md"
 echo "📝 Updating docs README..."
 
@@ -152,17 +171,10 @@ DIAGRAM_END
 
 # Check if README exists and has markers
 if [ -f "$README_FILE" ] && grep -q "<!-- ER_DIAGRAM_START -->" "$README_FILE" && grep -q "<!-- ER_DIAGRAM_END -->" "$README_FILE"; then
-    # Replace content between markers
-    # Extract content before marker
+    # Replace diagram section
     sed -n '1,/<!-- ER_DIAGRAM_START -->/p' "$README_FILE" | sed '$d' > "$README_FILE.tmp"
-
-    # Add new diagram
     cat "$TEMP_DIAGRAM" >> "$README_FILE.tmp"
-
-    # Extract content after marker
     sed -n '/<!-- ER_DIAGRAM_END -->/,$p' "$README_FILE" | tail -n +2 >> "$README_FILE.tmp"
-
-    # Replace original file
     mv "$README_FILE.tmp" "$README_FILE"
     echo "✅ README updated (diagram section replaced): $README_FILE"
 else
@@ -221,4 +233,4 @@ fi
 
 # Cleanup
 rm -f "$TEMP_DIAGRAM"
-echo "🎉 ER diagram generation complete!"
+echo "🎉 ER diagram with ENUMs generation complete!"
