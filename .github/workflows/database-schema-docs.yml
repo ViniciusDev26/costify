@@ -1,4 +1,4 @@
-name: Database Schema Documentation
+name: Database ER Diagram
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  generate-schema-docs:
+  generate-er-diagram:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -51,17 +51,6 @@ jobs:
           -Dflyway.user=$SPRING_DATASOURCE_USERNAME \
           -Dflyway.password=$SPRING_DATASOURCE_PASSWORD
 
-    - name: Generate schema documentation
-      env:
-        PGHOST: localhost
-        PGPORT: 5432
-        PGDATABASE: costify_db
-        PGUSER: costify_user
-        PGPASSWORD: costify_pass
-      run: |
-        chmod +x ./scripts/generate-schema-docs.sh
-        ./scripts/generate-schema-docs.sh
-
     - name: Generate ER diagram
       env:
         PGHOST: localhost
@@ -73,10 +62,10 @@ jobs:
         chmod +x ./scripts/generate-er-diagram.sh
         ./scripts/generate-er-diagram.sh
 
-    - name: Commit and push schema documentation
+    - name: Commit and push ER diagram
       run: |
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
-        git add docs/database-schema.md docs/database-er-diagram.mmd
-        git diff --staged --quiet || git commit -m "📚 update database schema documentation [skip ci]"
+        git add docs/database-er-diagram.mmd
+        git diff --staged --quiet || git commit -m "📊 update database ER diagram [skip ci]"
         git push

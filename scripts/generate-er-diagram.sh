@@ -10,11 +10,9 @@ DB_NAME="${PGDATABASE:-costify_db}"
 DB_USER="${PGUSER:-costify_user}"
 DB_PASS="${PGPASSWORD:-costify_pass}"
 
-# Output files
+# Output file
 OUTPUT_DIR="docs"
 MERMAID_FILE="$OUTPUT_DIR/database-er-diagram.mmd"
-PNG_FILE="$OUTPUT_DIR/database-er-diagram.png"
-SVG_FILE="$OUTPUT_DIR/database-er-diagram.svg"
 
 # Create docs directory if it doesn't exist
 mkdir -p "$OUTPUT_DIR"
@@ -85,7 +83,7 @@ for table in $TABLES; do
         # Clean up data type for Mermaid compatibility (replace commas and spaces with underscores)
         data_type=$(echo "$data_type" | sed 's/NULL//g' | sed 's/,/_/g' | sed 's/ /_/g' | xargs)
 
-        echo "        $data_type $col_name$KEY_INDICATOR" >> "$MERMAID_FILE"
+        echo "        $col_name $data_type$KEY_INDICATOR" >> "$MERMAID_FILE"
     done <<< "$COLUMNS"
 
     echo "    }" >> "$MERMAID_FILE"

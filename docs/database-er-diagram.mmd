@@ -1,30 +1,30 @@
 erDiagram
 
     ingredients {
-        varchar(255) id PK
-        varchar(255) name UK
-        numeric(10_3) package_quantity
-        numeric(10_2) package_price
-        timestamp_without_time_zone created_at
-        timestamp_without_time_zone updated_at
-        measurement_unit package_unit
+        id varchar(255) PK
+        name varchar(255) UK
+        package_quantity numeric(10_3)
+        package_price numeric(10_2)
+        created_at timestamp_without_time_zone
+        updated_at timestamp_without_time_zone
+        package_unit measurement_unit
     }
 
     recipe_ingredients {
-        integer id PK
-        varchar(255) recipe_id FK
-        varchar(255) ingredient_id FK
-        numeric(10_3) quantity
-        timestamp_without_time_zone created_at
-        measurement_unit unit
+        id integer PK
+        recipe_id varchar(255) FK
+        ingredient_id varchar(255) FK
+        quantity numeric(10_3)
+        created_at timestamp_without_time_zone
+        unit measurement_unit
     }
 
     recipes {
-        varchar(255) id PK
-        varchar(255) name UK
-        timestamp_without_time_zone created_at
-        timestamp_without_time_zone updated_at
-        numeric(10_2) total_cost
+        id varchar(255) PK
+        name varchar(255) UK
+        created_at timestamp_without_time_zone
+        updated_at timestamp_without_time_zone
+        total_cost numeric(10_2)
     }
 
     ingredients ||--o{ recipe_ingredients : "has"
