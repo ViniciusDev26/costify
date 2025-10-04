@@ -21,7 +21,7 @@ mkdir -p "$OUTPUT_DIR"
 
 # Function to execute psql queries
 query_db() {
-    PGPASSWORD="$DB_PASS" psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -t -A -F"," -c "$1"
+    PGPASSWORD="$DB_PASS" psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -t -A -F"|" -c "$1"
 }
 
 echo "🎨 Generating Mermaid ER diagram..."
@@ -47,8 +47,11 @@ for table in $TABLES; do
             column_name,
             CASE
                 WHEN data_type = 'character varying' THEN 'varchar(' || COALESCE(character_maximum_length::text, '') || ')'
-                WHEN data_type = 'numeric' AND numeric_scale > 0 THEN 'numeric(' || numeric_precision || ',' || numeric_scale || ')'
-                WHEN data_type = 'numeric' THEN 'numeric(' || numeric_precision || ')'
+                WHEN data_type = 'numeric' AND numeric_precision IS NOT NULL AND numeric_scale IS NOT NULL AND numeric_scale > 0
+                    THEN 'numeric(' || numeric_precision || ',' || numeric_scale || ')'
+                WHEN data_type = 'numeric' AND numeric_precision IS NOT NULL
+                    THEN 'numeric(' || numeric_precision || ')'
+                WHEN data_type = 'numeric' THEN 'numeric'
                 WHEN data_type = 'integer' THEN 'integer'
                 WHEN data_type = 'USER-DEFINED' THEN udt_name
                 ELSE data_type
@@ -61,7 +64,7 @@ for table in $TABLES; do
         ORDER BY ordinal_position;
     ")
 
-    while IFS=',' read -r col_name data_type nullable col_default; do
+    while IFS='|' read -r col_name data_type nullable col_default; do
         # Determine key type
         IS_PK=$(query_db "SELECT EXISTS (SELECT 1 FROM pg_index i JOIN pg_attribute a ON a.attrelid = i.indrelid AND a.attnum = ANY(i.indkey) WHERE i.indrelid = 'public.$table'::regclass AND i.indisprimary AND a.attname = '$col_name');")
 
@@ -79,8 +82,8 @@ for table in $TABLES; do
             KEY_INDICATOR=" UK"
         fi
 
-        # Clean up data type for display
-        data_type=$(echo "$data_type" | sed 's/NULL//g' | xargs)
+        # Clean up data type for Mermaid compatibility (replace commas and spaces with underscores)
+        data_type=$(echo "$data_type" | sed 's/NULL//g' | sed 's/,/_/g' | sed 's/ /_/g' | xargs)
 
         echo "        $data_type $col_name$KEY_INDICATOR" >> "$MERMAID_FILE"
     done <<< "$COLUMNS"
@@ -113,7 +116,7 @@ FK_RELATIONSHIPS=$(query_db "
 ")
 
 if [ ! -z "$FK_RELATIONSHIPS" ] && [ "$FK_RELATIONSHIPS" != "" ]; then
-    while IFS=',' read -r table_name foreign_table delete_rule; do
+    while IFS='|' read -r table_name foreign_table delete_rule; do
         # Determine relationship cardinality
         # For recipe_ingredients: recipes ||--o{ recipe_ingredients
         # recipes to recipe_ingredients: one-to-many

@@ -1,6 +1,6 @@
 # Database Schema Documentation
 
-**Generated:** 2025-10-04 00:22:58 UTC
+**Generated:** 2025-10-04 00:38:38 UTC
 
 **Database:** costify
 
@@ -21,10 +21,10 @@ erDiagram
     ingredients {
         varchar(255) id PK
         varchar(255) name UK
-        numeric(10 package_quantity
-        numeric(10 package_price
-        timestamp without time zone created_at
-        timestamp without time zone updated_at
+        numeric(10_3) package_quantity
+        numeric(10_2) package_price
+        timestamp_without_time_zone created_at
+        timestamp_without_time_zone updated_at
         measurement_unit package_unit
     }
 
@@ -32,17 +32,17 @@ erDiagram
         integer id PK
         varchar(255) recipe_id FK
         varchar(255) ingredient_id FK
-        numeric(10 quantity
-        timestamp without time zone created_at
+        numeric(10_3) quantity
+        timestamp_without_time_zone created_at
         measurement_unit unit
     }
 
     recipes {
         varchar(255) id PK
         varchar(255) name UK
-        timestamp without time zone created_at
-        timestamp without time zone updated_at
-        numeric(10 total_cost
+        timestamp_without_time_zone created_at
+        timestamp_without_time_zone updated_at
+        numeric(10_2) total_cost
     }
 
     ingredients ||--o{ recipe_ingredients : "has"
