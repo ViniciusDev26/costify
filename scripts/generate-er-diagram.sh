@@ -35,13 +35,13 @@ ENUMS=$(query_db "SELECT t.typname AS enum_name FROM pg_type t JOIN pg_catalog.p
 if [ ! -z "$ENUMS" ] && [ "$ENUMS" != "" ]; then
     for enum_name in $ENUMS; do
         echo "" >> "$MERMAID_FILE"
-        echo "    $enum_name {" >> "$MERMAID_FILE"
+        echo "    \"$enum_name (ENUM)\" {" >> "$MERMAID_FILE"
 
         # Get ENUM values
         ENUM_VALUES=$(query_db "SELECT e.enumlabel FROM pg_enum e JOIN pg_type t ON e.enumtypid = t.oid WHERE t.typname = '$enum_name' ORDER BY e.enumsortorder;")
 
         while IFS='|' read -r value; do
-            echo "        string $value" >> "$MERMAID_FILE"
+            echo "        $value string" >> "$MERMAID_FILE"
         done <<< "$ENUM_VALUES"
 
         echo "    }" >> "$MERMAID_FILE"
@@ -147,6 +147,33 @@ if [ ! -z "$FK_RELATIONSHIPS" ] && [ "$FK_RELATIONSHIPS" != "" ]; then
             echo "    $foreign_table ||..o{ $table_name : \"references\"" >> "$MERMAID_FILE"
         fi
     done <<< "$FK_RELATIONSHIPS"
+fi
+
+# Add relationships between tables and ENUMs
+if [ ! -z "$ENUMS" ] && [ "$ENUMS" != "" ]; then
+    echo "" >> "$MERMAID_FILE"
+
+    # For each table, find columns that use ENUM types
+    for table in $TABLES; do
+        # Get columns that use ENUM types
+        ENUM_COLUMNS=$(query_db "
+            SELECT
+                c.column_name,
+                c.udt_name as enum_type
+            FROM information_schema.columns c
+            WHERE c.table_schema = 'public'
+                AND c.table_name = '$table'
+                AND c.data_type = 'USER-DEFINED'
+            ORDER BY c.ordinal_position;
+        ")
+
+        if [ ! -z "$ENUM_COLUMNS" ] && [ "$ENUM_COLUMNS" != "" ]; then
+            while IFS='|' read -r column_name enum_type; do
+                # Add relationship: table uses enum
+                echo "    $table }o--|| \"$enum_type (ENUM)\" : \"uses\"" >> "$MERMAID_FILE"
+            done <<< "$ENUM_COLUMNS"
+        fi
+    done
 fi
 
 echo "✅ Mermaid diagram with ENUMs generated: $MERMAID_FILE"

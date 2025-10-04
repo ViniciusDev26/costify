@@ -12,14 +12,14 @@ The ER diagram below represents the database schema with all tables, relationshi
 ```mermaid
 erDiagram
 
-    measurement_unit {
-        string ML
-        string L
-        string G
-        string KG
-        string UN
-        string TBSP
-        string TBSP_BUTTER
+    "measurement_unit (ENUM)" {
+        ML string
+        L string
+        G string
+        KG string
+        UN string
+        TBSP string
+        TBSP_BUTTER string
     }
 
     ingredients {
@@ -51,6 +51,9 @@ erDiagram
 
     ingredients ||--o{ recipe_ingredients : "has"
     recipes ||--o{ recipe_ingredients : "has"
+
+    ingredients }o--|| "measurement_unit (ENUM)" : "uses"
+    recipe_ingredients }o--|| "measurement_unit (ENUM)" : "uses"
 ```
 <!-- ER_DIAGRAM_END -->
 
