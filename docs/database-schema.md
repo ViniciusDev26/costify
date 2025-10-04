@@ -1,10 +1,57 @@
 # Database Schema Documentation
 
-**Generated:** 2025-10-04 00:14:32 UTC
+**Generated:** 2025-10-04 00:22:58 UTC
 
 **Database:** costify
 
 **PostgreSQL Version:** PostgreSQL 16.9 on x86_64-pc-linux-musl, compiled by gcc (Alpine 14.2.0) 14.2.0, 64-bit
+
+## Entity Relationship Diagram
+
+### Visual Representation
+
+![Database ER Diagram](database-er-diagram.png)
+
+<details>
+<summary>View Mermaid Source</summary>
+
+```mermaid
+erDiagram
+
+    ingredients {
+        varchar(255) id PK
+        varchar(255) name UK
+        numeric(10 package_quantity
+        numeric(10 package_price
+        timestamp without time zone created_at
+        timestamp without time zone updated_at
+        measurement_unit package_unit
+    }
+
+    recipe_ingredients {
+        integer id PK
+        varchar(255) recipe_id FK
+        varchar(255) ingredient_id FK
+        numeric(10 quantity
+        timestamp without time zone created_at
+        measurement_unit unit
+    }
+
+    recipes {
+        varchar(255) id PK
+        varchar(255) name UK
+        timestamp without time zone created_at
+        timestamp without time zone updated_at
+        numeric(10 total_cost
+    }
+
+    ingredients ||--o{ recipe_ingredients : "has"
+    recipes ||--o{ recipe_ingredients : "has"
+```
+
+</details>
+
+---
 
 ## Table of Contents
 
