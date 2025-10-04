@@ -49,18 +49,6 @@ jobs:
           -Dflyway.user=$SPRING_DATASOURCE_USERNAME \
           -Dflyway.password=$SPRING_DATASOURCE_PASSWORD
 
-    - name: Install Mermaid CLI
-      run: |
-        npm install -g @mermaid-js/mermaid-cli
-
-    - name: Configure Puppeteer for CI
-      run: |
-        cat > /tmp/puppeteer-config.json << 'EOF'
-        {
-          "args": ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"]
-        }
-        EOF
-
     - name: Generate schema documentation
       env:
         PGHOST: localhost
@@ -72,7 +60,7 @@ jobs:
         chmod +x ./scripts/generate-schema-docs.sh
         ./scripts/generate-schema-docs.sh
 
-    - name: Generate ER diagram images
+    - name: Generate ER diagram
       env:
         PGHOST: localhost
         PGPORT: 5432
@@ -87,6 +75,6 @@ jobs:
       run: |
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
-        git add docs/database-schema.md docs/database-er-diagram.mmd docs/database-er-diagram.png docs/database-er-diagram.svg
+        git add docs/database-schema.md docs/database-er-diagram.mmd
         git diff --staged --quiet || git commit -m "📚 update database schema documentation [skip ci]"
         git push

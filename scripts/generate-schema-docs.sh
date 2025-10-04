@@ -38,13 +38,6 @@ echo "" >> "$OUTPUT_FILE"
 # Add ER Diagram section
 echo "## Entity Relationship Diagram" >> "$OUTPUT_FILE"
 echo "" >> "$OUTPUT_FILE"
-echo "### Visual Representation" >> "$OUTPUT_FILE"
-echo "" >> "$OUTPUT_FILE"
-echo "![Database ER Diagram](database-er-diagram.png)" >> "$OUTPUT_FILE"
-echo "" >> "$OUTPUT_FILE"
-echo "<details>" >> "$OUTPUT_FILE"
-echo "<summary>View Mermaid Source</summary>" >> "$OUTPUT_FILE"
-echo "" >> "$OUTPUT_FILE"
 echo "\`\`\`mermaid" >> "$OUTPUT_FILE"
 
 # Include mermaid diagram if it exists
@@ -56,8 +49,6 @@ else
 fi
 
 echo "\`\`\`" >> "$OUTPUT_FILE"
-echo "" >> "$OUTPUT_FILE"
-echo "</details>" >> "$OUTPUT_FILE"
 echo "" >> "$OUTPUT_FILE"
 echo "---" >> "$OUTPUT_FILE"
 echo "" >> "$OUTPUT_FILE"

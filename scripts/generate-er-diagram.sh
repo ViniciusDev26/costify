@@ -133,20 +133,4 @@ if [ ! -z "$FK_RELATIONSHIPS" ] && [ "$FK_RELATIONSHIPS" != "" ]; then
 fi
 
 echo "✅ Mermaid diagram generated: $MERMAID_FILE"
-
-# Generate PNG and SVG from Mermaid
-if command -v mmdc &> /dev/null; then
-    echo "🖼️  Generating PNG diagram..."
-    mmdc -i "$MERMAID_FILE" -o "$PNG_FILE" -t neutral -b transparent -p /tmp/puppeteer-config.json
-    echo "✅ PNG diagram generated: $PNG_FILE"
-
-    echo "🖼️  Generating SVG diagram..."
-    mmdc -i "$MERMAID_FILE" -o "$SVG_FILE" -t neutral -b transparent -p /tmp/puppeteer-config.json
-    echo "✅ SVG diagram generated: $SVG_FILE"
-else
-    echo "⚠️  Mermaid CLI (mmdc) not found. Skipping PNG/SVG generation."
-    echo "   Install with: npm install -g @mermaid-js/mermaid-cli"
-fi
-
-echo ""
 echo "🎉 ER diagram generation complete!"

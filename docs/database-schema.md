@@ -1,19 +1,12 @@
 # Database Schema Documentation
 
-**Generated:** 2025-10-04 00:38:38 UTC
+**Generated:** 2025-10-04 00:42:40 UTC
 
 **Database:** costify
 
 **PostgreSQL Version:** PostgreSQL 16.9 on x86_64-pc-linux-musl, compiled by gcc (Alpine 14.2.0) 14.2.0, 64-bit
 
 ## Entity Relationship Diagram
-
-### Visual Representation
-
-![Database ER Diagram](database-er-diagram.png)
-
-<details>
-<summary>View Mermaid Source</summary>
 
 ```mermaid
 erDiagram
@@ -48,8 +41,6 @@ erDiagram
     ingredients ||--o{ recipe_ingredients : "has"
     recipes ||--o{ recipe_ingredients : "has"
 ```
-
-</details>
 
 ---
 
