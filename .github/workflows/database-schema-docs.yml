@@ -52,15 +52,16 @@ jobs:
           -Dflyway.password=$SPRING_DATASOURCE_PASSWORD
 
     - name: Generate ER diagram
-      env:
-        PGHOST: localhost
-        PGPORT: 5432
-        PGDATABASE: costify_db
-        PGUSER: costify_user
-        PGPASSWORD: costify_pass
-      run: |
-        chmod +x ./scripts/generate-er-diagram.sh
-        ./scripts/generate-er-diagram.sh
+      uses: ViniciusDev26/er-diagram@v2
+      with:
+        pg-database: costify_db
+        pg-user: costify_user
+        pg-password: costify_pass
+        pg-host: localhost
+        pg-port: "5432"
+        output-dir: docs
+        write-to-readme: "true"
+        readme-path: docs/README.md
 
     - name: Commit and push documentation
       run: |
