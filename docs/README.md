@@ -22,6 +22,19 @@ erDiagram
         TBSP_BUTTER string
     }
 
+    flyway_schema_history {
+        installed_rank integer PK
+        version varchar(50)
+        description varchar(200)
+        type varchar(20)
+        script varchar(1000)
+        checksum integer
+        installed_by varchar(100)
+        installed_on timestamp_without_time_zone
+        execution_time integer
+        success boolean
+    }
+
     ingredients {
         id varchar(255) PK
         name varchar(255) UK
