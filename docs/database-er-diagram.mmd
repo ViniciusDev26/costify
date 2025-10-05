@@ -21,6 +21,7 @@ erDiagram
         installed_on timestamp_without_time_zone
         execution_time integer
         success boolean
+        string INDEX_flyway_schema_history_s_idx_success
     }
 
     ingredients {
@@ -31,6 +32,9 @@ erDiagram
         created_at timestamp_without_time_zone
         updated_at timestamp_without_time_zone
         package_unit measurement_unit
+        string INDEX_idx_ingredients_name_name
+        string INDEX_idx_ingredients_package_unit_package_unit
+        string UNIQUE-INDEX_ingredients_name_key_name
     }
 
     recipe_ingredients {
@@ -40,6 +44,10 @@ erDiagram
         quantity numeric(10_3)
         created_at timestamp_without_time_zone
         unit measurement_unit
+        string INDEX_idx_recipe_ingredients_ingredient_id_ingredient_id
+        string INDEX_idx_recipe_ingredients_recipe_id_recipe_id
+        string INDEX_idx_recipe_ingredients_unit_unit
+        string UNIQUE-INDEX_uk_recipe_ingredient_recipe_id_ingredient_id
     }
 
     recipes {
@@ -48,6 +56,8 @@ erDiagram
         created_at timestamp_without_time_zone
         updated_at timestamp_without_time_zone
         total_cost numeric(10_2)
+        string INDEX_idx_recipes_name_name
+        string UNIQUE-INDEX_recipes_name_key_name
     }
 
     ingredients ||--o{ recipe_ingredients : "has"
