@@ -52,22 +52,16 @@ jobs:
             -Dflyway.password=$SPRING_DATASOURCE_PASSWORD
 
       - name: Generate ER diagram
-        uses: ViniciusDev26/er-diagram@v2
+        uses: ViniciusDev26/er-diagram@v5
         with:
-          pg-database: costify_db
-          pg-user: costify_user
-          pg-password: costify_pass
-          pg-host: localhost
-          pg-port: "5432"
+          db-name: costify_db
+          db-user: costify_user
+          db-pass: costify_pass
+          db-host: localhost
+          db-port: "5432"
           output-dir: docs
           write-to-readme: "true"
           readme-path: docs/README.md
           excluded-tables: none
-
-      - name: Commit and push documentation
-        run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          git add docs/database-er-diagram.mmd docs/README.md
-          git diff --staged --quiet || git commit -m "📊 update database ER diagram and documentation [skip ci]"
-          git push
+          auto-commit: "true"
+          commit-message: "📊 update database ER diagram and documentation [skip ci]"
