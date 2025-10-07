@@ -5,6 +5,7 @@ import br.unifor.costify.domain.entity.Ingredient;
 import br.unifor.costify.domain.valueobject.Id;
 import br.unifor.costify.infra.data.entities.IngredientTable;
 import br.unifor.costify.infra.data.repositories.jpa.JpaIngredientRepository;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Repository;
 
@@ -22,6 +23,11 @@ public class PostgresIngredientRepository implements IngredientRepository {
         this.jpaIngredientRepository.findById(id.getValue()).orElse(null);
 
     return Optional.ofNullable(ingredientQueryResult).map(IngredientTable::toDomain);
+  }
+
+  @Override
+  public List<Ingredient> findAll() {
+    return this.jpaIngredientRepository.findAll().stream().map(IngredientTable::toDomain).toList();
   }
 
   public Ingredient save(Ingredient ingredient) {

@@ -277,4 +277,69 @@ class PostgresIngredientRepositoryIntegrationTest {
     assert !ingredientRepository.existsByName("test milk");
     assert !ingredientRepository.existsByName("TEST MILK");
   }
+
+  @Test
+  void findAll_shouldReturnEmptyList_whenNoIngredients() {
+    // When
+    var ingredients = ingredientRepository.findAll();
+
+    // Then
+    assert ingredients != null;
+    assert ingredients.isEmpty();
+  }
+
+  @Test
+  void findAll_shouldReturnAllIngredients() {
+    // Given
+    Ingredient ingredient1 =
+        new Ingredient(Id.of("ingredient-1"), "Milk", 1.0, Money.of(5.50), Unit.L);
+    Ingredient ingredient2 = new Ingredient(Id.of("ingredient-2"), "Flour", 500.0, Money.of(3.20), Unit.G);
+    Ingredient ingredient3 =
+        new Ingredient(Id.of("ingredient-3"), "Sugar", 1.0, Money.of(4.50), Unit.KG);
+
+    ingredientRepository.save(ingredient1);
+    ingredientRepository.save(ingredient2);
+    ingredientRepository.save(ingredient3);
+
+    // When
+    var ingredients = ingredientRepository.findAll();
+
+    // Then
+    assert ingredients != null;
+    assert ingredients.size() == 3;
+  }
+
+  @Test
+  void findAll_shouldReturnIngredientsWithCorrectData() {
+    // Given
+    Ingredient milk = new Ingredient(Id.of("milk-id"), "Milk", 1.0, Money.of(5.50), Unit.L);
+    Ingredient flour = new Ingredient(Id.of("flour-id"), "Flour", 500.0, Money.of(3.20), Unit.G);
+
+    ingredientRepository.save(milk);
+    ingredientRepository.save(flour);
+
+    // When
+    var ingredients = ingredientRepository.findAll();
+
+    // Then
+    assert ingredients.size() == 2;
+
+    // Find milk in results
+    var foundMilk =
+        ingredients.stream().filter(i -> i.getId().equals(milk.getId())).findFirst();
+    assert foundMilk.isPresent();
+    assert foundMilk.get().getName().equals("Milk");
+    assert foundMilk.get().getPackageQuantity() == 1.0;
+    assert foundMilk.get().getPackagePrice().equals(Money.of(5.50));
+    assert foundMilk.get().getPackageUnit() == Unit.L;
+
+    // Find flour in results
+    var foundFlour =
+        ingredients.stream().filter(i -> i.getId().equals(flour.getId())).findFirst();
+    assert foundFlour.isPresent();
+    assert foundFlour.get().getName().equals("Flour");
+    assert foundFlour.get().getPackageQuantity() == 500.0;
+    assert foundFlour.get().getPackagePrice().equals(Money.of(3.20));
+    assert foundFlour.get().getPackageUnit() == Unit.G;
+  }
 }
