@@ -101,7 +101,8 @@ costify/
 │   │   │       │   │   │   └── RecipeDto.java
 │   │   │       │   │   └── response/                # Response DTOs
 │   │   │       │   │   │   ├── IngredientCostDto.java
-│   │   │       │   │   │   └── RecipeCostDto.java
+│   │   │       │   │   │   ├── RecipeCostDto.java
+│   │   │       │   │   │   └── UnitDto.java
 │   │   │       │   ├── errors/                      # Application exceptions
 │   │   │       │   │   ├── IngredientAlreadyExistsException.java
 │   │   │       │   │   ├── IngredientNotFoundException.java
@@ -119,9 +120,11 @@ costify/
 │   │   │       │   │   └── RecipeFactory.java       # Recipe creation factory
 │   │   │       │   └── usecase/
 │   │   │       │       ├── CalculateRecipeCostUseCase.java # Recipe cost calculation logic
-│   │   │       │       ├── RegisterIngredientUseCase.java # Ingredient registration logic
-│   │   │       │       ├── RegisterRecipeUseCase.java     # Recipe registration logic
-│   │   │       │       └── UpdateIngredientUseCase.java   # Ingredient update logic
+│   │   │       │       ├── ListAvailableUnitsUseCase.java  # List available units logic
+│   │   │       │       ├── ListIngredientsUseCase.java     # List ingredients logic
+│   │   │       │       ├── RegisterIngredientUseCase.java  # Ingredient registration logic
+│   │   │       │       ├── RegisterRecipeUseCase.java      # Recipe registration logic
+│   │   │       │       └── UpdateIngredientUseCase.java    # Ingredient update logic
 │   │   │       ├── domain/                          # Domain Layer (Core Business Logic)
 │   │   │       │   ├── contracts/
 │   │   │       │   │   └── IdGenerator.java         # Abstract ID generation
@@ -157,6 +160,7 @@ costify/
 │   │   │       │   ├── controllers/
 │   │   │       │   │   ├── IngredientController.java # REST endpoints for ingredients
 │   │   │       │   │   ├── RecipeController.java    # REST endpoints for recipes
+│   │   │       │   │   ├── UnitController.java      # REST endpoints for units
 │   │   │       │   │   └── dto/
 │   │   │       │   │       ├── IngredientControllerRegisterRequest.java
 │   │   │       │   │       ├── RecipeControllerRegisterRequest.java
@@ -198,6 +202,8 @@ costify/
 │               │   │   └── RegisterRecipeCommandTest.java
 │               │   └── usecase/                     # Use case tests
 │               │       ├── CalculateRecipeCostUseCaseTest.java
+│               │       ├── ListAvailableUnitsUseCaseTest.java
+│               │       ├── ListIngredientsUseCaseTest.java
 │               │       ├── RegisterIngredientUseCaseTest.java
 │               │       └── RegisterRecipeUseCaseTest.java
 │               ├── domain/                          # Domain unit tests
@@ -288,7 +294,8 @@ application/                             # Business use cases (COMPLETED)
 │   │   └── RecipeDto.java
 │   └── response/                        # Response DTOs
 │       ├── IngredientCostDto.java
-│       └── RecipeCostDto.java
+│       ├── RecipeCostDto.java
+│       └── UnitDto.java
 ├── errors/                              # Application exceptions
 │   ├── IngredientAlreadyExistsException.java
 │   ├── IngredientNotFoundException.java
@@ -304,9 +311,11 @@ application/                             # Business use cases (COMPLETED)
 │   └── ValidationService.java           # Input validation service
 └── usecase/
     ├── CalculateRecipeCostUseCase.java  # Recipe cost calculation logic
-    ├── RegisterIngredientUseCase.java   # Business workflows
-    ├── RegisterRecipeUseCase.java
-    └── UpdateIngredientUseCase.java
+    ├── ListAvailableUnitsUseCase.java   # List available units workflow
+    ├── ListIngredientsUseCase.java      # List ingredients workflow
+    ├── RegisterIngredientUseCase.java   # Ingredient registration workflow
+    ├── RegisterRecipeUseCase.java       # Recipe registration workflow
+    └── UpdateIngredientUseCase.java     # Ingredient update workflow
 ```
 
 #### 3. Infrastructure Layer (`src/main/java/br/unifor/costify/infra/`) - ✅ COMPLETED
@@ -319,6 +328,7 @@ infra/                                   # Infrastructure implementation (COMPLE
 ├── controllers/
 │   ├── IngredientController.java        # REST endpoints for ingredients
 │   ├── RecipeController.java            # REST endpoints for recipes
+│   ├── UnitController.java              # REST endpoints for units
 │   └── dto/
 │       ├── IngredientControllerRegisterRequest.java
 │       ├── RecipeControllerRegisterRequest.java
@@ -354,12 +364,13 @@ The Costify application now has a complete Clean Architecture implementation wit
 #### ✅ Fully Implemented Features
 
 - **Complete Recipe Management**: Full CRUD operations with REST endpoints
-- **Complete Ingredient Management**: Full CRUD operations with REST endpoints  
+- **Complete Ingredient Management**: Full CRUD operations with REST endpoints
+- **Unit Management**: List available measurement units
 - **Recipe Cost Calculation**: Core business feature with cost breakdown
 - **Repository Pattern**: Full database abstraction layer implemented
 - **Domain-Driven Design**: Complete domain model with entities, value objects, and services
 - **Comprehensive Testing**: Unit tests, integration tests, and repository tests
-- **Database Migrations**: Complete schema evolution with 4 migrations
+- **Database Migrations**: Complete schema evolution with 5 migrations
 
 #### 🎯 Current Capabilities
 
@@ -369,13 +380,19 @@ The Costify application now has a complete Clean Architecture implementation wit
    - Retrieve recipe details with cost breakdowns
    - Update recipe information
 
-2. **Ingredient Operations**  
+2. **Ingredient Operations**
    - Register ingredients with units and pricing
    - Update ingredient information
    - Retrieve ingredient details
+   - List all registered ingredients
    - Cost calculations per unit
 
-3. **Cost Calculation Engine**
+3. **Unit Operations**
+   - List all available measurement units
+   - View unit types (VOLUME, WEIGHT, UNIT)
+   - View conversion factors to base units
+
+4. **Cost Calculation Engine**
    - Real-time recipe cost calculation
    - Ingredient cost breakdowns
    - Unit conversion and pricing
@@ -413,8 +430,9 @@ The Costify application has extensive test coverage across all architectural lay
 - **Migration Tests**: Flyway migration verification tests
 
 #### 3. Test Statistics
-- **Total Test Files**: 20+ test classes
-- **Coverage Areas**: Domain (6 test classes), Application (7 test classes), Integration (7 test classes)
+- **Total Test Files**: 24+ test classes
+- **Total Tests**: 111+ test scenarios
+- **Coverage Areas**: Domain (7 test classes), Application (10 test classes), Infrastructure (4 test classes), Integration (3 test classes)
 - **Database Testing**: PostgreSQL integration with Testcontainers for realistic testing
 - **Migration Testing**: Complete database schema evolution verification
 
@@ -436,8 +454,17 @@ integration/repository/
 ```text
 application/usecase/
 ├── CalculateRecipeCostUseCaseTest.java
+├── ListAvailableUnitsUseCaseTest.java
+├── ListIngredientsUseCaseTest.java
 ├── RegisterIngredientUseCaseTest.java
 └── RegisterRecipeUseCaseTest.java
+```
+
+#### Controller Testing
+```text
+infra/controllers/
+├── IngredientControllerTest.java
+└── UnitControllerTest.java
 ```
 
 #### Domain Model Testing
@@ -483,6 +510,122 @@ domain/
 2. **Migrations**: Create and run Flyway migrations
 3. **Testing**: Use `-DargLine="-ea"` to enable Java assertions
 4. **Integration Tests**: Use Testcontainers for database testing
+
+## REST API Endpoints
+
+The application exposes the following REST API endpoints at `/api`:
+
+### Ingredient Endpoints
+
+#### Create Ingredient
+```http
+POST /api/ingredients
+Content-Type: application/json
+
+{
+  "name": "Milk",
+  "packageQuantity": 1.0,
+  "packagePrice": 5.50,
+  "packageUnit": "L"
+}
+```
+**Response**: `IngredientDto` with calculated unit cost
+
+#### List All Ingredients
+```http
+GET /api/ingredients
+```
+**Response**: Array of `IngredientDto` objects
+```json
+[
+  {
+    "id": "uuid",
+    "name": "Milk",
+    "packageQuantity": 1.0,
+    "packagePrice": 5.50,
+    "packageUnit": "L",
+    "unitCost": 0.0055
+  }
+]
+```
+
+### Recipe Endpoints
+
+#### Create Recipe
+```http
+POST /api/recipes
+Content-Type: application/json
+
+{
+  "name": "Cake",
+  "ingredients": [
+    {
+      "ingredientId": "ingredient-uuid",
+      "quantity": 500.0,
+      "unit": "ML"
+    }
+  ]
+}
+```
+**Response**: `RecipeDto` with total cost
+
+#### Calculate Recipe Cost
+```http
+GET /api/recipes/{recipeId}/cost
+```
+**Response**: `RecipeCostDto` with detailed cost breakdown
+
+### Unit Endpoints
+
+#### List Available Units
+```http
+GET /api/units
+```
+**Response**: Array of available measurement units
+```json
+[
+  {
+    "name": "ML",
+    "type": "VOLUME",
+    "factorToBase": 1.0
+  },
+  {
+    "name": "L",
+    "type": "VOLUME",
+    "factorToBase": 1000.0
+  },
+  {
+    "name": "G",
+    "type": "WEIGHT",
+    "factorToBase": 1.0
+  },
+  {
+    "name": "KG",
+    "type": "WEIGHT",
+    "factorToBase": 1000.0
+  },
+  {
+    "name": "TBSP",
+    "type": "VOLUME",
+    "factorToBase": 15.0
+  },
+  {
+    "name": "TBSP_BUTTER",
+    "type": "WEIGHT",
+    "factorToBase": 14.0
+  },
+  {
+    "name": "UN",
+    "type": "UNIT",
+    "factorToBase": 1.0
+  }
+]
+```
+
+**Available Units**:
+- **VOLUME**: ML (milliliter), L (liter), TBSP (tablespoon)
+- **WEIGHT**: G (gram), KG (kilogram), TBSP_BUTTER (tablespoon of butter)
+- **UNIT**: UN (unit/piece)
 
 ## Key Design Principles
 
