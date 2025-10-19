@@ -29,6 +29,9 @@ LABEL maintainer="Costify Team"
 LABEL description="Costify - Recipe Cost Calculator"
 LABEL version="0.0.1"
 
+# Install curl for health checks
+RUN apk add --no-cache curl
+
 # Create non-root user for security
 RUN addgroup -S costify && adduser -S costify -G costify
 
@@ -49,7 +52,7 @@ EXPOSE 8080
 
 # Health check endpoint
 HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:8080/api/actuator/health || exit 1
+  CMD curl -f http://localhost:8080/api/actuator/health || exit 1
 
 # JVM configuration for production
 ENV JAVA_OPTS="-XX:+UseContainerSupport \
