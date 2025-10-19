@@ -68,7 +68,7 @@ services:
     networks:
       - costify-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/api/actuator/health"]
+      test: ["CMD", "sh", "-c", "curl -f http://localhost:$${SERVER_PORT:-8080}/api/actuator/health"]
       interval: 30s
       timeout: 10s
       retries: 3
