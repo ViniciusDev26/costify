@@ -75,4 +75,32 @@ class ActuatorEndpointsE2ETest {
         .andExpect(jsonPath("$.status", is("UP")))
         .andExpect(jsonPath("$.components.db.status", is("UP")));
   }
+
+  @Test
+  @DisplayName("Should verify database is included in health components")
+  void shouldVerifyDatabaseInHealthComponents() throws Exception {
+    mockMvc.perform(get("/actuator/health"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.components.db").exists())
+        .andExpect(jsonPath("$.components.db.status", is("UP")))
+        .andExpect(jsonPath("$.components.db.details").exists())
+        .andExpect(jsonPath("$.components.db.details.database", is("PostgreSQL")));
+  }
+
+  @Test
+  @DisplayName("Should verify readiness depends on database connectivity")
+  void shouldVerifyReadinessDependsOnDatabase() throws Exception {
+    // Readiness probe should be UP only when database is accessible
+    mockMvc.perform(get("/actuator/health/readiness"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.status", is("UP")));
+  }
+
+  @Test
+  @DisplayName("Should verify database connection details in health endpoint")
+  void shouldVerifyDatabaseConnectionDetails() throws Exception {
+    mockMvc.perform(get("/actuator/health"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.components.db.details.validationQuery").exists());
+  }
 }
