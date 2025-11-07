@@ -7,6 +7,7 @@ import br.unifor.costify.infra.data.entities.RecipeTable;
 import br.unifor.costify.infra.data.repositories.jpa.JpaRecipeRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -30,6 +31,11 @@ public class PostgresRecipeRepository implements RecipeRepository {
         this.jpaRecipeRepository.findById(id.getValue()).orElse(null);
 
     return Optional.ofNullable(recipeQueryResult).map(RecipeTable::toDomain);
+  }
+
+  @Override
+  public List<Recipe> findAll() {
+    return this.jpaRecipeRepository.findAll().stream().map(RecipeTable::toDomain).toList();
   }
 
   @Override
