@@ -30,6 +30,7 @@ class RecipeDtoTest {
     assert dto.ingredients().size() == 2;
     assert dto.ingredients().contains(recipeIngredient1);
     assert dto.ingredients().contains(recipeIngredient2);
+    assert dto.totalCost().equals(Money.of(10.50));
   }
 
   @Test
@@ -47,5 +48,6 @@ class RecipeDtoTest {
     assert dto.name().equals("Cake Recipe");
     assert dto.ingredients().size() == 1;
     assert dto.ingredients().contains(recipeIngredient);
+    assert dto.totalCost().equals(Money.of(15.75));
   }
 }
