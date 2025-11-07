@@ -7,6 +7,7 @@ import br.unifor.costify.domain.valueobject.Id;
 import br.unifor.costify.domain.valueobject.Money;
 import br.unifor.costify.domain.valueobject.RecipeIngredient;
 import br.unifor.costify.domain.valueobject.Unit;
+import java.math.BigDecimal;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
@@ -30,7 +31,7 @@ class RecipeDtoTest {
     assert dto.ingredients().size() == 2;
     assert dto.ingredients().contains(recipeIngredient1);
     assert dto.ingredients().contains(recipeIngredient2);
-    assert dto.totalCost().equals(Money.of(10.50));
+    assert dto.totalCost().compareTo(BigDecimal.valueOf(10.50)) == 0;
   }
 
   @Test
@@ -48,6 +49,6 @@ class RecipeDtoTest {
     assert dto.name().equals("Cake Recipe");
     assert dto.ingredients().size() == 1;
     assert dto.ingredients().contains(recipeIngredient);
-    assert dto.totalCost().equals(Money.of(15.75));
+    assert dto.totalCost().compareTo(BigDecimal.valueOf(15.75)) == 0;
   }
 }
