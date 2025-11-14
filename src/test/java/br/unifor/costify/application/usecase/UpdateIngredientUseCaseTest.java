@@ -1,6 +1,8 @@
 package br.unifor.costify.application.usecase;
 
 import br.unifor.costify.application.contracts.IngredientRepository;
+import br.unifor.costify.application.contracts.TransactionManager;
+import br.unifor.costify.application.contracts.TransactionalOperation;
 import br.unifor.costify.application.dto.command.UpdateIngredientCommand;
 import br.unifor.costify.application.dto.entity.IngredientDto;
 import br.unifor.costify.domain.entity.Ingredient;
@@ -14,7 +16,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -25,13 +26,35 @@ class UpdateIngredientUseCaseTest {
 
   private IngredientRepository ingredientRepository;
   private DomainEventPublisher eventPublisher;
+  private TransactionManager transactionManager;
   private UpdateIngredientUseCase updateIngredientUseCase;
 
   @BeforeEach
   void setUp() {
     ingredientRepository = mock(IngredientRepository.class);
     eventPublisher = mock(DomainEventPublisher.class);
-    updateIngredientUseCase = new UpdateIngredientUseCase(ingredientRepository, eventPublisher);
+    transactionManager = mock(TransactionManager.class);
+
+    // Configure the mock transaction manager to execute the operation directly
+    // This mimics the real behavior: RuntimeExceptions pass through, checked exceptions are wrapped
+    when(transactionManager.executeInTransaction(any())).thenAnswer(invocation -> {
+      TransactionalOperation<?> operation = invocation.getArgument(0);
+      try {
+        return operation.execute();
+      } catch (RuntimeException e) {
+        // Pass through runtime exceptions as-is
+        throw e;
+      } catch (Exception e) {
+        // Wrap checked exceptions
+        throw new RuntimeException("Transaction operation failed", e);
+      }
+    });
+
+    updateIngredientUseCase = new UpdateIngredientUseCase(
+        ingredientRepository,
+        eventPublisher,
+        transactionManager
+    );
   }
 
   @Test
