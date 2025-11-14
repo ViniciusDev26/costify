@@ -1,12 +1,19 @@
 package br.unifor.costify.domain.entity;
 
 import br.unifor.costify.domain.contracts.IdGenerator;
+import br.unifor.costify.domain.errors.ingredient.InvalidIngredientNameException;
 import br.unifor.costify.domain.errors.money.NegativeMoneyException;
+import br.unifor.costify.domain.events.DomainEvent;
+import br.unifor.costify.domain.events.ingredient.IngredientUpdatedEvent;
 import br.unifor.costify.domain.valueobject.Id;
 import br.unifor.costify.domain.valueobject.Money;
 import br.unifor.costify.domain.valueobject.Unit;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class IngredientTest {
 
@@ -66,5 +73,103 @@ class IngredientTest {
 
     double expectedUnitCost = 5.0 / Unit.L.toBase(1.0);
     assert ingredient.getUnitCost() == expectedUnitCost;
+  }
+
+  @Test
+  void updateIngredient_shouldUpdateAllFields() {
+    // Arrange
+    Id id = Id.of("test-id");
+    Ingredient ingredient = new Ingredient(id, "Leite", 1.0, Money.of(5.0), Unit.L);
+
+    // Act
+    ingredient.update("Leite Desnatado", 2.0, Money.of(8.0), Unit.L);
+
+    // Assert
+    assertEquals("Leite Desnatado", ingredient.getName());
+    assertEquals(2.0, ingredient.getPackageQuantity());
+    assertEquals(Money.of(8.0), ingredient.getPackagePrice());
+    assertEquals(Unit.L, ingredient.getPackageUnit());
+  }
+
+  @Test
+  void updateIngredient_shouldEmitIngredientUpdatedEvent() {
+    // Arrange
+    Id id = Id.of("test-id");
+    Ingredient ingredient = new Ingredient(id, "Leite", 1.0, Money.of(5.0), Unit.L);
+
+    // Act
+    ingredient.update("Leite Desnatado", 2.0, Money.of(8.0), Unit.L);
+    List<DomainEvent> events = ingredient.getDomainEvents();
+
+    // Assert
+    assertFalse(events.isEmpty());
+    assertEquals(1, events.size());
+    assertTrue(events.get(0) instanceof IngredientUpdatedEvent);
+
+    IngredientUpdatedEvent event = (IngredientUpdatedEvent) events.get(0);
+    assertEquals(id, event.getIngredientId());
+    assertEquals("Leite Desnatado", event.getNewName());
+    assertEquals(2.0, event.getNewPackageQuantity());
+    assertEquals(Money.of(8.0), event.getNewPackagePrice());
+    assertEquals(Unit.L, event.getNewPackageUnit());
+    assertEquals("IngredientUpdated", event.getEventType());
+  }
+
+  @Test
+  void updateIngredient_withInvalidName_shouldThrowException() {
+    // Arrange
+    Id id = Id.of("test-id");
+    Ingredient ingredient = new Ingredient(id, "Leite", 1.0, Money.of(5.0), Unit.L);
+
+    // Act & Assert
+    assertThrows(InvalidIngredientNameException.class, () -> {
+      ingredient.update("", 2.0, Money.of(8.0), Unit.L);
+    });
+
+    assertThrows(InvalidIngredientNameException.class, () -> {
+      ingredient.update(null, 2.0, Money.of(8.0), Unit.L);
+    });
+  }
+
+  @Test
+  void updateIngredient_withInvalidQuantity_shouldThrowException() {
+    // Arrange
+    Id id = Id.of("test-id");
+    Ingredient ingredient = new Ingredient(id, "Leite", 1.0, Money.of(5.0), Unit.L);
+
+    // Act & Assert
+    assertThrows(IllegalArgumentException.class, () -> {
+      ingredient.update("Leite", 0, Money.of(8.0), Unit.L);
+    });
+
+    assertThrows(IllegalArgumentException.class, () -> {
+      ingredient.update("Leite", -1, Money.of(8.0), Unit.L);
+    });
+  }
+
+  @Test
+  void updateIngredient_withNegativePrice_shouldThrowException() {
+    // Arrange
+    Id id = Id.of("test-id");
+    Ingredient ingredient = new Ingredient(id, "Leite", 1.0, Money.of(5.0), Unit.L);
+
+    // Act & Assert
+    assertThrows(NegativeMoneyException.class, () -> {
+      ingredient.update("Leite", 2.0, Money.of(-1.0), Unit.L);
+    });
+  }
+
+  @Test
+  void clearDomainEvents_shouldRemoveAllEvents() {
+    // Arrange
+    Id id = Id.of("test-id");
+    Ingredient ingredient = new Ingredient(id, "Leite", 1.0, Money.of(5.0), Unit.L);
+    ingredient.update("Leite Desnatado", 2.0, Money.of(8.0), Unit.L);
+
+    // Act
+    ingredient.clearDomainEvents();
+
+    // Assert
+    assertTrue(ingredient.getDomainEvents().isEmpty());
   }
 }
