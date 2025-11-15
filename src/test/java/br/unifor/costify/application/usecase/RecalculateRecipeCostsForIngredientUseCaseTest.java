@@ -1,4 +1,4 @@
-package br.unifor.costify.application.service;
+package br.unifor.costify.application.usecase;
 
 import br.unifor.costify.application.contracts.IngredientRepository;
 import br.unifor.costify.application.contracts.RecipeRepository;
@@ -26,8 +26,8 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("RecipeCostUpdateService Tests")
-class RecipeCostUpdateServiceTest {
+@DisplayName("RecalculateRecipeCostsForIngredientUseCase Tests")
+class RecalculateRecipeCostsForIngredientUseCaseTest {
 
     @Mock
     private RecipeRepository recipeRepository;
@@ -38,11 +38,11 @@ class RecipeCostUpdateServiceTest {
     @Mock
     private RecipeCostCalculationService costCalculationService;
 
-    private RecipeCostUpdateService recipeCostUpdateService;
+    private RecalculateRecipeCostsForIngredientUseCase useCase;
 
     @BeforeEach
     void setUp() {
-        recipeCostUpdateService = new RecipeCostUpdateService(
+        useCase = new RecalculateRecipeCostsForIngredientUseCase(
                 recipeRepository,
                 ingredientRepository,
                 costCalculationService
@@ -92,7 +92,7 @@ class RecipeCostUpdateServiceTest {
                 .thenReturn(new RecipeCost(recipe2.getId(), recipe2.getName(), List.of(ingredientCost2)));
 
         // Act
-        recipeCostUpdateService.updateRecipeCostsForIngredient(ingredientId);
+        useCase.execute(ingredientId);
 
         // Assert
         verify(recipeRepository).findByIngredientId(ingredientId);
@@ -117,7 +117,7 @@ class RecipeCostUpdateServiceTest {
                 .thenReturn(Collections.emptyList());
 
         // Act
-        recipeCostUpdateService.updateRecipeCostsForIngredient(ingredientId);
+        useCase.execute(ingredientId);
 
         // Assert
         verify(recipeRepository).findByIngredientId(ingredientId);
@@ -172,7 +172,7 @@ class RecipeCostUpdateServiceTest {
                 .thenReturn(new RecipeCost(recipe.getId(), recipe.getName(), List.of(ingredientCost1, ingredientCost2)));
 
         // Act
-        recipeCostUpdateService.updateRecipeCostsForIngredient(milkId);
+        useCase.execute(milkId);
 
         // Assert
         verify(recipeRepository).findByIngredientId(milkId);

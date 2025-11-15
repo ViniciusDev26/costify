@@ -1,4 +1,4 @@
-package br.unifor.costify.application.service;
+package br.unifor.costify.application.usecase;
 
 import br.unifor.costify.application.contracts.IngredientRepository;
 import br.unifor.costify.application.contracts.RecipeRepository;
@@ -16,18 +16,22 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * Service responsible for updating recipe costs when ingredients are modified.
- * This service is typically triggered by ingredient update events to ensure
- * all affected recipes reflect the current ingredient prices.
+ * Use case for recalculating recipe costs when ingredients are modified.
+ *
+ * User Story: "As a user, when I update an ingredient price,
+ * I want all recipe costs using that ingredient to be automatically updated"
+ *
+ * This use case is typically triggered by ingredient update events but can also
+ * be invoked directly for manual recalculation scenarios.
  */
 @Service
-public class RecipeCostUpdateService {
+public class RecalculateRecipeCostsForIngredientUseCase {
 
     private final RecipeRepository recipeRepository;
     private final IngredientRepository ingredientRepository;
     private final RecipeCostCalculationService costCalculationService;
 
-    public RecipeCostUpdateService(
+    public RecalculateRecipeCostsForIngredientUseCase(
             RecipeRepository recipeRepository,
             IngredientRepository ingredientRepository,
             RecipeCostCalculationService costCalculationService) {
@@ -37,7 +41,8 @@ public class RecipeCostUpdateService {
     }
 
     /**
-     * Updates the total cost of all recipes that contain the specified ingredient.
+     * Executes the recipe cost recalculation for all recipes using the specified ingredient.
+     *
      * This method:
      * 1. Finds all recipes using the given ingredient
      * 2. Loads all ingredients for each recipe
@@ -46,7 +51,7 @@ public class RecipeCostUpdateService {
      *
      * @param ingredientId the ID of the updated ingredient
      */
-    public void updateRecipeCostsForIngredient(Id ingredientId) {
+    public void execute(Id ingredientId) {
         // Find all recipes that use this ingredient
         List<Recipe> affectedRecipes = recipeRepository.findByIngredientId(ingredientId);
 

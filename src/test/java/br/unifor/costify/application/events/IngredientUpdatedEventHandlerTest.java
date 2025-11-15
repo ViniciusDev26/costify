@@ -1,6 +1,6 @@
 package br.unifor.costify.application.events;
 
-import br.unifor.costify.application.service.RecipeCostUpdateService;
+import br.unifor.costify.application.usecase.RecalculateRecipeCostsForIngredientUseCase;
 import br.unifor.costify.domain.events.ingredient.IngredientUpdatedEvent;
 import br.unifor.costify.domain.valueobject.Id;
 import br.unifor.costify.domain.valueobject.Money;
@@ -19,17 +19,17 @@ import static org.mockito.Mockito.*;
 class IngredientUpdatedEventHandlerTest {
 
     @Mock
-    private RecipeCostUpdateService recipeCostUpdateService;
+    private RecalculateRecipeCostsForIngredientUseCase recalculateRecipeCostsUseCase;
 
     private IngredientUpdatedEventHandler eventHandler;
 
     @BeforeEach
     void setUp() {
-        eventHandler = new IngredientUpdatedEventHandler(recipeCostUpdateService);
+        eventHandler = new IngredientUpdatedEventHandler(recalculateRecipeCostsUseCase);
     }
 
     @Test
-    @DisplayName("Should handle ingredient updated event and trigger recipe cost update")
+    @DisplayName("Should handle ingredient updated event and trigger recipe cost recalculation")
     void shouldHandleIngredientUpdatedEvent() {
         // Arrange
         Id ingredientId = Id.of("ingredient-123");
@@ -45,7 +45,7 @@ class IngredientUpdatedEventHandlerTest {
         eventHandler.handleIngredientUpdated(event);
 
         // Assert
-        verify(recipeCostUpdateService).updateRecipeCostsForIngredient(ingredientId);
+        verify(recalculateRecipeCostsUseCase).execute(ingredientId);
     }
 
     @Test
@@ -76,14 +76,14 @@ class IngredientUpdatedEventHandlerTest {
         eventHandler.handleIngredientUpdated(event2);
 
         // Assert
-        verify(recipeCostUpdateService).updateRecipeCostsForIngredient(ingredientId1);
-        verify(recipeCostUpdateService).updateRecipeCostsForIngredient(ingredientId2);
-        verifyNoMoreInteractions(recipeCostUpdateService);
+        verify(recalculateRecipeCostsUseCase).execute(ingredientId1);
+        verify(recalculateRecipeCostsUseCase).execute(ingredientId2);
+        verifyNoMoreInteractions(recalculateRecipeCostsUseCase);
     }
 
     @Test
-    @DisplayName("Should propagate exceptions from recipe cost update service")
-    void shouldPropagateExceptionsFromService() {
+    @DisplayName("Should propagate exceptions from recipe cost recalculation use case")
+    void shouldPropagateExceptionsFromUseCase() {
         // Arrange
         Id ingredientId = Id.of("ingredient-123");
         var event = new IngredientUpdatedEvent(
@@ -95,15 +95,15 @@ class IngredientUpdatedEventHandlerTest {
         );
 
         doThrow(new RuntimeException("Database error"))
-                .when(recipeCostUpdateService)
-                .updateRecipeCostsForIngredient(ingredientId);
+                .when(recalculateRecipeCostsUseCase)
+                .execute(ingredientId);
 
         // Act & Assert
         try {
             eventHandler.handleIngredientUpdated(event);
         } catch (RuntimeException e) {
             // Exception should be propagated
-            verify(recipeCostUpdateService).updateRecipeCostsForIngredient(ingredientId);
+            verify(recalculateRecipeCostsUseCase).execute(ingredientId);
         }
     }
 }
