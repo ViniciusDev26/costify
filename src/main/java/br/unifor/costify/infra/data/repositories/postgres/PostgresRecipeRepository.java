@@ -47,4 +47,12 @@ public class PostgresRecipeRepository implements RecipeRepository {
   public void deleteById(Id id) {
     this.jpaRecipeRepository.deleteById(id.getValue());
   }
+
+  @Override
+  public List<Recipe> findByIngredientId(Id ingredientId) {
+    return this.jpaRecipeRepository.findByIngredientsIngredientId(ingredientId.getValue())
+        .stream()
+        .map(RecipeTable::toDomain)
+        .toList();
+  }
 }

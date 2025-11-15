@@ -16,4 +16,6 @@ public interface RecipeRepository {
   boolean existsByName(String name);
 
   void deleteById(Id id);
+
+  List<Recipe> findByIngredientId(Id ingredientId);
 }

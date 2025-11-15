@@ -71,6 +71,13 @@ public class Recipe {
     this.ingredients = new ArrayList<>(updatedIngredients);
   }
 
+  public void updateTotalCost(Money newTotalCost) {
+    if (newTotalCost == null) {
+      throw new InvalidTotalCostException("Total cost cannot be null");
+    }
+    this.totalCost = newTotalCost;
+  }
+
   private void validate(String name, List<RecipeIngredient> ingredients) {
     if (ingredients == null || ingredients.isEmpty()) {
       throw new EmptyRecipeException("Recipe must have at least one ingredient");
