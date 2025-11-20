@@ -3,6 +3,7 @@ package br.unifor.costify.infra.controllers;
 import br.unifor.costify.application.dto.command.RegisterIngredientCommand;
 import br.unifor.costify.application.dto.command.UpdateIngredientCommand;
 import br.unifor.costify.application.dto.entity.IngredientDto;
+import br.unifor.costify.application.usecase.GetIngredientByIdUseCase;
 import br.unifor.costify.application.usecase.ListIngredientsUseCase;
 import br.unifor.costify.application.usecase.RegisterIngredientUseCase;
 import br.unifor.costify.application.usecase.UpdateIngredientUseCase;
@@ -25,19 +26,27 @@ public class IngredientController {
   private final RegisterIngredientUseCase registerIngredientUseCase;
   private final UpdateIngredientUseCase updateIngredientUseCase;
   private final ListIngredientsUseCase listIngredientsUseCase;
+  private final GetIngredientByIdUseCase getIngredientByIdUseCase;
 
   public IngredientController(
       RegisterIngredientUseCase registerIngredientUseCase,
       UpdateIngredientUseCase updateIngredientUseCase,
-      ListIngredientsUseCase listIngredientsUseCase) {
+      ListIngredientsUseCase listIngredientsUseCase,
+      GetIngredientByIdUseCase getIngredientByIdUseCase) {
     this.registerIngredientUseCase = registerIngredientUseCase;
     this.updateIngredientUseCase = updateIngredientUseCase;
     this.listIngredientsUseCase = listIngredientsUseCase;
+    this.getIngredientByIdUseCase = getIngredientByIdUseCase;
   }
 
   @GetMapping
   public List<IngredientDto> listIngredients() {
     return listIngredientsUseCase.execute();
+  }
+
+  @GetMapping("/{id}")
+  public IngredientDto getIngredientById(@PathVariable String id) {
+    return getIngredientByIdUseCase.execute(id);
   }
 
   @PostMapping
