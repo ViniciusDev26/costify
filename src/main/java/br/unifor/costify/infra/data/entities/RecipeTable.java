@@ -44,11 +44,11 @@ public class RecipeTable {
     table.id = recipe.getId().getValue();
     table.name = recipe.getName();
     table.totalCost = recipe.getTotalCost().getAmount();
-    
+
     table.ingredients = recipe.getIngredients().stream()
         .map(ingredient -> RecipeIngredientTable.fromDomain(recipe.getId().getValue(), ingredient))
         .toList();
-    
+
     return table;
   }
 

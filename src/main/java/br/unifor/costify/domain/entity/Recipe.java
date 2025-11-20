@@ -78,6 +78,20 @@ public class Recipe {
     this.totalCost = newTotalCost;
   }
 
+  public void updateName(String newName) {
+    if (newName == null || newName.isBlank()) {
+      throw new IllegalArgumentException("Recipe name cannot be null or empty");
+    }
+    this.name = newName;
+  }
+
+  public void updateIngredients(List<RecipeIngredient> newIngredients) {
+    if (newIngredients == null || newIngredients.isEmpty()) {
+      throw new EmptyRecipeException("Recipe must have at least one ingredient");
+    }
+    this.ingredients = new ArrayList<>(newIngredients);
+  }
+
   private void validate(String name, List<RecipeIngredient> ingredients) {
     if (ingredients == null || ingredients.isEmpty()) {
       throw new EmptyRecipeException("Recipe must have at least one ingredient");
