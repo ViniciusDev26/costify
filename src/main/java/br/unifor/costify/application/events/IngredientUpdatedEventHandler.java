@@ -2,6 +2,9 @@ package br.unifor.costify.application.events;
 
 import br.unifor.costify.application.usecase.RecalculateRecipeCostsForIngredientUseCase;
 import br.unifor.costify.domain.events.ingredient.IngredientUpdatedEvent;
+import br.unifor.costify.infra.events.TransactionalDomainEventWrapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -22,6 +25,7 @@ import org.springframework.transaction.event.TransactionalEventListener;
  */
 @Component
 public class IngredientUpdatedEventHandler {
+    private static final Logger logger = LoggerFactory.getLogger(IngredientUpdatedEventHandler.class);
 
     private final RecalculateRecipeCostsForIngredientUseCase recalculateRecipeCostsUseCase;
 
@@ -33,10 +37,18 @@ public class IngredientUpdatedEventHandler {
      * Handles the IngredientUpdatedEvent after the transaction commits.
      * This method triggers the recalculation of costs for all recipes that use the updated ingredient.
      *
-     * @param event the ingredient updated event containing the updated ingredient data
+     * @param wrapper the transactional wrapper containing the ingredient updated event
      */
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    public void handleIngredientUpdated(IngredientUpdatedEvent event) {
-        recalculateRecipeCostsUseCase.execute(event.getIngredientId());
+    public void handleIngredientUpdated(TransactionalDomainEventWrapper wrapper) {
+        logger.info("Received TransactionalDomainEventWrapper: {}", wrapper.getEvent().getClass().getSimpleName());
+        // Unwrap the domain event
+        if (wrapper.getEvent() instanceof IngredientUpdatedEvent event) {
+            logger.info("Handling IngredientUpdatedEvent for ingredient: {}", event.getIngredientId().getValue());
+            recalculateRecipeCostsUseCase.execute(event.getIngredientId());
+            logger.info("Recipe costs recalculation triggered for ingredient: {}", event.getIngredientId().getValue());
+        } else {
+            logger.warn("Received unexpected event type: {}", wrapper.getEvent().getClass().getName());
+        }
     }
 }

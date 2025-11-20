@@ -8,7 +8,11 @@ import br.unifor.costify.domain.service.RecipeCostCalculationService;
 import br.unifor.costify.domain.valueobject.Id;
 import br.unifor.costify.domain.valueobject.RecipeCost;
 import br.unifor.costify.domain.valueobject.RecipeIngredient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +30,7 @@ import java.util.Optional;
  */
 @Service
 public class RecalculateRecipeCostsForIngredientUseCase {
+    private static final Logger logger = LoggerFactory.getLogger(RecalculateRecipeCostsForIngredientUseCase.class);
 
     private final RecipeRepository recipeRepository;
     private final IngredientRepository ingredientRepository;
@@ -51,19 +56,28 @@ public class RecalculateRecipeCostsForIngredientUseCase {
      *
      * @param ingredientId the ID of the updated ingredient
      */
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void execute(Id ingredientId) {
+        logger.info("Starting recipe cost recalculation for ingredient: {}", ingredientId.getValue());
+
         // Find all recipes that use this ingredient
         List<Recipe> affectedRecipes = recipeRepository.findByIngredientId(ingredientId);
+        logger.info("Found {} recipes affected by ingredient {}", affectedRecipes.size(), ingredientId.getValue());
 
         // If no recipes use this ingredient, nothing to update
         if (affectedRecipes.isEmpty()) {
+            logger.info("No recipes found using ingredient {}", ingredientId.getValue());
             return;
         }
 
         // Update cost for each affected recipe
         for (Recipe recipe : affectedRecipes) {
+            logger.info("Recalculating cost for recipe: {} ({})", recipe.getName(), recipe.getId().getValue());
             updateRecipeCost(recipe);
+            logger.info("Recipe {} cost updated successfully", recipe.getName());
         }
+
+        logger.info("Completed recipe cost recalculation for ingredient: {}", ingredientId.getValue());
     }
 
     /**

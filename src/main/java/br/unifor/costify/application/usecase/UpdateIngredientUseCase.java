@@ -9,6 +9,8 @@ import br.unifor.costify.domain.events.DomainEvent;
 import br.unifor.costify.domain.events.DomainEventPublisher;
 import br.unifor.costify.domain.valueobject.Id;
 import br.unifor.costify.domain.valueobject.Money;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Use case for updating an existing ingredient.
@@ -16,6 +18,7 @@ import br.unifor.costify.domain.valueobject.Money;
  * abstraction to manage transaction boundaries without depending on Spring.
  */
 public class UpdateIngredientUseCase {
+  private static final Logger logger = LoggerFactory.getLogger(UpdateIngredientUseCase.class);
   private final IngredientRepository ingredientRepository;
   private final DomainEventPublisher eventPublisher;
   private final TransactionManager transactionManager;
@@ -52,28 +55,33 @@ public class UpdateIngredientUseCase {
           command.packageUnit() != null ? command.packageUnit() : ingredient.getPackageUnit()
       );
 
+      // Extract domain events BEFORE saving (save() creates new object that loses events)
+      var domainEvents = ingredient.getDomainEvents();
+      logger.info("Extracted {} domain events before save for ingredient {}", domainEvents.size(), ingredient.getId().getValue());
+
       // Save updated entity (within transaction)
       Ingredient savedIngredient = ingredientRepository.save(ingredient);
 
-      // Publish domain events
+      // Publish domain events using the extracted list
       // Events will be processed by @TransactionalEventListener AFTER commit
-      publishDomainEvents(savedIngredient);
+      publishDomainEvents(domainEvents, savedIngredient.getId());
 
       return IngredientDto.from(savedIngredient);
     });
   }
 
   /**
-   * Publishes all domain events from the entity and clears the event list.
-   * This method ensures events are published exactly once and the entity
-   * is ready for subsequent operations.
+   * Publishes all domain events that were extracted before the entity was saved.
+   * This method ensures events are published exactly once after the transaction commits.
    *
-   * @param ingredient The ingredient entity with domain events to publish
+   * @param events The list of domain events to publish
+   * @param ingredientId The ID of the ingredient for logging purposes
    */
-  private void publishDomainEvents(Ingredient ingredient) {
-    for (DomainEvent event : ingredient.getDomainEvents()) {
+  private void publishDomainEvents(java.util.List<DomainEvent> events, Id ingredientId) {
+    logger.info("Publishing {} domain events for ingredient {}", events.size(), ingredientId.getValue());
+    for (DomainEvent event : events) {
+      logger.info("Publishing event: {}", event.getClass().getSimpleName());
       eventPublisher.publish(event);
     }
-    ingredient.clearDomainEvents();
   }
 }

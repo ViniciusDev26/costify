@@ -5,6 +5,7 @@ import br.unifor.costify.domain.events.ingredient.IngredientUpdatedEvent;
 import br.unifor.costify.domain.valueobject.Id;
 import br.unifor.costify.domain.valueobject.Money;
 import br.unifor.costify.domain.valueobject.Unit;
+import br.unifor.costify.infra.events.TransactionalDomainEventWrapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -42,7 +43,7 @@ class IngredientUpdatedEventHandlerTest {
         );
 
         // Act
-        eventHandler.handleIngredientUpdated(event);
+        eventHandler.handleIngredientUpdated(new TransactionalDomainEventWrapper(event));
 
         // Assert
         verify(recalculateRecipeCostsUseCase).execute(ingredientId);
@@ -72,8 +73,8 @@ class IngredientUpdatedEventHandlerTest {
         );
 
         // Act
-        eventHandler.handleIngredientUpdated(event1);
-        eventHandler.handleIngredientUpdated(event2);
+        eventHandler.handleIngredientUpdated(new TransactionalDomainEventWrapper(event1));
+        eventHandler.handleIngredientUpdated(new TransactionalDomainEventWrapper(event2));
 
         // Assert
         verify(recalculateRecipeCostsUseCase).execute(ingredientId1);
@@ -100,7 +101,7 @@ class IngredientUpdatedEventHandlerTest {
 
         // Act & Assert
         try {
-            eventHandler.handleIngredientUpdated(event);
+            eventHandler.handleIngredientUpdated(new TransactionalDomainEventWrapper(event));
         } catch (RuntimeException e) {
             // Exception should be propagated
             verify(recalculateRecipeCostsUseCase).execute(ingredientId);
