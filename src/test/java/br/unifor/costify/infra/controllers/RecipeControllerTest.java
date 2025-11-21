@@ -4,10 +4,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import br.unifor.costify.application.dto.entity.RecipeDto;
+import br.unifor.costify.application.dto.response.RecipeIngredientDto;
 import br.unifor.costify.application.usecase.ListRecipesUseCase;
-import br.unifor.costify.domain.valueobject.Id;
-import br.unifor.costify.domain.valueobject.Money;
-import br.unifor.costify.domain.valueobject.RecipeIngredient;
 import br.unifor.costify.domain.valueobject.Unit;
 import java.math.BigDecimal;
 import java.util.List;
@@ -29,8 +27,8 @@ class RecipeControllerTest {
 
   @BeforeEach
   void setUp() {
-    RecipeIngredient milk = new RecipeIngredient(Id.of("milk-id"), 500.0, Unit.ML);
-    RecipeIngredient flour = new RecipeIngredient(Id.of("flour-id"), 300.0, Unit.G);
+    RecipeIngredientDto milk = new RecipeIngredientDto("milk-id", 500.0, Unit.ML);
+    RecipeIngredientDto flour = new RecipeIngredientDto("flour-id", 300.0, Unit.G);
 
     RecipeDto cake = new RecipeDto("cake-id", "Cake", List.of(milk, flour), BigDecimal.valueOf(15.50));
     RecipeDto bread = new RecipeDto("bread-id", "Bread", List.of(flour), BigDecimal.valueOf(8.30));

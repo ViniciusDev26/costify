@@ -63,9 +63,9 @@ class GetRecipeByIdUseCaseTest {
         assertThat(result.id()).isEqualTo(recipeId.getValue());
         assertThat(result.name()).isEqualTo("Bolo de Chocolate");
         assertThat(result.ingredients()).hasSize(1);
-        assertThat(result.ingredients().get(0).getIngredientId()).isEqualTo(ingredientId);
-        assertThat(result.ingredients().get(0).getQuantity()).isEqualTo(500.0);
-        assertThat(result.ingredients().get(0).getUnit()).isEqualTo(Unit.ML);
+        assertThat(result.ingredients().get(0).ingredientId()).isEqualTo(ingredientId.getValue());
+        assertThat(result.ingredients().get(0).quantity()).isEqualTo(500.0);
+        assertThat(result.ingredients().get(0).unit()).isEqualTo(Unit.ML);
         assertThat(result.totalCost()).isEqualByComparingTo(new BigDecimal("10.50"));
 
         verify(recipeRepository).findById(recipeId);

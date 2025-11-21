@@ -29,8 +29,12 @@ class RecipeDtoTest {
     assert dto.id().equals("test-recipe-id-123");
     assert dto.name().equals("Bread Recipe");
     assert dto.ingredients().size() == 2;
-    assert dto.ingredients().contains(recipeIngredient1);
-    assert dto.ingredients().contains(recipeIngredient2);
+    assert dto.ingredients().get(0).ingredientId().equals(ingredientId1.getValue());
+    assert dto.ingredients().get(0).quantity() == 0.5;
+    assert dto.ingredients().get(0).unit() == Unit.KG;
+    assert dto.ingredients().get(1).ingredientId().equals(ingredientId2.getValue());
+    assert dto.ingredients().get(1).quantity() == 0.2;
+    assert dto.ingredients().get(1).unit() == Unit.KG;
     assert dto.totalCost().compareTo(BigDecimal.valueOf(10.50)) == 0;
   }
 
@@ -48,7 +52,9 @@ class RecipeDtoTest {
     assert dto.id().equals("cake-recipe-id-456");
     assert dto.name().equals("Cake Recipe");
     assert dto.ingredients().size() == 1;
-    assert dto.ingredients().contains(recipeIngredient);
+    assert dto.ingredients().get(0).ingredientId().equals(ingredientId.getValue());
+    assert dto.ingredients().get(0).quantity() == 1.0;
+    assert dto.ingredients().get(0).unit() == Unit.KG;
     assert dto.totalCost().compareTo(BigDecimal.valueOf(15.75)) == 0;
   }
 }

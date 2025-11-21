@@ -79,8 +79,12 @@ class RegisterRecipeUseCaseTest {
 
     assert result.name().equals("Bread Recipe");
     assert result.ingredients().size() == 2;
-    assert result.ingredients().contains(recipeIngredient1);
-    assert result.ingredients().contains(recipeIngredient2);
+    assert result.ingredients().get(0).ingredientId().equals(ingredientId1.getValue());
+    assert result.ingredients().get(0).quantity() == 0.5;
+    assert result.ingredients().get(0).unit() == Unit.KG;
+    assert result.ingredients().get(1).ingredientId().equals(ingredientId2.getValue());
+    assert result.ingredients().get(1).quantity() == 0.2;
+    assert result.ingredients().get(1).unit() == Unit.KG;
 
     verify(recipeRepository).existsByName("Bread Recipe");
     verify(ingredientLoaderService).loadIngredients(ingredients);

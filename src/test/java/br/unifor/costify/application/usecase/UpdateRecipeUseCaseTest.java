@@ -102,7 +102,7 @@ class UpdateRecipeUseCaseTest {
         assertThat(result).isNotNull();
         assertThat(result.name()).isEqualTo("Bolo Atualizado");
         assertThat(result.ingredients()).hasSize(1);
-        assertThat(result.ingredients().get(0).getQuantity()).isEqualTo(600.0);
+        assertThat(result.ingredients().get(0).quantity()).isEqualTo(600.0);
         assertThat(result.totalCost()).isEqualByComparingTo(new BigDecimal("12.00"));
 
         ArgumentCaptor<Recipe> recipeCaptor = ArgumentCaptor.forClass(Recipe.class);
