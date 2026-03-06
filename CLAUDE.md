@@ -484,32 +484,48 @@ domain/
 
 ## Build & Development Commands
 
-### Essential Maven Commands
+**IMPORTANT: This project runs exclusively via Docker.**
+
+### Essential Docker Commands
 ```bash
-# Clean build
-./mvnw clean compile
+# Start application (builds automatically if needed)
+docker-compose up -d
 
-# Run application
-./mvnw spring-boot:run
+# View logs
+docker-compose logs -f app
 
-# Run tests (with Java assertions)
-./mvnw test -DargLine="-ea"
+# Rebuild after code changes
+docker-compose up -d --build app
 
-# Full build with tests
-./mvnw clean install
+# Stop application
+docker-compose stop
+
+# Remove containers and data
+docker-compose down -v
+
+# Check status
+docker-compose ps
+```
+
+### Running Tests
+```bash
+# Run all tests inside container
+docker-compose exec app ./mvnw test -DargLine="-ea"
 
 # Run specific test class
-./mvnw test -Dtest=IngredientTest
+docker-compose exec app ./mvnw test -Dtest=IngredientTest
 
 # Run integration tests only
-./mvnw test -Dtest="**/*IntegrationTest"
+docker-compose exec app ./mvnw test -Dtest="**/*IntegrationTest"
 ```
 
 ### Development Workflow
-1. **Database**: Ensure PostgreSQL is running locally
-2. **Migrations**: Create and run Flyway migrations
-3. **Testing**: Use `-DargLine="-ea"` to enable Java assertions
-4. **Integration Tests**: Use Testcontainers for database testing
+1. **Start containers**: `docker-compose up -d`
+2. **View logs**: `docker-compose logs -f app`
+3. **Make code changes**: Edit files locally
+4. **Rebuild**: `docker-compose up -d --build app`
+5. **Run tests**: `docker-compose exec app ./mvnw test -DargLine="-ea"`
+6. **Database migrations**: Applied automatically via Flyway on startup
 
 ## REST API Endpoints
 
@@ -673,9 +689,11 @@ GET /api/units
 # 1. Save current state
 git add . && git commit -m "checkpoint: before implementing [feature]"
 
-# 2. Verify environment
-docker-compose up -d postgres
-./mvnw test -DargLine="-ea"
+# 2. Verify environment (start containers)
+docker-compose up -d
+
+# 3. Run existing tests to verify baseline
+docker-compose exec app ./mvnw test -DargLine="-ea"
 ```
 
 #### Phase 2: TDD Implementation
@@ -684,30 +702,33 @@ For each component (Entity, Service, Controller):
 1. **RED Phase**
    ```bash
    # Write failing test
-   ./mvnw test -Dtest=ComponentNameTest
+   docker-compose exec app ./mvnw test -Dtest=ComponentNameTest
    # Expected: Test fails (RED)
    ```
 
 2. **GREEN Phase**
    ```bash
    # Write minimal implementation
-   ./mvnw test -Dtest=ComponentNameTest  
+   docker-compose exec app ./mvnw test -Dtest=ComponentNameTest
    # Expected: Test passes (GREEN)
    ```
 
 3. **REFACTOR Phase**
    ```bash
    # Improve code quality
-   ./mvnw test  # All tests still pass
+   docker-compose exec app ./mvnw test  # All tests still pass
    ```
 
 #### Phase 3: Integration & Validation
 ```bash
-# Full test suite
-./mvnw clean test -DargLine="-ea"
+# Rebuild application with changes
+docker-compose up -d --build app
 
-# Application startup test
-./mvnw spring-boot:run
+# Full test suite
+docker-compose exec app ./mvnw clean test -DargLine="-ea"
+
+# Verify application is running
+curl http://localhost:8080/api/actuator/health
 
 # Final squash commit (combines checkpoint + implementation)
 git reset --soft HEAD~1  # Reset to before checkpoint but keep changes

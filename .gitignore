@@ -31,3 +31,11 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Docker ###
+*.log
+logs/
+
+### Backup ###
+*.sql
+backup/
