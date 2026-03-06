@@ -538,16 +538,6 @@ curl http://localhost:8080/api/actuator/health/readiness
 - **[CLAUDE.md](CLAUDE.md)**: Arquitetura detalhada e decisões de design
 - **[test-api.sh](test-api.sh)**: Script de teste da API
 
-## Próximos Passos
-
-- [ ] Adicionar documentação Swagger/OpenAPI
-- [ ] Implementar autenticação JWT
-- [ ] Adicionar suporte a multi-tenancy
-- [ ] Implementar cache (Redis)
-- [ ] Adicionar métricas (Prometheus/Grafana)
-- [ ] CI/CD pipeline (GitHub Actions)
-- [ ] Frontend (React/Vue)
-
 ## Licença
 
 Este projeto é um projeto acadêmico da Universidade de Fortaleza (UNIFOR).
