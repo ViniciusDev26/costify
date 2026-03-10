@@ -9,6 +9,7 @@ import br.unifor.costify.infra.data.repositories.jpa.JpaRecipeRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +26,7 @@ public class PostgresRecipeRepository implements RecipeRepository {
   }
 
   @Override
+  @Transactional
   public Recipe save(Recipe recipe) {
     // Check if recipe exists to handle updates properly
     Optional<RecipeTable> existingRecipe = this.jpaRecipeRepository.findById(recipe.getId().getValue());
