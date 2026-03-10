@@ -55,9 +55,12 @@ public class UpdateIngredientUseCase {
           command.packageUnit() != null ? command.packageUnit() : ingredient.getPackageUnit()
       );
 
-      // Extract domain events BEFORE saving (save() creates new object that loses events)
+      // Get a copy of domain events before clearing (getDomainEvents() returns a new list)
       var domainEvents = ingredient.getDomainEvents();
       logger.info("Extracted {} domain events before save for ingredient {}", domainEvents.size(), ingredient.getId().getValue());
+
+      // Clear events from entity before saving
+      ingredient.clearDomainEvents();
 
       // Save updated entity (within transaction)
       Ingredient savedIngredient = ingredientRepository.save(ingredient);

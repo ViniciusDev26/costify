@@ -9,7 +9,6 @@ import br.unifor.costify.domain.valueobject.Money;
 import br.unifor.costify.domain.valueobject.Unit;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class Ingredient {
@@ -119,7 +118,7 @@ public class Ingredient {
    * @return Unmodifiable list of domain events
    */
   public List<DomainEvent> getDomainEvents() {
-    return Collections.unmodifiableList(domainEvents);
+    return new ArrayList<>(domainEvents);
   }
 
   /**

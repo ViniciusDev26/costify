@@ -26,7 +26,7 @@ class ActuatorEndpointsE2ETest {
 
   @Container
   @ServiceConnection
-  static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:17-alpine")
+  static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16.9")
       .withDatabaseName("costify_test")
       .withUsername("test")
       .withPassword("test");

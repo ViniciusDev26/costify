@@ -17,7 +17,7 @@ public class FlywayMigrationIntegrationTest {
 
   @Container
   static PostgreSQLContainer<?> postgresContainer =
-      new PostgreSQLContainer<>("postgres:16.9-alpine")
+      new PostgreSQLContainer<>("postgres:16.9")
           .withDatabaseName("costify")
           .withUsername("postgres")
           .withPassword("postgres");
