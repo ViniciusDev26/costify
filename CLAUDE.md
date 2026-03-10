@@ -33,29 +33,41 @@ costify/
 - Zustand (state), React Router v7, React Query
 - Bun (package manager), Vitest (tests), Biome (linter)
 
-## Backend Architecture (Clean Architecture)
+## Backend Architecture
+
+The backend uses **Clean Architecture** within explicit **Bounded Contexts** (DDD).
+
+### Bounded Contexts
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    Presentation Layer                       │
-│                   (Controllers, DTOs)                       │
-└─────────────────┬───────────────────────────────────────────┘
-                  │
-┌─────────────────┴───────────────────────────────────────────┐
-│                  Application Layer                          │
-│              (Use Cases, Services)                          │
-└─────────────────┬───────────────────────────────────────────┘
-                  │
-┌─────────────────┴───────────────────────────────────────────┐
-│                    Domain Layer                             │
-│        (Entities, Value Objects, Contracts)                │
-└─────────────────┬───────────────────────────────────────────┘
-                  │
-┌─────────────────┴───────────────────────────────────────────┐
-│                Infrastructure Layer                         │
-│       (Repositories, External APIs, Database)              │
-└─────────────────────────────────────────────────────────────┘
+br.unifor.costify/
+├── shared/      # Shared Kernel — cross-cutting primitives used by all BCs
+├── catalog/     # Catalog BC — ingredient master data and unit management
+└── recipe/      # Recipe BC — recipe management and cost calculation
 ```
+
+Each bounded context has its own `domain/`, `application/`, and `infra/` layers:
+
+```
+<bc>/
+├── domain/       # Entities, value objects, domain events, domain services
+├── application/  # Use cases, DTOs, repository contracts, factories
+└── infra/        # Controllers, JPA entities, repository implementations
+```
+
+### Bounded Context Responsibilities
+
+| BC | Responsibility |
+|----|---------------|
+| `shared` | `Id`, `Money`, `Unit`, `DomainEvent`, `TransactionManager`, error base classes |
+| `catalog` | `Ingredient` entity, ingredient CRUD, unit listing, publishes `IngredientUpdatedEvent` |
+| `recipe` | `Recipe` entity, recipe CRUD, cost calculation, listens to `IngredientUpdatedEvent` |
+
+### Cross-BC Communication
+
+`catalog` publishes `IngredientUpdatedEvent` → `recipe` handles it via `IngredientUpdatedEventHandler`, triggering `RecalculateRecipeCostsForIngredientUseCase` to keep recipe costs consistent.
+
+`recipe` depends on `catalog` (reads ingredient data), but `catalog` has no dependency on `recipe`.
 
 ## Current Folder Structure
 
@@ -66,33 +78,55 @@ costify/
 │   │   ├── main/
 │   │   │   ├── java/br/unifor/costify/
 │   │   │   │   ├── CostifyApplication.java
-│   │   │   │   ├── application/                     # Application Layer
-│   │   │   │   │   ├── contracts/
-│   │   │   │   │   │   ├── IngredientRepository.java
-│   │   │   │   │   │   └── RecipeRepository.java
-│   │   │   │   │   ├── dto/
-│   │   │   │   │   │   ├── command/
-│   │   │   │   │   │   ├── entity/
-│   │   │   │   │   │   └── response/
-│   │   │   │   │   ├── errors/
-│   │   │   │   │   ├── factory/
-│   │   │   │   │   ├── service/
-│   │   │   │   │   ├── validation/
-│   │   │   │   │   └── usecase/
-│   │   │   │   ├── domain/                          # Domain Layer
-│   │   │   │   │   ├── contracts/
-│   │   │   │   │   ├── entity/
-│   │   │   │   │   ├── errors/
-│   │   │   │   │   ├── service/
-│   │   │   │   │   └── valueobject/
-│   │   │   │   └── infra/                           # Infrastructure Layer
-│   │   │   │       ├── config/
-│   │   │   │       ├── controllers/
-│   │   │   │       ├── data/
-│   │   │   │       │   ├── entities/
-│   │   │   │       │   └── repositories/
-│   │   │   │       ├── errors/
-│   │   │   │       └── transaction/
+│   │   │   │   ├── shared/                          # Shared Kernel
+│   │   │   │   │   ├── domain/
+│   │   │   │   │   │   ├── contracts/IdGenerator.java
+│   │   │   │   │   │   ├── errors/                  # DomainException, DomainErrorCode, NegativeMoneyException
+│   │   │   │   │   │   ├── events/                  # DomainEvent, DomainEventPublisher, DomainEventHandler
+│   │   │   │   │   │   └── valueobject/             # Id, Money, Unit
+│   │   │   │   │   ├── application/
+│   │   │   │   │   │   ├── config/ValidationConfig.java
+│   │   │   │   │   │   ├── contracts/               # TransactionManager, TransactionalOperation
+│   │   │   │   │   │   ├── errors/                  # ApplicationException, ApplicationErrorCode
+│   │   │   │   │   │   └── validation/ValidationService.java
+│   │   │   │   │   └── infra/
+│   │   │   │   │       ├── config/                  # SecurityConfig, UuidGenerator
+│   │   │   │   │       ├── errors/                  # GlobalExceptionHandler, ErrorResponse
+│   │   │   │   │       ├── events/                  # Spring event publisher/processor
+│   │   │   │   │       └── transaction/SpringTransactionManager.java
+│   │   │   │   ├── catalog/                         # Catalog Bounded Context
+│   │   │   │   │   ├── domain/
+│   │   │   │   │   │   ├── entity/Ingredient.java
+│   │   │   │   │   │   ├── events/IngredientUpdatedEvent.java
+│   │   │   │   │   │   └── errors/InvalidIngredientNameException.java
+│   │   │   │   │   ├── application/
+│   │   │   │   │   │   ├── contracts/IngredientRepository.java
+│   │   │   │   │   │   ├── dto/{command,entity,response}
+│   │   │   │   │   │   ├── errors/                  # IngredientAlreadyExists, IngredientNotFound
+│   │   │   │   │   │   ├── factory/IngredientFactory.java
+│   │   │   │   │   │   ├── service/IngredientLoaderService.java
+│   │   │   │   │   │   └── usecase/                 # Register, Update, List, GetById, ListUnits
+│   │   │   │   │   └── infra/
+│   │   │   │   │       ├── config/CatalogConfiguration.java
+│   │   │   │   │       ├── controllers/             # IngredientController, UnitController
+│   │   │   │   │       ├── data/                    # IngredientTable, JPA repo, Postgres repo
+│   │   │   │   │       └── events/handlers/IngredientEventHandler.java
+│   │   │   │   └── recipe/                          # Recipe Bounded Context
+│   │   │   │       ├── domain/
+│   │   │   │       │   ├── entity/Recipe.java
+│   │   │   │       │   ├── valueobject/             # RecipeIngredient, IngredientCost, RecipeCost
+│   │   │   │       │   ├── errors/                  # EmptyRecipe, InvalidQuantity, InvalidTotalCost
+│   │   │   │       │   └── service/RecipeCostCalculationService.java
+│   │   │   │       ├── application/
+│   │   │   │       │   ├── contracts/RecipeRepository.java
+│   │   │   │       │   ├── dto/{command,entity,response}
+│   │   │   │       │   ├── errors/                  # RecipeAlreadyExists, RecipeNotFound
+│   │   │   │       │   ├── events/IngredientUpdatedEventHandler.java
+│   │   │   │       │   ├── factory/RecipeFactory.java
+│   │   │   │       │   └── usecase/                 # Register, Update, List, GetById, Calculate cost, Recalculate
+│   │   │   │       └── infra/
+│   │   │   │           ├── controllers/RecipeController.java
+│   │   │   │           └── data/                    # RecipeTable, RecipeIngredientTable, repos
 │   │   │   └── resources/
 │   │   │       ├── application.properties
 │   │   │       └── db/migration/
@@ -101,16 +135,12 @@ costify/
 │   │   │           ├── V3__Remove_unit_cost_column.sql
 │   │   │           └── V4__Add_total_cost_column_to_recipes.sql
 │   │   └── test/java/br/unifor/costify/
-│   │       ├── domain/
-│   │       ├── application/
-│   │       ├── infra/
-│   │       ├── integration/
-│   │       │   ├── flyway/
-│   │       │   ├── repository/
-│   │       │   ├── security/
-│   │       │   ├── controllers/
-│   │       │   └── events/
-│   │       └── e2e/
+│   │       ├── catalog/
+│   │       ├── recipe/
+│   │       ├── shared/
+│   │       └── integration/
+│   │           ├── flyway/
+│   │           └── repository/
 │   ├── Dockerfile
 │   ├── docker-compose.yml
 │   ├── docker-compose.prod.yml

@@ -12,11 +12,27 @@ Backend do projeto Costify. REST API para gerenciamento de ingredientes e receit
 
 ## Arquitetura
 
-Clean Architecture com três camadas:
+**Clean Architecture** dentro de **Bounded Contexts** (DDD).
 
-- **`domain/`** — entidades, value objects, regras de negócio (sem dependências externas)
-- **`application/`** — casos de uso, DTOs, contratos de repositório
+### Bounded Contexts
+
+| BC | Responsabilidade |
+|----|-----------------|
+| `shared` | Kernel compartilhado: `Id`, `Money`, `Unit`, `DomainEvent`, `TransactionManager`, classes base de erro |
+| `catalog` | Entidade `Ingredient`, CRUD de ingredientes, listagem de unidades, publica `IngredientUpdatedEvent` |
+| `recipe` | Entidade `Recipe`, CRUD de receitas, cálculo de custos, escuta `IngredientUpdatedEvent` |
+
+Cada bounded context tem três camadas:
+
+- **`domain/`** — entidades, value objects, eventos de domínio, serviços de domínio (sem dependências externas)
+- **`application/`** — casos de uso, DTOs, contratos de repositório, factories
 - **`infra/`** — controllers REST, repositórios JPA, configurações Spring
+
+### Comunicação entre Contextos
+
+`catalog` publica `IngredientUpdatedEvent` → `recipe` recebe via `IngredientUpdatedEventHandler` → dispara `RecalculateRecipeCostsForIngredientUseCase` para manter os custos das receitas atualizados.
+
+`recipe` depende de `catalog` (lê dados de ingredientes), mas `catalog` não tem dependência de `recipe`.
 
 ## Comandos
 
