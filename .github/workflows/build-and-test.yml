@@ -92,7 +92,7 @@ jobs:
           db-port: "5432"
           output-dir: docs
           write-to-readme: "true"
-          readme-path: api/docs/README.md
+          readme-path: docs/README.md
           excluded-tables: none
           auto-commit: "true"
           commit-message: "📊 update database ER diagram and documentation [skip ci]"
