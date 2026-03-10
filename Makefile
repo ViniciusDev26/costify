@@ -1,7 +1,8 @@
-M2_CACHE   := $(HOME)/.m2
-API_DIR    := $(shell pwd)/api
-WEB_DIR    := $(shell pwd)/web
-TC_HOST    ?= host.docker.internal
+M2_CACHE       := $(HOME)/.m2
+API_DIR        := $(shell pwd)/api
+WEB_DIR        := $(shell pwd)/web
+TC_HOST        ?= host.docker.internal
+DOCKER_NETWORK ?=
 
 # ─── Full stack ───────────────────────────────────────────────────────────────
 
@@ -24,6 +25,7 @@ up-db:
 
 test-api:
 	docker run --rm \
+		$(DOCKER_NETWORK) \
 		-v /var/run/docker.sock:/var/run/docker.sock \
 		-v $(API_DIR):/app \
 		-v $(M2_CACHE):/root/.m2 \
@@ -34,6 +36,7 @@ test-api:
 
 test-api-class:
 	docker run --rm \
+		$(DOCKER_NETWORK) \
 		-v /var/run/docker.sock:/var/run/docker.sock \
 		-v $(API_DIR):/app \
 		-v $(M2_CACHE):/root/.m2 \

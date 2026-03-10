@@ -15,7 +15,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Run tests
-        run: make test-api TC_HOST=localhost
+        run: make test-api DOCKER_NETWORK="--network host"
 
   test-web:
     name: Web Tests
