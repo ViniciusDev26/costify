@@ -50,7 +50,7 @@ logs-api:
 # ─── Web ──────────────────────────────────────────────────────────────────────
 
 dev-web:
-	cd web && bun run dev
+	docker compose watch web
 
 test-web:
 	cd web && bun run test

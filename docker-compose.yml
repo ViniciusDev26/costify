@@ -53,17 +53,32 @@ services:
     build:
       context: ./web
       dockerfile: Dockerfile
-      args:
-        VITE_COSTIFY_API_URL: ${VITE_COSTIFY_API_URL:-http://localhost:8080/api}
+      target: development
     container_name: costify-web
+    volumes:
+      - ./web/src:/app/src
+      - ./web/index.html:/app/index.html
     ports:
-      - "80:80"
+      - "5173:5173"
+    environment:
+      VITE_COSTIFY_API_URL: ${VITE_COSTIFY_API_URL:-http://localhost:8080/api}
     networks:
       - costify-network
     depends_on:
       api:
         condition: service_healthy
-    restart: unless-stopped
+    develop:
+      watch:
+        - action: sync
+          path: ./web/src
+          target: /app/src
+        - action: sync
+          path: ./web/index.html
+          target: /app/index.html
+        - action: rebuild
+          path: ./web/package.json
+        - action: rebuild
+          path: ./web/bun.lock
 
 volumes:
   postgres_data:

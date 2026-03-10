@@ -1,4 +1,18 @@
-# Stage 1: build
+# ─── Development ─────────────────────────────────────────────────────────────
+FROM oven/bun:1-alpine AS development
+
+WORKDIR /app
+
+COPY package.json bun.lock ./
+RUN bun install --frozen-lockfile
+
+COPY . .
+
+EXPOSE 5173
+
+CMD ["bun", "run", "dev", "--host", "0.0.0.0"]
+
+# ─── Builder ──────────────────────────────────────────────────────────────────
 FROM oven/bun:1-alpine AS builder
 
 WORKDIR /app
@@ -12,12 +26,11 @@ ENV VITE_COSTIFY_API_URL=$VITE_COSTIFY_API_URL
 COPY . .
 RUN bun run build
 
-# Stage 2: serve
-FROM nginx:alpine
+# ─── Production ───────────────────────────────────────────────────────────────
+FROM nginx:alpine AS production
 
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Support client-side routing (React Router)
 RUN printf 'server {\n\
   listen 80;\n\
   root /usr/share/nginx/html;\n\
