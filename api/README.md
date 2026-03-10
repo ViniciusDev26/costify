@@ -94,3 +94,77 @@ Gerenciadas via Flyway em `src/main/resources/db/migration/`:
 - `V2` — Conversão de campos de unidade para enum
 - `V3` — Remoção da coluna `unit_cost`
 - `V4` — Adição da coluna `total_cost` em `recipes`
+
+<!-- ER_DIAGRAM_START -->
+## Database ER Diagram
+
+```mermaid
+erDiagram
+
+    "measurement_unit (ENUM)" {
+        ML string
+        L string
+        G string
+        KG string
+        UN string
+        TBSP string
+        TBSP_BUTTER string
+    }
+
+    flyway_schema_history {
+        installed_rank integer PK
+        version varchar(50)
+        description varchar(200)
+        type varchar(20)
+        script varchar(1000)
+        checksum integer
+        installed_by varchar(100)
+        installed_on timestamp_without_time_zone
+        execution_time integer
+        success boolean
+        string INDEX_flyway_schema_history_s_idx_success
+    }
+
+    ingredients {
+        id varchar(255) PK
+        name varchar(255) UK
+        package_quantity numeric(10_3)
+        package_price numeric(10_2)
+        created_at timestamp_without_time_zone
+        updated_at timestamp_without_time_zone
+        package_unit measurement_unit
+        string INDEX_idx_ingredients_name_name
+        string INDEX_idx_ingredients_package_unit_package_unit
+        string UNIQUE-INDEX_ingredients_name_key_name
+    }
+
+    recipe_ingredients {
+        id integer PK
+        recipe_id varchar(255) FK
+        ingredient_id varchar(255) FK
+        quantity numeric(10_3)
+        created_at timestamp_without_time_zone
+        unit measurement_unit
+        string INDEX_idx_recipe_ingredients_ingredient_id_ingredient_id
+        string INDEX_idx_recipe_ingredients_recipe_id_recipe_id
+        string INDEX_idx_recipe_ingredients_unit_unit
+        string UNIQUE-INDEX_uk_recipe_ingredient_recipe_id_ingredient_id
+    }
+
+    recipes {
+        id varchar(255) PK
+        name varchar(255) UK
+        created_at timestamp_without_time_zone
+        updated_at timestamp_without_time_zone
+        total_cost numeric(10_2)
+        string INDEX_idx_recipes_name_name
+        string UNIQUE-INDEX_recipes_name_key_name
+    }
+
+    ingredients ||--o{ recipe_ingredients : "has"
+    recipes ||--o{ recipe_ingredients : "has"
+
+    ingredients }o--|| "measurement_unit (ENUM)" : "uses"
+    recipe_ingredients }o--|| "measurement_unit (ENUM)" : "uses"
+```
+<!-- ER_DIAGRAM_END -->
