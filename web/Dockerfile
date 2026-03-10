@@ -8,9 +8,6 @@ COPY package.json bun.lock ./
 FROM base AS deps
 RUN bun install --frozen-lockfile
 
-FROM base AS deps-prod
-RUN bun install --frozen-lockfile --production
-
 # ─── Development ──────────────────────────────────────────────────────────────
 FROM deps AS development
 
