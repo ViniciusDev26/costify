@@ -112,8 +112,6 @@ Gerenciadas via Flyway em `src/main/resources/db/migration/`:
 - `V4` — Adição da coluna `total_cost` em `recipes`
 
 <!-- ER_DIAGRAM_START -->
-## Database ER Diagram
-
 ```mermaid
 erDiagram
 
