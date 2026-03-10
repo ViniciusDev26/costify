@@ -10,6 +10,7 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./init:/docker-entrypoint-initdb.d
     networks:
       - costify-network
     healthcheck:
@@ -18,20 +19,27 @@ services:
       timeout: 5s
       retries: 5
 
-  api:
+  app:
     build:
-      context: ./api
+      context: .
       dockerfile: Dockerfile
-    container_name: costify-api
+    container_name: costify-app
     environment:
+      # Spring Profile
       SPRING_PROFILES_ACTIVE: prod
+
+      # Database Configuration
       DB_HOST: postgres
       DB_PORT: 5432
       DB_NAME: costify
       DB_USER: postgres
       DB_PASSWORD: postgres
+
+      # Application Configuration
       SERVER_PORT: 8080
       CONTEXT_PATH: /api
+
+      # Connection Pool
       DB_POOL_SIZE: 20
       DB_POOL_MIN_IDLE: 5
     ports:
@@ -48,22 +56,6 @@ services:
       timeout: 10s
       retries: 5
       start_period: 60s
-
-  web:
-    build:
-      context: ./web
-      dockerfile: Dockerfile
-      args:
-        VITE_COSTIFY_API_URL: ${VITE_COSTIFY_API_URL:-http://localhost:8080/api}
-    container_name: costify-web
-    ports:
-      - "80:80"
-    networks:
-      - costify-network
-    depends_on:
-      api:
-        condition: service_healthy
-    restart: unless-stopped
 
 volumes:
   postgres_data:
