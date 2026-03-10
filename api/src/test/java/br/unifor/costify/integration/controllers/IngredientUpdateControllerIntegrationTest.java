@@ -1,13 +1,13 @@
 package br.unifor.costify.integration.controllers;
 
 import br.unifor.costify.TestcontainersConfiguration;
-import br.unifor.costify.application.contracts.IngredientRepository;
-import br.unifor.costify.domain.contracts.IdGenerator;
-import br.unifor.costify.domain.entity.Ingredient;
-import br.unifor.costify.domain.valueobject.Id;
-import br.unifor.costify.domain.valueobject.Money;
-import br.unifor.costify.domain.valueobject.Unit;
-import br.unifor.costify.infra.controllers.dto.IngredientControllerRegisterRequest;
+import br.unifor.costify.catalog.application.contracts.IngredientRepository;
+import br.unifor.costify.shared.domain.contracts.IdGenerator;
+import br.unifor.costify.catalog.domain.entity.Ingredient;
+import br.unifor.costify.shared.domain.valueobject.Id;
+import br.unifor.costify.shared.domain.valueobject.Money;
+import br.unifor.costify.shared.domain.valueobject.Unit;
+import br.unifor.costify.catalog.infra.controllers.dto.IngredientControllerRegisterRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

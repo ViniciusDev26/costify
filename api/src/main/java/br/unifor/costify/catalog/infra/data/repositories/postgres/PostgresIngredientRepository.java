@@ -1,0 +1,46 @@
+package br.unifor.costify.catalog.infra.data.repositories.postgres;
+
+import br.unifor.costify.catalog.application.contracts.IngredientRepository;
+import br.unifor.costify.catalog.domain.entity.Ingredient;
+import br.unifor.costify.shared.domain.valueobject.Id;
+import br.unifor.costify.catalog.infra.data.entities.IngredientTable;
+import br.unifor.costify.catalog.infra.data.repositories.jpa.JpaIngredientRepository;
+import java.util.List;
+import java.util.Optional;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public class PostgresIngredientRepository implements IngredientRepository {
+  private final JpaIngredientRepository jpaIngredientRepository;
+
+  public PostgresIngredientRepository(JpaIngredientRepository jpaIngredientRepository) {
+    this.jpaIngredientRepository = jpaIngredientRepository;
+  }
+
+  @Override
+  public Optional<Ingredient> findById(Id id) {
+    IngredientTable ingredientQueryResult =
+        this.jpaIngredientRepository.findById(id.getValue()).orElse(null);
+
+    return Optional.ofNullable(ingredientQueryResult).map(IngredientTable::toDomain);
+  }
+
+  @Override
+  public List<Ingredient> findAll() {
+    return this.jpaIngredientRepository.findAll().stream().map(IngredientTable::toDomain).toList();
+  }
+
+  public Ingredient save(Ingredient ingredient) {
+    IngredientTable ingredientTable = IngredientTable.fromDomain(ingredient);
+    IngredientTable savedIngredient = this.jpaIngredientRepository.save(ingredientTable);
+    return IngredientTable.toDomain(savedIngredient);
+  }
+
+  public void deleteById(Id id) {
+    this.jpaIngredientRepository.deleteById(id.getValue());
+  }
+
+  public boolean existsByName(String name) {
+    return this.jpaIngredientRepository.existsByName(name);
+  }
+}

@@ -1,0 +1,122 @@
+package br.unifor.costify.recipe.application.usecase;
+
+import br.unifor.costify.catalog.application.contracts.IngredientRepository;
+import br.unifor.costify.recipe.application.contracts.RecipeRepository;
+import br.unifor.costify.catalog.domain.entity.Ingredient;
+import br.unifor.costify.recipe.domain.entity.Recipe;
+import br.unifor.costify.recipe.domain.service.RecipeCostCalculationService;
+import br.unifor.costify.shared.domain.valueobject.Id;
+import br.unifor.costify.recipe.domain.valueobject.RecipeCost;
+import br.unifor.costify.recipe.domain.valueobject.RecipeIngredient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+/**
+ * Use case for recalculating recipe costs when ingredients are modified.
+ *
+ * User Story: "As a user, when I update an ingredient price,
+ * I want all recipe costs using that ingredient to be automatically updated"
+ *
+ * This use case is typically triggered by ingredient update events but can also
+ * be invoked directly for manual recalculation scenarios.
+ */
+@Service
+public class RecalculateRecipeCostsForIngredientUseCase {
+    private static final Logger logger = LoggerFactory.getLogger(RecalculateRecipeCostsForIngredientUseCase.class);
+
+    private final RecipeRepository recipeRepository;
+    private final IngredientRepository ingredientRepository;
+    private final RecipeCostCalculationService costCalculationService;
+
+    public RecalculateRecipeCostsForIngredientUseCase(
+            RecipeRepository recipeRepository,
+            IngredientRepository ingredientRepository,
+            RecipeCostCalculationService costCalculationService) {
+        this.recipeRepository = recipeRepository;
+        this.ingredientRepository = ingredientRepository;
+        this.costCalculationService = costCalculationService;
+    }
+
+    /**
+     * Executes the recipe cost recalculation for all recipes using the specified ingredient.
+     *
+     * This method:
+     * 1. Finds all recipes using the given ingredient
+     * 2. Loads all ingredients for each recipe
+     * 3. Recalculates the recipe cost
+     * 4. Updates and saves the recipe with the new total cost
+     *
+     * @param ingredientId the ID of the updated ingredient
+     */
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void execute(Id ingredientId) {
+        logger.info("Starting recipe cost recalculation for ingredient: {}", ingredientId.getValue());
+
+        // Find all recipes that use this ingredient
+        List<Recipe> affectedRecipes = recipeRepository.findByIngredientId(ingredientId);
+        logger.info("Found {} recipes affected by ingredient {}", affectedRecipes.size(), ingredientId.getValue());
+
+        // If no recipes use this ingredient, nothing to update
+        if (affectedRecipes.isEmpty()) {
+            logger.info("No recipes found using ingredient {}", ingredientId.getValue());
+            return;
+        }
+
+        // Update cost for each affected recipe
+        for (Recipe recipe : affectedRecipes) {
+            logger.info("Recalculating cost for recipe: {} ({})", recipe.getName(), recipe.getId().getValue());
+            updateRecipeCost(recipe);
+            logger.info("Recipe {} cost updated successfully", recipe.getName());
+        }
+
+        logger.info("Completed recipe cost recalculation for ingredient: {}", ingredientId.getValue());
+    }
+
+    /**
+     * Updates the cost of a single recipe by recalculating based on current ingredient prices.
+     *
+     * @param recipe the recipe to update
+     */
+    private void updateRecipeCost(Recipe recipe) {
+        // Load all ingredients for this recipe
+        Map<Id, Ingredient> ingredientMap = loadIngredientsForRecipe(recipe);
+
+        // Calculate the new cost
+        RecipeCost recipeCost = costCalculationService.calculateCost(recipe, ingredientMap);
+
+        // Update the recipe with the new total cost
+        recipe.updateTotalCost(recipeCost.getTotalCost());
+
+        // Save the updated recipe
+        recipeRepository.save(recipe);
+    }
+
+    /**
+     * Loads all ingredients referenced in a recipe into a map.
+     *
+     * @param recipe the recipe whose ingredients to load
+     * @return a map of ingredient IDs to Ingredient entities
+     */
+    private Map<Id, Ingredient> loadIngredientsForRecipe(Recipe recipe) {
+        Map<Id, Ingredient> ingredientMap = new HashMap<>();
+
+        for (RecipeIngredient recipeIngredient : recipe.getIngredients()) {
+            Id ingredientId = recipeIngredient.getIngredientId();
+            Optional<Ingredient> ingredientOpt = ingredientRepository.findById(ingredientId);
+
+            ingredientOpt.ifPresent(ingredient ->
+                    ingredientMap.put(ingredientId, ingredient)
+            );
+        }
+
+        return ingredientMap;
+    }
+}
