@@ -1,6 +1,7 @@
-M2_CACHE := $(HOME)/.m2
-API_DIR  := $(shell pwd)/api
-WEB_DIR  := $(shell pwd)/web
+M2_CACHE   := $(HOME)/.m2
+API_DIR    := $(shell pwd)/api
+WEB_DIR    := $(shell pwd)/web
+TC_HOST    ?= host.docker.internal
 
 # ─── Full stack ───────────────────────────────────────────────────────────────
 
@@ -27,7 +28,7 @@ test-api:
 		-v $(API_DIR):/app \
 		-v $(M2_CACHE):/root/.m2 \
 		-w /app \
-		-e TESTCONTAINERS_HOST_OVERRIDE=host.docker.internal \
+		-e TESTCONTAINERS_HOST_OVERRIDE=$(TC_HOST) \
 		maven:3.9-eclipse-temurin-21 \
 		./mvnw test -DargLine="-ea"
 
@@ -37,7 +38,7 @@ test-api-class:
 		-v $(API_DIR):/app \
 		-v $(M2_CACHE):/root/.m2 \
 		-w /app \
-		-e TESTCONTAINERS_HOST_OVERRIDE=host.docker.internal \
+		-e TESTCONTAINERS_HOST_OVERRIDE=$(TC_HOST) \
 		maven:3.9-eclipse-temurin-21 \
 		./mvnw test -DargLine="-ea" -Dtest="$(CLASS)"
 
@@ -53,7 +54,19 @@ dev-web:
 	docker compose watch web
 
 test-web:
-	cd web && bun run test
+	docker run --rm \
+		-v $(WEB_DIR):/app \
+		-w /app \
+		oven/bun:1-alpine \
+		sh -c "bun install --frozen-lockfile && bun run test"
+
+build-web:
+	docker run --rm \
+		-v $(WEB_DIR):/app \
+		-w /app \
+		-e VITE_COSTIFY_API_URL=$(VITE_COSTIFY_API_URL) \
+		oven/bun:1-alpine \
+		sh -c "bun install --frozen-lockfile && bun run build"
 
 deploy-web:
 	docker compose up -d --build web
@@ -67,5 +80,5 @@ test: test-api test-web
 
 .PHONY: up down logs deploy up-db \
         test-api test-api-class deploy-api logs-api \
-        dev-web test-web deploy-web logs-web \
+        dev-web test-web build-web deploy-web logs-web \
         test
