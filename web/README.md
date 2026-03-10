@@ -1,89 +1,66 @@
 # Costify Web
 
-A modern React web application for cost tracking and management, built with the latest web technologies.
-
-## Features
-
-- ✨ Modern React 19 with TypeScript
-- 🎨 Beautiful UI with Tailwind CSS and shadcn/ui components
-- 🌙 Dark/Light theme toggle with persistence
-- 📱 Responsive design
-- ⚡ Fast development with Vite
-- 🧪 Testing setup with Vitest and React Testing Library
-- 🗂️ State management with Zustand
+Frontend React do projeto Costify. Para orquestração completa, use os comandos `make` na raiz do monorepo.
 
 ## Tech Stack
 
-- **Frontend**: React 19, TypeScript
-- **Build Tool**: Vite (rolldown-vite)
-- **Styling**: Tailwind CSS v4
-- **UI Components**: shadcn/ui, Radix UI
-- **State Management**: Zustand
-- **Routing**: React Router v7
-- **Testing**: Vitest, React Testing Library, jsdom
-- **Linting**: ESLint
+- **React 19** + TypeScript 5.8
+- **Vite** (rolldown-vite) — build tool
+- **TailwindCSS v4** + **shadcn/ui** — UI e estilos
+- **Zustand v5** — estado global com persistência
+- **React Router v7** — roteamento
+- **React Query (TanStack)** — data fetching e cache
+- **React Hook Form** + **Zod** — formulários e validação
+- **Bun** — package manager
+- **Vitest** + React Testing Library — testes
+- **Biome** — linter
 
-## Getting Started
+## Comandos (via monorepo root)
 
-### Prerequisites
-
-- Node.js (recommended: latest LTS)
-- npm
-
-### Installation
-
-1. Clone the repository
 ```bash
-git clone <repository-url>
-cd costify-web
+make dev-web        # Desenvolvimento com hot reload
+make deploy-web     # Build e start do container
+make test-web       # Rodar testes
+make build-web      # Build de produção
+make logs-web       # Ver logs
 ```
 
-2. Install dependencies
-```bash
-npm install
-```
-
-3. Start the development server
-```bash
-npm run dev
-```
-
-The application will be available at `http://localhost:5173`
-
-## Available Scripts
-
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm test` - Run tests
-- `npm run test:watch` - Run tests in watch mode
-- `npm run lint` - Run ESLint
-
-## Project Structure
+## Estrutura do Projeto
 
 ```
 src/
+├── api/
+│   ├── axios.ts              # Instância Axios configurada
+│   └── costify/
+│       ├── client.ts
+│       └── queries/          # React Query hooks por feature
+├── pages/
+│   ├── home/
+│   ├── ingredients/          # Listagem e edição de ingredientes
+│   │   ├── schemas/          # Schemas Zod
+│   │   ├── components/
+│   │   ├── list/
+│   │   └── edit/
+│   ├── recipes/              # Listagem e edição de receitas
+│   │   ├── schemas/
+│   │   ├── components/
+│   │   └── edit/
+│   └── NotFound.tsx
 ├── components/
-│   └── ui/           # Reusable UI components (shadcn/ui)
+│   ├── ui/                   # Primitivos shadcn/ui
+│   └── Navigation.tsx
 ├── stores/
-│   └── theme/        # Theme state management
-├── lib/              # Utilities and helpers
-├── App.tsx           # Main application component
-└── main.tsx          # Application entry point
+│   └── theme/                # Tema claro/escuro com persistência
+├── routes/
+│   └── index.tsx
+├── hooks/
+└── lib/
 ```
 
-## Key Libraries
+## Variáveis de Ambiente
 
-- [shadcn/ui](https://ui.shadcn.com/) - Beautiful and accessible UI components
-- [React Router](https://reactrouter.com) - Declarative routing for React
-- [Zustand](https://zustand-demo.pmnd.rs/) - Simple state management
-- [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework
-- [Radix UI](https://www.radix-ui.com/) - Low-level UI primitives
+| Variável               | Padrão                       |
+|------------------------|------------------------------|
+| `VITE_COSTIFY_API_URL` | `http://localhost:8080/api`  |
 
-## Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+Copie `.env.example` para `.env` para desenvolvimento local.
