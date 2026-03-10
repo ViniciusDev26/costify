@@ -1,10 +1,18 @@
-# ─── Development ─────────────────────────────────────────────────────────────
-FROM oven/bun:1-alpine AS development
+# ─── Base ─────────────────────────────────────────────────────────────────────
+FROM oven/bun:1-alpine AS base
 
 WORKDIR /app
-
 COPY package.json bun.lock ./
+
+# ─── Dependencies ─────────────────────────────────────────────────────────────
+FROM base AS deps
 RUN bun install --frozen-lockfile
+
+FROM base AS deps-prod
+RUN bun install --frozen-lockfile --production
+
+# ─── Development ──────────────────────────────────────────────────────────────
+FROM deps AS development
 
 COPY . .
 
@@ -13,12 +21,7 @@ EXPOSE 5173
 CMD ["bun", "run", "dev", "--host", "0.0.0.0"]
 
 # ─── Builder ──────────────────────────────────────────────────────────────────
-FROM oven/bun:1-alpine AS builder
-
-WORKDIR /app
-
-COPY package.json bun.lock ./
-RUN bun install --frozen-lockfile
+FROM deps AS builder
 
 ARG VITE_COSTIFY_API_URL
 ENV VITE_COSTIFY_API_URL=$VITE_COSTIFY_API_URL
