@@ -1,8 +1,8 @@
 M2_CACHE       := $(HOME)/.m2
 API_DIR        := $(shell pwd)/api
 WEB_DIR        := $(shell pwd)/web
-TC_HOST        ?= host.docker.internal
 DOCKER_NETWORK ?=
+TC_HOST        ?= $(if $(filter --network host,$(DOCKER_NETWORK)),localhost,host.docker.internal)
 
 # ─── Full stack ───────────────────────────────────────────────────────────────
 
